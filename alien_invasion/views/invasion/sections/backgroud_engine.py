@@ -12,7 +12,8 @@ from alien_invasion import CONSTANTS
 
 
 class BackgroundEngine(arc.Section):
-    """Gameplay loop background logic."""
+    """Background logic."""
+
     def __init__(
         self,
         left: int,
@@ -21,6 +22,9 @@ class BackgroundEngine(arc.Section):
         height: int,
         **kwargs,
     ) -> None:
+        """
+        Initialise background images.
+        """
         super().__init__(
             left,
             bottom,
@@ -33,49 +37,56 @@ class BackgroundEngine(arc.Section):
 
         self.backgrounds = arc.SpriteList()
 
-        images: list[arc.Sprite] = [
+        bg_pair = arc.load_texture_pair(CONSTANTS.DIR_RESOURCES / 'images/background/20150327144018-8ba5f9d2-me.png')
+        sprites: list[arc.Sprite] = [
             arc.Sprite(
-                CONSTANTS.DIR_RESOURCES / 'images/background/20150327144018-8ba5f9d2-me.png',
-                scale=3, #repeat_count_y=3,
+                texture=bg_pair[0], scale=3,
+            ),
+            arc.Sprite(
+                texture=bg_pair[1], scale=3,
             ),
         ]
 
         # self.fadein_per_frame = 0.4
-        # self.upper_bg_alpha = 140
+        # self.upper_bg_alpha = 250
 
-        self.backgrounds.extend(images)
+        self.backgrounds.extend(sprites)
+        self.backgrounds.alpha = 90
 
-        self.backgrounds[0].change_y = -10
-        # self.backgrounds[0].image_height = self.backgrounds[0].height * 2
+        # velocity
+        self.backgrounds[0].change_y = -0.2
+        self.backgrounds[1].change_y = self.backgrounds[0].change_y
 
-        self.backgrounds[0].append_texture(self.backgrounds[0].texture)
-        print(self.backgrounds[0].textures)
+        # position 1 above 0 for the first update_l1 iteration loop
+        self.backgrounds[1].bottom = self.backgrounds[0].top
 
-        # self.backgrounds[0].image_y = self.backgrounds[0].height * 2
+    def on_update(self, dt) -> None:
+        """Compute background layer changes."""
 
-    def on_update(self, dt):
+        def update_layer_3() -> None:
+            """
+            Repositions textures of layer 3 background.
 
-        if self.backgrounds[0].top < 0:
-            self.backgrounds[0].top = CONSTANTS.DISPLAY.HEIGHT
-        else:
-            self.backgrounds[0].bottom -= 10
+            When first img 0 reaches bottom, move above it an img 1,
+            then then img 1 reaches bottom, move above it an img 0
+            """
+            if self.backgrounds[0].bottom < 0:
+                self.backgrounds[1].bottom = self.backgrounds[0].top
+            if self.backgrounds[1].bottom < 0:
+                self.backgrounds[0].bottom = self.backgrounds[1].top
 
+        update_layer_3()
         self.backgrounds.update()
+
 
     def on_draw(self):
         """
         Render background section.
         """
 
-        # surf_h = surf.get_height()
-        # rel_y = ypos % img_rect.height
-        # surf.blit(img, (0, rel_y - img_rect.height))
-
-        # if rel_y < surf_h:
-        #     surf.blit(img, (0, rel_y))
-
-        self.backgrounds.draw(pixelated=False)
         # Draw the background texture
+        self.backgrounds.draw(pixelated=True)
+
         # arc.draw_lrwh_rectangle_textured(
         #     0, 0,
         #     CONSTANTS.DISPLAY.WIDTH,
