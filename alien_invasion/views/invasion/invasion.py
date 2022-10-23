@@ -56,15 +56,15 @@ class Invasion(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
 
-        # Render score
-        # arc.draw_text(
-        #     f"presence: {22}",
-        #     start_x=35,
-        #     start_y=self.window.height - 35,
-        #     color=arc.color.BLACK,
-        #     font_size=24,
-        #     font_name="Kenney Rocket",
-        # )
+        # Render FPS formated with 2 decimal places 
+        arc.draw_text(
+            f"FPS: {arc.get_fps():.2f}",
+            start_x=35,
+            start_y=self.window.height - 35,
+            color=arc.color.WHITE,
+            font_size=12,
+            font_name="Courier New",
+        )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == KEYMAP['quit']:
