@@ -5,6 +5,7 @@ from alien_invasion.settings import KEYMAP
 from .sections import (
     AlienArea,
     PlayerArea,
+    BackgroundEngine,
 )
 
 class Invasion(arc.View):
@@ -13,6 +14,15 @@ class Invasion(arc.View):
         super().__init__()
 
         self.game_state: CONSTANTS.GAME_STATE = None
+
+        self.background_engine = BackgroundEngine(
+            left=0, bottom=0,
+            width=self.window.width,
+            height=self.window.height,
+            # prevents arcade events capture
+            accept_keyboard_events=False,
+            name="background_engine",
+        )
 
         self.alien_area = AlienArea(
             left=0, bottom=0,
@@ -33,6 +43,7 @@ class Invasion(arc.View):
             name="player_area"
         )
 
+        self.section_manager.add_section(self.background_engine)
         self.section_manager.add_section(self.alien_area)
         self.section_manager.add_section(self.player_area)
 
@@ -46,14 +57,14 @@ class Invasion(arc.View):
         arc.start_render()
 
         # Render score
-        arc.draw_text(
-            f"presence: {22}",
-            start_x=35,
-            start_y=self.window.height - 35,
-            color=arc.color.BLACK,
-            font_size=24,
-            font_name="Kenney Rocket",
-        )
+        # arc.draw_text(
+        #     f"presence: {22}",
+        #     start_x=35,
+        #     start_y=self.window.height - 35,
+        #     color=arc.color.BLACK,
+        #     font_size=24,
+        #     font_name="Kenney Rocket",
+        # )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == KEYMAP['quit']:
