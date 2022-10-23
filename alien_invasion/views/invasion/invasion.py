@@ -56,7 +56,7 @@ class Invasion(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
 
-        # Render FPS formated with 2 decimal places 
+        # Render FPS formated with 2 decimal places
         arc.draw_text(
             f"FPS: {arc.get_fps():.2f}",
             start_x=35,

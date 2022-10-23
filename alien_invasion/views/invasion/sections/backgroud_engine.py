@@ -3,10 +3,13 @@ Module for background management.
 """
 
 from pathlib import Path
+from timeit import repeat
 
 import arcade as arc
 
 from alien_invasion import CONSTANTS
+
+
 
 class BackgroundEngine(arc.Section):
     """Gameplay loop background logic."""
@@ -28,48 +31,55 @@ class BackgroundEngine(arc.Section):
 
         arc.set_background_color(arc.color.BLACK)
 
-        self.background = self.load_new_background(
-            CONSTANTS.DIR_RESOURCES / 'images/main_menu.png',
-            90, 0.4
-        )
+        self.backgrounds = arc.SpriteList()
 
-    def load_new_background(self,
-        texture: Path,
-        upper_alpha: int,
-        fadein_speed: float = 0.4
-    ) -> arc.texture.Texture:
-        """
-        Parameters
-        ----------
-        texture: Path
-            pathlib.Path path to an image.
-            Consider RESOURCES constant.
-        upper_texture_alpha: int
-            Desired transperency background texture channel.
-        fadein_speed: float = 0.4
-            Desired fade-in speed for alpha channel per frame.
-            Is incrimented in `.on_draw` method.
-        """
-        self.bg_alpha_reveal = 0
-        self.bg_upper_alpha = upper_alpha
-        self.bg_fadein_speed = fadein_speed
-        return arc.load_texture(texture)
+        images: list[arc.Sprite] = [
+            arc.Sprite(
+                CONSTANTS.DIR_RESOURCES / 'images/background/20150327144018-8ba5f9d2-me.png',
+                scale=3, #repeat_count_y=3,
+            ),
+        ]
+
+        # self.fadein_per_frame = 0.4
+        # self.upper_bg_alpha = 140
+
+        self.backgrounds.extend(images)
+
+        self.backgrounds[0].change_y = -10
+        # self.backgrounds[0].image_height = self.backgrounds[0].height * 2
+
+        self.backgrounds[0].append_texture(self.backgrounds[0].texture)
+        print(self.backgrounds[0].textures)
+
+        # self.backgrounds[0].image_y = self.backgrounds[0].height * 2
+
+    def on_update(self, dt):
+
+        if self.backgrounds[0].top < 0:
+            self.backgrounds[0].top = CONSTANTS.DISPLAY.HEIGHT
+        else:
+            self.backgrounds[0].bottom -= 10
+
+        self.backgrounds.update()
 
     def on_draw(self):
         """
         Render background section.
         """
 
-        def compute_bg_fadein():
-            if self.bg_alpha_reveal < self.bg_upper_alpha:
-                self.bg_alpha_reveal += self.bg_fadein_speed
+        # surf_h = surf.get_height()
+        # rel_y = ypos % img_rect.height
+        # surf.blit(img, (0, rel_y - img_rect.height))
 
-        compute_bg_fadein()
+        # if rel_y < surf_h:
+        #     surf.blit(img, (0, rel_y))
+
+        self.backgrounds.draw(pixelated=False)
         # Draw the background texture
-        arc.draw_lrwh_rectangle_textured(
-            0, 0,
-            CONSTANTS.DISPLAY.WIDTH,
-            CONSTANTS.DISPLAY.HEIGHT,
-            self.background,
-            alpha=self.bg_alpha_reveal,
-        )
+        # arc.draw_lrwh_rectangle_textured(
+        #     0, 0,
+        #     CONSTANTS.DISPLAY.WIDTH,
+        #     CONSTANTS.DISPLAY.HEIGHT,
+        #     self.background,
+        #     alpha=self.bg_alpha_reveal,
+        # )
