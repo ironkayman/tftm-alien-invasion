@@ -1,0 +1,8 @@
+{
+    "display_name": "Basic Accelerator",
+    "sys_name": "basic_accelerator",
+    "description": "A very basic and janky prototype of a acceleration-based railgun connected directly to a ship energy reactor",
+    "bullet_damage": 1,
+    "rate_of_fire": 2,
+    "energy_consumed": 3
+}

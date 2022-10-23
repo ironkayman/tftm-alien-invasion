@@ -1,0 +1,10 @@
+{
+    "current_keymap": {
+        "start": "enter",
+        "pause": "q",
+        "quit": "q",
+        "player_starship_movement_left": "left",
+        "player_starship_movement_right": "right",
+        "player_starship_fire_primary": "z"
+    }
+}

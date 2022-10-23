@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "alien_invasion"
+version = "0.1.1"
+description = "Demo of alien invasion game"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+arcade = "^2.6.15"
+toml = "^0.10.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

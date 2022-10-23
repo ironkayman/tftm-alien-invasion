@@ -1,0 +1,47 @@
+[info]
+    name = "castle_keep"
+    # TODO: fragmentation engine
+    # small (1 fragment), medium (<4 frg) , large (<9 frg), giant (<13 frg), unimaginable (<43 frg)
+    size = 'large'
+    # available damage types and states are governed by given types below
+    type = ['narrific', 'corporeal', 'ancient']
+    xp = 4000
+
+[drops]
+# percentage
+tectonic_grave_fragment = 60
+ancient_castle_bricks = 440
+
+[state]
+
+[state.initial]
+    # looks inside resources/sprites, searched after state name
+    # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
+    moveset = ['spiralling', 'escaping']
+    hp = 200
+    death_damage_cap = false
+
+[state.damaged]
+    moveset = ['escaping']
+    # if its multiple images/gif, changes rotation speed
+    animation_speed = 0.5
+    hp = 100
+    death_damage_cap = false
+
+[state.destroyed]
+    moveset = ['floating']
+    hp = 50
+    # true - does not allow to damage next phase 
+    death_damage_cap = true
+    # true - incomming killing damage absorbed and used for powerup on next phase
+    death_damage_charge = true
+
+[state.ascended]
+    animation_speed = 1.8
+    moveset = ['killing', 'spiralling']
+    hp = 200
+    death_damage_cap = false
+
+[state.corpse]
+    moveset = ['static']
+    hp = 20
