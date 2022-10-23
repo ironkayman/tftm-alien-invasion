@@ -9,9 +9,9 @@ Licensing:
 
 Images used:
 
-https://imagearchives.esac.esa.int/picture.php?/4685/category/55
-https://imagearchives.esac.esa.int/picture.php?/4686/category/55
 https://imagearchives.esac.esa.int/picture.php?/5690/category/47
+https://imagearchives.esac.esa.int/picture.php?/6028/category/45
+https://imagearchives.esac.esa.int/picture.php?/6029/category/45
 
 
 # License

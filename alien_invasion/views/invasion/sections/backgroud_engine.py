@@ -37,7 +37,7 @@ class BackgroundEngine(arc.Section):
 
         self.backgrounds = arc.SpriteList()
 
-        bg_pair = arc.load_texture_pair(CONSTANTS.DIR_RESOURCES / 'images/background/20150327144018-8ba5f9d2-me.png')
+        bg_pair = arc.load_texture_pair(CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png')
         sprites: list[arc.Sprite] = [
             arc.Sprite(
                 texture=bg_pair[0], scale=3,
@@ -51,7 +51,7 @@ class BackgroundEngine(arc.Section):
         # self.upper_bg_alpha = 250
 
         self.backgrounds.extend(sprites)
-        self.backgrounds.alpha = 90
+        self.backgrounds.alpha = 110
 
         # velocity
         self.backgrounds[0].change_y = -0.2
