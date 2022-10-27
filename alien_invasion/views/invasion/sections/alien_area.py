@@ -2,6 +2,11 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+"""
+Alien spawner - chain of moving emitters for particles, but particles are aliens
+also they cant overlap and should find pathfinding
+"""
+
 class AlienArea(arc.Section):
     """Aliens' area of movement."""
     def __init__(
