@@ -35,14 +35,14 @@ class BackgroundEngine(arc.Section):
 
         self.backgrounds = arc.SpriteList()
 
-        def create_layer_microcomets():
+        def create_layer_microcomets() -> None:
             """Create layers of rare but fast moving objects."""
             return arc.Emitter(
                 center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
-                emit_controller=arc.EmitInterval(0.6),
+                emit_controller=arc.EmitInterval(0.75),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
-                    change_xy=(0.0, -35.0),
+                    change_xy=(0.0, -45.0),
                     lifetime=5,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -53,29 +53,51 @@ class BackgroundEngine(arc.Section):
                 )
             )
 
-        def create_layer_stardust():
-            """Creates moving particle background.
+        def create_layer_stardust_primary() -> None:
+            """Creates relatively faster moving particle background.
 
-            Create second moving layer above
+            Create primary moving layer above
             background image, slightly faster than it.
             """
             return arc.Emitter(
                 center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
-                emit_controller=arc.EmitInterval(0.75),
+                emit_controller=arc.EmitInterval(7.5),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -0.12),
-                    lifetime=120,
+                    change_xy=(0.0, -0.2),
+                    lifetime=180,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
                         (CONSTANTS.DISPLAY.WIDTH, CONSTANTS.DISPLAY.HEIGHT)
                     ),
                     scale=0.04,
-                    alpha=15
+                    alpha=100
                 )
             )
 
-        def create_background_rolling_image_layer():
+        def create_layer_stardust_secondary() -> None:
+            """Creates slower moving particle background.
+
+            Create secondary and more slow layer above
+            background image, slightly faster than it.
+            """
+            return arc.Emitter(
+                center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
+                emit_controller=arc.EmitInterval(5.5),
+                particle_factory=lambda emitter: arc.LifetimeParticle(
+                    filename_or_texture=":resources:images/tiles/dirtCenter.png",
+                    change_xy=(0.0, -0.12),
+                    lifetime=240,
+                    center_xy=arc.rand_on_line(
+                        (0.0, 0.0),
+                        (CONSTANTS.DISPLAY.WIDTH, CONSTANTS.DISPLAY.HEIGHT)
+                    ),
+                    scale=0.04,
+                    alpha=60
+                )
+            )
+
+        def create_background_rolling_image_layer() -> None:
             bg_pair = arc.load_texture_pair(
                 CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
             )
@@ -99,10 +121,11 @@ class BackgroundEngine(arc.Section):
             self.backgrounds[1].bottom = self.backgrounds[0].top
 
         create_background_rolling_image_layer()
-        self.emitter_stardust = create_layer_stardust()
+        self.emitter_stardust_secondary = create_layer_stardust_secondary()
+        self.emitter_stardust_primary = create_layer_stardust_primary()
         self.emitter_microcomet = create_layer_microcomets()
 
-    def on_update(self, dt) -> None:
+    def on_update(self, _) -> None:
         """Compute background layer changes."""
 
         def compute_viewport_layer_3() -> None:
@@ -120,11 +143,11 @@ class BackgroundEngine(arc.Section):
         # compute image shifting against veiwport
         compute_viewport_layer_3()
         # call emitters
-        self.emitter_stardust.update()
-        self.emitter_microcomet.update()
-        # update computes background
-        self.backgrounds.update()
-
+        [layer.update() for layer in (
+            self.emitter_stardust_secondary,
+            self.emitter_stardust_primary,
+            self.emitter_microcomet,
+            self.backgrounds,)]
 
     def on_draw(self):
         """
@@ -134,6 +157,8 @@ class BackgroundEngine(arc.Section):
         # Draw the background texture
         self.backgrounds.draw(pixelated=True)
         # render emitted particles
-        self.emitter_stardust.draw()
-        self.emitter_microcomet.draw()
+        [layer.draw() for layer in (
+            self.emitter_stardust_secondary,
+            self.emitter_stardust_primary,
+            self.emitter_microcomet,)]
 
