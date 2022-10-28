@@ -70,24 +70,25 @@ class PlayerArea(arc.Section):
                 if player_bullet.bottom > self.window.height:
                     player_bullet.remove_from_sprite_lists()
 
-        def prevent_starship_moving_outside_veiw() -> None:
-            """check if player ship reaches view boundaries"""
+        # def prevent_starship_moving_outside_veiw() -> None:
+        #     """check if player ship reaches view boundaries"""
 
-            starship = self.player[0]
-            if starship.left < self.left:
-                starship.moving_left = False
-                # consider ship axis step movement, return him partially to screen
-                # this solution prevents jittering at high ship speed
-                if starship.left < self.left - starship.width // 2:
-                    starship.left = self.left - starship.width * 0.3
+        #     starship = self.player[0]
+        #     if starship.left < self.left:
+        #         starship.moving_left = False
+        #         # consider ship axis step movement, return him partially to screen
+        #         # this solution prevents jittering at high ship speed
+        #         if starship.left < self.left - starship.width // 2:
+        #             starship.left = self.left - starship.width * 0.3
 
-            if starship.right > self.right:
-                starship.moving_right = False
-                # hitbox_rightmost_axis_value = max(starship.get_adjusted_hit_box(), key=lambda point: point[0])[0]
-                if starship.right > self.right + starship.width // 2:
-                    starship.right = self.right + starship.width * 0.3
+        #     if starship.right > self.right:
+        #         starship.moving_right = False
+        #         # hitbox_rightmost_axis_value = max(starship.get_adjusted_hit_box(), key=lambda point: point[0])[0]
+        #         if starship.right > self.right + starship.width // 2:
+        #             starship.right = self.right + starship.width * 0.3
 
         # prevent_starship_moving_outside_veiw()
+
         # player update func considers its movement states
         # which were potentially changed
         self.player.update()
@@ -103,8 +104,7 @@ class PlayerArea(arc.Section):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key press events."""
         # set the paddle direction and movement speed
-        # if symbol: breakpoint()
-        print(symbol)
+
         if symbol == self.key_left:
             self.ship.moving_left = True
         elif symbol == self.key_right:
