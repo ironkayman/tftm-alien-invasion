@@ -53,6 +53,7 @@ class PlayerArea(arc.Section):
         # the player ship
         self.ship = Starship(
             fired_shots=self.player_bullet_list,
+            area_coords=[self.left, self.right, width, height]
         )
         self.ship.center_x = self.window.width / 2
         self.ship.center_y = self.ship.height
@@ -86,7 +87,7 @@ class PlayerArea(arc.Section):
                 if starship.right > self.right + starship.width // 2:
                     starship.right = self.right + starship.width * 0.3
 
-        prevent_starship_moving_outside_veiw()
+        # prevent_starship_moving_outside_veiw()
         # player update func considers its movement states
         # which were potentially changed
         self.player.update()
