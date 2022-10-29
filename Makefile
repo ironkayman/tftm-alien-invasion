@@ -6,7 +6,7 @@ default: start
 .PHONY: start prepare
 
 start:
-	$(PYTHON) ./alien_invasion.py
+	$(PYTHON) ./run.py
 
 prepare:
 	$(POETRY) install
