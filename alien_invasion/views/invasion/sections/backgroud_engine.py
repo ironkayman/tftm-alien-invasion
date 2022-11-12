@@ -9,6 +9,39 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 
 
+class BackgroundImage(arc.Sprite):
+    """Background image wrapper
+    
+    Used fot wrappig [copyrighted content]
+    Observatory taken images due to their size.
+
+    Attributes
+    ----------
+    pixelated: bool
+        Make class images pixeletad when drawn.
+    """
+
+    pixelated: bool = True
+
+    def __init__(self, texture, scale: float|int) -> None:
+        """Initialise preset center_* values by `scale`.
+        
+        Default position is bottom-left of the screen (0,0)
+        """
+        scale=3 # ->
+        center_x = 0
+        center_y = 0
+        # scale=1.5, ->
+        # center_x = CONSTANTS.DISPLAY.WIDTH // 2,
+        # center_y = CONSTANTS.DISPLAY.HEIGHT // 2,
+        super().__init__(
+            texture=texture,
+            scale=scale,
+            center_x=center_x,
+            center_y=center_y,
+        )
+
+
 class BackgroundEngine(arc.Section):
     """Background logic."""
 
@@ -102,12 +135,8 @@ class BackgroundEngine(arc.Section):
                 CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
             )
             sprites: list[arc.Sprite] = [
-                arc.Sprite(
-                    texture=bg_pair[0], scale=3,
-                ),
-                arc.Sprite(
-                    texture=bg_pair[1], scale=3,
-                ),
+                BackgroundImage(texture=bg_pair[0], scale=3),
+                BackgroundImage(texture=bg_pair[1], scale=3),
             ]
 
             self.backgrounds.extend(sprites)
@@ -155,7 +184,7 @@ class BackgroundEngine(arc.Section):
         """
 
         # Draw the background texture
-        self.backgrounds.draw(pixelated=True)
+        self.backgrounds.draw(pixelated=BackgroundImage.pixelated)
         # render emitted particles
         [layer.draw() for layer in (
             self.emitter_stardust_secondary,
