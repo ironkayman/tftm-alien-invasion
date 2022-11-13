@@ -27,7 +27,7 @@ class MainMenu(arc.View):
             ),
             scale=0.85,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 + 20,
-            center_y=150
+            center_y=20
         )
 
         self.human_interface = HumanInterface(
@@ -38,9 +38,9 @@ class MainMenu(arc.View):
         )
 
         # self.section_manager.add_section(self.background_engine)
-        self.section_manager.add_section(self.human_interface, 444)
+        self.section_manager.add_section(self.human_interface)
 
-        self.window.set_mouse_visible(True)
+        self.window.set_mouse_visible(False)
 
 
     def on_draw(self) -> None:
