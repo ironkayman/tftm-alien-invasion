@@ -1,3 +1,4 @@
+from abc import ABC
 from enum import IntEnum, auto
 
 import arcade as arc
@@ -15,24 +16,22 @@ class EnumButton(IntEnum):
     QUIT = auto()
 
 
-class QuitButton(arc.gui.UIFlatButton):
+class CallbackButton(arc.gui.UIFlatButton, ABC):
+    """Abstract class for buttons with callback"""
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.click_callback = kwargs['click_callback']
+
+    def on_click(self, event: arc.gui.UIOnClickEvent):
+        self.click_callback()
+
+
+class QuitButton(CallbackButton):
     bid = EnumButton.QUIT
 
-    def on_click(self, event: arc.gui.UIOnClickEvent):
-        print('Exiting ...')
-        arc.exit()
 
-
-class StartButton(arc.gui.UIFlatButton):
+class StartButton(CallbackButton):
     bid = EnumButton.START
-
-    def on_click(self, event: arc.gui.UIOnClickEvent):
-        print("Starting ...", event)
-        invasion_view = Invasion()
-        invasion_view.setup()
-        # TODO: call prototype parent until window attr? functools.reduce?
-        root = self.parent.parent.parent
-        root.window.show_view(invasion_view)
 
 
 class HumanInterface(arc.Section):
@@ -55,31 +54,39 @@ class HumanInterface(arc.Section):
             **kwargs
         )
 
-        # a UIManager to handle the UI
         self.manager = arc.gui.UIManager(self.view)
-        self.manager.enable()
+        # enabling moved to parent View
 
         # Create a vertical BoxGroup to align buttons
         self.menu = arc.gui.UIBoxLayout()
 
-        start_button = StartButton(text="Start Game", width=200)
-        self.menu.add(start_button)#.with_space_around(bottom=20))
+        start_button = StartButton(text="Start Game", width=200,
+            click_callback=self.__deploy_view_invasion)
+        self.menu.add(start_button.with_space_around(bottom=20))
 
-        quit_button = QuitButton(text="Quit", width=200)
+        quit_button = QuitButton(text="Quit", width=200,
+            click_callback=self.__deploy_exit)
         self.menu.add(quit_button)
 
         # Create a widget to hold the menu widget, that will center the buttons
-        self.manager.add(
-            arc.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="center_y",
-                child=self.menu,
-            )
-        )
+        self.manager.add(arc.gui.UIAnchorWidget(
+            anchor_x="center_x",
+            anchor_y="center_y",
+            child=self.menu,
+        ))
 
         start_button.hovered = True
-        print('children:', self.menu.children)
-        print(self.selected_widget)
+        print('selected widget:', self.selected_widget)
+
+    def __deploy_view_invasion(self) -> None:
+        """Callback funct for starting Invasion view."""
+        invasion_view = Invasion()
+        invasion_view.setup()
+        self.window.show_view(invasion_view)
+
+    def __deploy_exit(self) -> None:
+        """Callback func for Exiting Arcade."""
+        arc.exit()
 
     @property
     def selected_widget(self) -> arc.gui.UIWidget|None:
