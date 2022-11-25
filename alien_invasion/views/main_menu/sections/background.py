@@ -3,7 +3,6 @@ Module for main_menu background management.
 """
 
 from random import randrange
-from pathlib import Path
 
 import arcade as arc
 
@@ -21,6 +20,11 @@ class Background(arc.Section):
         height: int,
         **kwargs,
     ) -> None:
+        """Animated backfround logic setup.
+        
+        Prepares 4 sprites as a background for
+        UIManager at `human_interface` section.
+        """
         super().__init__(
             left,
             bottom,
@@ -29,7 +33,6 @@ class Background(arc.Section):
             **kwargs,
             accept_keyboard_events=False,
         )
-
         arc.set_background_color(arc.color.BLACK)
 
         self.background_layers = arc.SpriteList()
@@ -46,18 +49,17 @@ class Background(arc.Section):
         self.background_layers.append(self.backfall)
 
 
-        # cold center structure
+        # structure at screen center behind buttons
         self.cental_node = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_crack.png'),
             scale=0.36,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
-        # self.cental_node.color = (231, 221, 200)
         self.background_layers.append(self.cental_node)
 
 
-        # inner asteroids, should periodically float up-down
+        # inner asteroids, should periodically float up-and-down
         self.asteroids_float = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
             scale=0.38,
@@ -74,7 +76,9 @@ class Background(arc.Section):
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 60,
             angle=-30,
         )
+        # alternate color
         # self.asteroids_spin.color = (240, 220, 200)
+        # make more bluish and darker tint
         self.asteroids_spin.color = (200, 220, 240)
         self.background_layers.append(self.asteroids_spin)
 
@@ -84,11 +88,13 @@ class Background(arc.Section):
 
     def on_update(self, dt: float = 1 / 60) -> None:
         """Compute background layer changes."""
+        # calculate inner astaroids elevation
         self.last_update_time += dt
         if self.last_update_time > self.float_interval:
             self.asteroids_float.center_y += randrange(-6, 6)
             self.last_update_time = 0
 
+        # spin outer asteroids
         self.asteroids_spin.angle += 0.02
 
     def on_draw(self):
