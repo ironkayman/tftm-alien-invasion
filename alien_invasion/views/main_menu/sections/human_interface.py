@@ -27,10 +27,12 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
 
 
 class QuitButton(CallbackButton):
+    """Exit."""
     bid = EnumButton.QUIT
 
 
 class StartButton(CallbackButton):
+    """Start gameplay loop."""
     bid = EnumButton.START
 
 
@@ -76,7 +78,6 @@ class HumanInterface(arc.Section):
         ))
 
         start_button.hovered = True
-        print('selected widget:', self.selected_widget)
 
     def __deploy_view_invasion(self) -> None:
         """Callback funct for starting Invasion view."""
@@ -169,10 +170,10 @@ class HumanInterface(arc.Section):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process standard keyboard input."""
         if symbol == arc.key.DOWN:
-            self.selected_widget = self.selected_widget_id() + 1
+            self.selected_widget = self.selected_widget_id() + 1 if self.selected_widget_id() >= 0 else len(EnumButton)
             # self.view.background.center_y -= 12
         elif symbol == arc.key.UP:
-            self.selected_widget = self.selected_widget_id() - 1
+            self.selected_widget = self.selected_widget_id() - 1 if self.selected_widget_id() >= 0 else 1
             # self.view.background.center_y += 12
         elif symbol == arc.key.ENTER:
             self.selected_widget.on_click(arc.gui.UIOnClickEvent)
