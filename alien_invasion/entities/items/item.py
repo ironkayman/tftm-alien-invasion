@@ -17,7 +17,7 @@ class Item(ABC):
     item_type: ItemType = ItemType.ABC
 
     def __init__(self, model_name) -> None:
-        self.model_name = model_name
+        self.item_name = model_name
         for k, v in load_item_as_dict(model_name).items():
             self.__setattr__(k, v)
 
