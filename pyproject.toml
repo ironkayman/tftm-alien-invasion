@@ -8,6 +8,7 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.10"
 arcade = "^2.6.15"
 toml = "^0.10.2"
+pydantic = "^1.10.2"
 
 [tool.poetry.dev-dependencies]
 
