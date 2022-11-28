@@ -1,6 +1,6 @@
 import arcade as arc
 
-def load_keymap(config: dict) -> dict:
+def load_keymap_from_config(config: dict) -> dict:
     """Load keymap from readable dict-like config.
 
     Parameters
@@ -25,6 +25,9 @@ def load_keymap(config: dict) -> dict:
         'player_starship_movement_right',
         'player_starship_fire_primary'
     ]
-    for key in keys:
-        keymap_arcade[key] = getattr(arc.key, keymap_config[key].upper())
+    if not config['keymap_override']:
+        for key in keys:
+            keymap_arcade[key] = getattr(arc.key, keymap_config[key].upper())
+    else:
+        raise NotImplementedError
     return keymap_arcade

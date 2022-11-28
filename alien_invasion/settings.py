@@ -1,4 +1,3 @@
-from alien_invasion.utils.loaders import config_loader, load_save_files
+from alien_invasion.utils.loaders import config_loader
 
 KEYMAP = config_loader()['keymap']
-SAVES = load_save_files()

@@ -1,17 +1,19 @@
-from typing import Dict, Any
-
-import arcade 
+from pathlib import Path
+from typing import Dict, Any, NoReturn
 
 from .file_opener import reader
-from .keymap import load_keymap
+from .keymap import load_keymap_from_config
+from .starship import load_starship_loadout
 
-def loader() -> Dict[str, Any]:
-    config, error = reader()
+def loader() -> Dict[str, Any]|NoReturn:
+    config, error = reader(Path().cwd().joinpath('configs/config.json'))
 
     if error is not Ellipsis:
-        print('\n\n config file error:', error)
+        print('\nConfig file error:', error)
+        exit(0)
 
-    keymap = load_keymap(config)
+    keymap = load_keymap_from_config(config) # type: ignore
+    starship = load_starship_loadout(config)
 
     return {
         'config': config,
