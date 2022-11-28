@@ -40,8 +40,9 @@ def reader(file_path) -> Tuple[dict[str, Any]|EllipsisType, EllipsisType|FileNot
     except FileNotFoundError as err:
         print("no config found")
         error = err
+        # create?
     except JSONDecodeError as err:
         error = err
-    else:
-        print(config)
+        print(error)
+        exit(0)
     return config, error

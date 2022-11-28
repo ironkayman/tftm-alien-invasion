@@ -29,6 +29,8 @@ class StarshipLoadout:
     def __init__(self, config) -> None:
         self.stats = StarshipStats()
         self.hull = StarshipHull(config['starship']['hull'])
+        self.stats.armor = self.hull.total_armor
+        print(self.stats)
 
 
 def load_starship_loadout(config: dict):

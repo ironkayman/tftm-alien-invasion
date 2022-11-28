@@ -5,6 +5,39 @@
         "quit": "q",
         "player_starship_movement_left": "left",
         "player_starship_movement_right": "right",
-        "player_starship_fire_primary": "z"
+        "player_starship_fire_primary": "c"
+    },
+    "keymap_override": null,
+    "gamestats": {},
+    "progression": {},
+    "starship": {
+        "hull": {
+            "model": "modular_tesseract_2",
+            "armor": [
+                "hardened_marsian_armor",
+                "hardened_marsian_armor"
+            ]
+        },
+        "weaponry": {
+            "primary": {
+                "model": "basic_orbital_debris_accelerator"
+            },
+            "secondary": [
+                {
+                    "slot": 1,
+                    "model": "damaged_artillery"
+                },
+                {
+                    "slot": 2,
+                    "model": "damaged_artillery"
+                }
+            ]
+        },
+        "engine": {
+            "model": "spiralling_reactor"
+        },
+        "thrusters": {
+            "model": "pre_war_era_propulsion_thrusters"
+        }
     }
 }

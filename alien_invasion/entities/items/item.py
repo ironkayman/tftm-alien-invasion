@@ -1,4 +1,3 @@
-from math import fsum
 from abc import ABC
 
 from enum import IntEnum, auto
@@ -40,8 +39,9 @@ class ItemHull(Item):
     
     __armor_models: list[ItemArmor] = []
 
+    @property
     def total_armor(self) -> int:
-        return round(fsum(
+        return round(sum(
             [m.armor for m in self.armor_models]
         ))
 
