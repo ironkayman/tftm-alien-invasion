@@ -1,4 +1,7 @@
 {
     "display_name": "damaged artillery",
-    "description": "Another highly destructive and highly damaged creations of engineering of rescent times."
+    "description": "Another highly destructive and highly damaged creations of engineering of rescent times.",
+    "bullet_damage": 30,
+    "energy_per_bullet": 3,
+    "reload_speed": 1000
 }

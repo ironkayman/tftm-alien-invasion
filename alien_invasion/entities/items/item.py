@@ -2,7 +2,10 @@ from abc import ABC
 
 from enum import IntEnum, auto
 
+from pydantic import BaseModel
+
 from alien_invasion.utils.loaders.item import load_item_as_dict
+
 
 class ItemType(IntEnum):
     ABC = auto()
@@ -10,13 +13,15 @@ class ItemType(IntEnum):
     ENGINE = auto()
     HULL = auto()
     THRUSTERS = auto()
-    WEAPONRY = auto()
+    WEAPON = auto()
 
 # move to pydadantic for field validation
 class Item(ABC):
     item_type: ItemType = ItemType.ABC
+    display_name: str
+    description: str
 
-    def __init__(self, model_name) -> None:
+    def __init__(self, model_name: str) -> None:
         self.item_name = model_name
         for k, v in load_item_as_dict(model_name).items():
             self.__setattr__(k, v)
@@ -59,3 +64,19 @@ class ItemHull(Item):
         for name in model_names:
             model = ItemArmor(name)
             self.__armor_models.append(model)
+
+class ItemWeapon(Item):
+    """
+    Attributes
+    ----------
+    energy_per_bullet : int
+        Enegry of ship's reactor consumed for a single bullet.
+    reload_speed : float
+        Time between bullet launches in `ms`.
+    """
+
+    item_type: ItemType = ItemType.WEAPON
+
+    energy_per_bullet: int
+    reload_speed: int
+

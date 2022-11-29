@@ -2,6 +2,6 @@
     "display_name": "Basic Accelerator",
     "description": "A very basic and janky build of a particle accrelerator connected directly to a ship energy reactor. In reality its another artificial rift.",
     "bullet_damage": 1,
-    "rate_of_fire": 2,
-    "energy_consumed": 3
+    "energy_per_bullet": 3,
+    "reload_speed": 1000
 }
