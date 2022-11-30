@@ -14,6 +14,7 @@ class StarshipStats:
 class StarshipHull(ItemHull):
     def __init__(self, hull_dict: dict[str, Any]) -> None:
         super().__init__(hull_dict['model'])
+        breakpoint()
         self.armor_models = hull_dict['armor']
 
 class StarshipWeaponry:

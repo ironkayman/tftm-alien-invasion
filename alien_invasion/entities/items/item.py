@@ -1,8 +1,13 @@
+from typing import Any
 from abc import ABC
 
 from enum import IntEnum, auto
 
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    Field,
+    Extra,
+)
 
 from alien_invasion.utils.loaders.item import load_item_as_dict
 
@@ -16,20 +21,22 @@ class ItemType(IntEnum):
     WEAPON = auto()
 
 # move to pydadantic for field validation
-class Item(ABC):
+class Item(BaseModel, ABC):
     item_type: ItemType = ItemType.ABC
     display_name: str
     description: str
 
     def __init__(self, model_name: str) -> None:
-        self.item_name = model_name
-        for k, v in load_item_as_dict(model_name).items():
-            self.__setattr__(k, v)
+        # self.item_name = model_name
+        # for k, v in load_item_as_dict(model_name).items():
+        #     self.__setattr__(k, v)
+        # self.parse_obj(**load_item_as_dict(model_name))
+        super().__init__(**load_item_as_dict(model_name))
 
-
-# def load_equipment_from_categories():
-#     WEAPONRY = DIR_EQUIPMENT / 'weaponry'
-#     WEAPONRY.glob('*.json')
+    class Config:
+        extra = Extra.forbid
+        # orm_mode=True
+        underscore_attrs_are_private=True
 
 class ItemArmor(Item):
     item_type: ItemType = ItemType.ARMOR
@@ -42,7 +49,12 @@ class ItemHull(Item):
     armor_mount_slots: int
     secondary_weapon_mount_slots: int
     
-    __armor_models: list[ItemArmor] = []
+    # armor_models = Field(default_factory=list)
+    __armor_models: list[ItemArmor] = Field(default_factory=list)
+
+    # def __init__(self, model_name: str) -> None:
+    #     super().__init__(model_name)
+    #     self.__setattr__('armor_models', [])
 
     @property
     def total_armor(self) -> int:
@@ -65,6 +77,8 @@ class ItemHull(Item):
             model = ItemArmor(name)
             self.__armor_models.append(model)
 
+    # class Config:
+    #     exclude=['armor_models']
 class ItemWeapon(Item):
     """
     Attributes
