@@ -83,16 +83,6 @@ class ItemHull(Item):
             raise Exception
         return values
 
-    # @validator('armor', always=True, each_item=True)
-    # def repopulate_armor(cls, val):
-    #     breakpoint()
-    #     return val
-
-    # @validator('weapons', always=True, each_item=True)
-    # def repopulate_weapons(cls, val):
-    #     return val
-
-
     @property
     def total_armor(self) -> int:
         return sum([

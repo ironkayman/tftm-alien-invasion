@@ -65,12 +65,6 @@ class StarshipWeaponry(BaseModel):
 
     primary: ItemWeapon|None = None
     secondaries: list[ItemWeapon]|None = Field(default_factory=list)
-    
-    # runs on each attribute change
-    @root_validator(pre=True)
-    def check(cls, values: dict[str, Any]):
-        breakpoint()
-        return values
 
     # additional attrs are required by pydantic
     loadout: StarshipLoadout = Field(default_factory=object, exclude=True)
@@ -86,10 +80,20 @@ class StarshipWeaponry(BaseModel):
         loadout : 'StarshipLoadout'
         """
         super().__init__()
-        self.primary = ItemWeapon(weapons_dict['primary']['model'])
-        # TODO: count checks
-        self.secondaries = [ItemWeapon(n['model']) for n in weapons_dict['secondary']]
         self.loadout = loadout
+
+        self.primary = ItemWeapon(weapons_dict['primary']['model'])
+        self.secondaries = [ItemWeapon(n['model']) for n in weapons_dict['secondary']]
+
+    # runs on each attribute change
+    @root_validator(pre=True)
+    def check(cls, values: dict[str, Any]):
+        # handle presetuped validator firing
+        if not values.get('loadout', False):
+            return values
+        if len(values.get('secondaries', [])) > values.get('loadout').hull.secondary_weapon_mount_slots:
+            raise Exception
+        return values
 
     class Config:
         underscore_attrs_are_private = True
