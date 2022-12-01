@@ -14,8 +14,7 @@ class StarshipStats:
 class StarshipHull(ItemHull):
     def __init__(self, hull_dict: dict[str, Any]) -> None:
         super().__init__(hull_dict['model'])
-        breakpoint()
-        self.armor_models = hull_dict['armor']
+        self.armor = [ItemArmor(a) for a in hull_dict['armor']]
 
 class StarshipWeaponry:
     """
@@ -32,10 +31,7 @@ class StarshipWeaponry:
 
     def __init__(self, weaponry_dict: dict[str, Any], hull: StarshipHull) -> None:
         self.primary = ItemWeapon(weaponry_dict['primary']['model'])
-        if len(weaponry_dict['secondary']) > hull.secondary_weapon_mount_slots:
-            raise Exception('more than can be mounted')        
-        for sc in weaponry_dict['secondary']:
-            self.secondaries.append(ItemWeapon(sc['model']))
+        self.secondaries = hull.weapons
 
 class StarshipLoadout:
     """
@@ -53,7 +49,7 @@ class StarshipLoadout:
         self.stats.armor = self.hull.total_armor
         self.stats.secondary_weapon_slots = self.hull.secondary_weapon_mount_slots
 
-        self.weaponry = StarshipWeaponry(config['starship']['weaponry'], self.hull)
+        self.weaponry = StarshipWeaponry(config['starship']['weaponry'])
 
 
 
