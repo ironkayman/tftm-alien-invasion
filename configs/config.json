@@ -24,11 +24,9 @@
             },
             "secondary": [
                 {
-                    "slot": 1,
                     "model": "damaged_artillery"
                 },
                 {
-                    "slot": 2,
                     "model": "damaged_artillery"
                 }
             ]
