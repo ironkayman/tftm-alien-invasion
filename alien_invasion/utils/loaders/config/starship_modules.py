@@ -1,6 +1,10 @@
 from typing import Any
 
-from pydantic import Field
+from pydantic import (
+    Field,
+    root_validator,
+    BaseModel,
+)
 
 from alien_invasion.constants import DIR_EQUIPMENT
 
@@ -49,7 +53,7 @@ class StarshipHull(ItemHull):
         arbitrary_types_allowed = True
 
 
-class StarshipWeaponry:
+class StarshipWeaponry(BaseModel):
     """
     Attributes
     ----------
@@ -59,8 +63,14 @@ class StarshipWeaponry:
         List of secondary weapons.
     """
 
-    primary: ItemWeapon
-    secondaries: list[ItemWeapon] = []
+    primary: ItemWeapon|None = None
+    secondaries: list[ItemWeapon]|None = Field(default_factory=list)
+    
+    # runs on each attribute change
+    @root_validator(pre=True)
+    def check(cls, values: dict[str, Any]):
+        breakpoint()
+        return values
 
     # additional attrs are required by pydantic
     loadout: StarshipLoadout = Field(default_factory=object, exclude=True)
@@ -75,11 +85,15 @@ class StarshipWeaponry:
         weapons_dict : dict
         loadout : 'StarshipLoadout'
         """
+        super().__init__()
         self.primary = ItemWeapon(weapons_dict['primary']['model'])
         # TODO: count checks
         self.secondaries = [ItemWeapon(n['model']) for n in weapons_dict['secondary']]
         self.loadout = loadout
 
     class Config:
+        underscore_attrs_are_private = True
+        validate_assignment = True
         # fix loadout type since its imported later cyclically
         arbitrary_types_allowed = True
+
