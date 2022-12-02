@@ -12,6 +12,7 @@ from alien_invasion.entities.items.item import (
     ItemArmor,
     ItemHull,
     ItemWeapon,
+    ItemEngine,
 )
 
 from .starship import StarshipLoadout
@@ -25,6 +26,7 @@ from .starship import StarshipLoadout
 #         breakpoint()
 #         return starship_subclass(*args)
 #     return modify_init
+
 
 class StarshipHull(ItemHull):
 
@@ -101,3 +103,34 @@ class StarshipWeaponry(BaseModel):
         # fix loadout type since its imported later cyclically
         arbitrary_types_allowed = True
 
+
+class StarshipEngine(ItemEngine):
+    """
+    """
+
+    # additional attrs are required by pydantic
+    loadout: StarshipLoadout = Field(default_factory=object, exclude=True)
+
+    def __init__(self,
+        engine_dict: dict[str, Any],
+        loadout: 'StarshipLoadout'
+    ) -> None:
+        """
+        Paramters
+        ---------
+        engine_dict : dict
+        loadout : 'StarshipLoadout'
+        """
+        super().__init__(engine_dict['model'])
+        self.loadout = loadout
+
+
+    @root_validator
+    def check(cls, values: dict[str, Any]):
+        return values
+
+    class Config:
+        underscore_attrs_are_private = True
+        validate_assignment = True
+        # fix loadout type since its imported later cyclically
+        arbitrary_types_allowed = True
