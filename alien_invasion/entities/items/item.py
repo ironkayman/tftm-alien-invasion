@@ -97,6 +97,7 @@ class ItemHull(Item):
             m.armor for m in self.armor
         ])
 
+# TODO: separate classes with _timer
 class ItemEngine(Item):
     """
     Attributes
@@ -105,16 +106,13 @@ class ItemEngine(Item):
         Energy restored per second.
     energy_cap : int
         Energy capacity, maximum for reactor.
-    # overdrive_duration : int
-    #     Overdrive in ms duration
-    # overdrive_energy_cap_multiplier : float
-    #     Overdrive mode multiplier for energy restoration cap
     """
 
     item_type: ItemType = ItemType.ENGINE
 
     energy_restored: int
     energy_cap: int
+
 
 class ItemThruster(Item):
     """

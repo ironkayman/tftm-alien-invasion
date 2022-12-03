@@ -13,12 +13,12 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 # from alien_invasion.utils.loaders import starship_loader
 
+# TODO: on equipment change, specifically secondaries, recreate dataclass?
 @dataclass(slots=True, kw_only=True)
 class Timeouts:
     primary: float
     secondaries: list[float]
-
-    SEC: int = 1000
+    engine: int = 1
 
 
 @dataclass(frozen=True)
@@ -73,22 +73,37 @@ class Starship(arc.Sprite):
 
         self.movement_borders = MovementArea(*area_coords)
         self.transmission = StarshipTransmission(self, self.movement_borders)
+        self.current_energy_capacity = self.loadout.engine.energy_cap
 
-        # based on ship configuration
-        self.SPEED = 10.5
         self.moving_left = False
         self.moving_right = False
-
-        # self.BULLET_SPEED = 5.5
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
-        # self.last_update_time = 0
+        self.SPEED = self.loadout.thrusters.velocity
+
+        self.one_second_timer = 0
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
         super().update()
+
+        def update_energy_capacity():
+            nonlocal delta_time
+
+            self.one_second_timer += delta_time
+
+            if self.current_energy_capacity < self.loadout.engine.energy_cap:
+                self.current_energy_capacity += self.loadout.engine.energy_restored * delta_time
+                if self.loadout.engine.energy_cap < self.current_energy_capacity:
+                    self.current_energy_capacity = self.loadout.engine.energy_cap
+
+            if self.one_second_timer >= self.timeouts.engine:
+                self.current_energy_capacity -= self.loadout.thrusters.energy_requirement
+                self.one_second_timer = 0
+
+            print(f'{self.current_energy_capacity:.2f}/{self.loadout.engine.energy_cap}')
 
         def update_movement():
             """Transmission-based sprite movement updater.
@@ -140,6 +155,7 @@ class Starship(arc.Sprite):
 
         update_movement()
         update_firing()
+        update_energy_capacity()
 
 
     def _fire_primary(self) -> None:
@@ -168,6 +184,10 @@ class StarshipTransmission:
         self.area = area
 
     @property
+    def low_energy(self) -> bool:
+        return self.starship.current_energy_capacity <= 0
+
+    @property
     def border_reached_left(self) -> bool:
         """Check if ship touches left border."""
         return self.starship.left < self.area.left
@@ -187,6 +207,11 @@ class StarshipTransmission:
         in an account current ship movement states.
         """
         return any((
+            # no energy
+            all((
+                self.low_energy,
+                self.starship.moving_left or self.starship.moving_right,
+            )),
             # touched left border
             all((
                 self.starship.moving_left,
@@ -196,5 +221,5 @@ class StarshipTransmission:
             all((
                 self.starship.moving_right,
                 self.border_reached_right
-            ))
+            )),
         ))

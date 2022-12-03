@@ -114,6 +114,8 @@ class StarshipEngine(ItemEngine):
     # additional attrs are required by pydantic
     loadout: StarshipLoadout = Field(default_factory=object, exclude=True)
 
+    # current_capacity: int = 0
+
     def __init__(self,
         engine_dict: dict[str, Any],
         loadout: 'StarshipLoadout'
@@ -125,6 +127,7 @@ class StarshipEngine(ItemEngine):
         loadout : 'StarshipLoadout'
         """
         super().__init__(engine_dict['model'])
+        # self.current_capacity = self.energy_cap
         self.loadout = loadout
 
 
