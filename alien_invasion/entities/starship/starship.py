@@ -215,12 +215,12 @@ class Starship(arc.Sprite):
             self.loadout.weaponry.primary._timer += delta_time
             # correcteed timeout:
             # it behaves as usual until ship is in static full thruster motion,
-            # then timeout is cut to 1/3,
-            # while being only not at low energy capacity for escaping timing abuse
+            # then timeout is cut to 2/3,
+            # while being hicher than 30% of energy capacity
             timeout_corrected = (
-                self.timeouts.primary if
-                not any((full_motion, self.transmission.low_energy))
-                else self.timeouts.primary * 0.66
+                self.timeouts.primary * 0.66 if
+                full_motion and ((self.current_energy_capacity / self.loadout.engine.energy_cap) * 100) >= 30
+                else self.timeouts.primary
             )
             # firing
             if (
