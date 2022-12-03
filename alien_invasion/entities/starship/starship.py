@@ -94,7 +94,7 @@ class Starship(arc.Sprite):
         self.SPEED = self.loadout.thrusters.velocity
 
         self.reactivated_since_free_fall = False
-        # self.one_second_timer = 0
+        self.free_fall_timer = 0
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
@@ -145,8 +145,10 @@ class Starship(arc.Sprite):
             # continue free falling
             # moving will disrupt free falling state 
             self.free_falling = (
-                self.transmission.low_energy
-                or (
+                (
+                    0 < self.free_fall_timer < 2
+                    or self.transmission.low_energy
+                ) or (
                     self.free_falling and
                     not self.transmission.low_energy and
                     not any(motion)
@@ -155,6 +157,7 @@ class Starship(arc.Sprite):
 
             # standart movement behavior
             if not self.free_falling:
+                self.free_fall_timer = 0
                 # last movement direction for cahnge of outage
                 # this caises to free fall in that direction
                 if self.moving_left:
@@ -189,6 +192,8 @@ class Starship(arc.Sprite):
                         self.stop()
                 # exit
                 return
+
+            self.free_fall_timer += delta_time
 
             # last L/R movement at low energy -> free fall
             if self.last_direction == LastDirection.LEFT:
