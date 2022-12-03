@@ -13,6 +13,14 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 # from alien_invasion.utils.loaders import starship_loader
 
+@dataclass(slots=True, kw_only=True)
+class Timeouts:
+    primary: float
+    secondaries: list[float]
+
+    SEC: int = 1000
+
+
 @dataclass(frozen=True)
 class MovementArea:
     """Params of explorable by ship area.
@@ -38,6 +46,7 @@ class Starship(arc.Sprite):
     possibly removing such business-logic from main Controller
     which in our case is View/Section.
     """
+
     def __init__(self, fired_shots: arc.SpriteList, area_coords: list):
         """Creates Starship instance.
 
@@ -57,6 +66,11 @@ class Starship(arc.Sprite):
         from alien_invasion.utils.loaders.config.starship import StarshipLoadout
         self.loadout: StarshipLoadout = STARSHIP
 
+        self.timeouts = Timeouts(
+            primary=self.loadout.weaponry.primary.recharge_timeout,
+            secondaries=[tm.recharge_timeout for tm in self.loadout.weaponry.secondaries],
+        )
+
         self.movement_borders = MovementArea(*area_coords)
         self.transmission = StarshipTransmission(self, self.movement_borders)
 
@@ -66,7 +80,6 @@ class Starship(arc.Sprite):
         self.moving_right = False
 
         self.BULLET_SPEED = 5.5
-        self.BULLET_COOLDOWN = self.loadout.weaponry.primary.recharge_timeout
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
@@ -115,7 +128,7 @@ class Starship(arc.Sprite):
             nonlocal delta_time
             self.last_update_time += delta_time
             # firing
-            if self.firing_primary and self.last_update_time > self.BULLET_COOLDOWN / 1000:
+            if self.firing_primary and self.last_update_time > self.timeouts.primary / 1000:
                 self._fire_primary()
                 self.last_update_time = 0
 

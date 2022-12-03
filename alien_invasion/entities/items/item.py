@@ -64,6 +64,7 @@ class ItemWeapon(Item):
     energy_per_bullet: int
     recharge_timeout: int
 
+
 class ItemHull(Item):
     item_type: ItemType = ItemType.HULL
 
