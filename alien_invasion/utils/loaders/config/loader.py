@@ -17,5 +17,6 @@ def loader() -> Dict[str, Any]|NoReturn:
 
     return {
         'config': config,
+        'starship': starship,
         'keymap': keymap
     }

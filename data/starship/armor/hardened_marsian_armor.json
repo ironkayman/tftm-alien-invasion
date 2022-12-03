@@ -1,5 +1,5 @@
 {
+    "display_name": "hardeneed martian armor",
     "description": "Remains of military complex brought to Earth from Mars before the collapse, and were possible to melt only since gaining access to enegy capacity of lower fortress levels closest to Sphere 2.",
-    "armor": 300,
-    "secondary_weapon_mount_slots": 2
+    "armor": 300
 }

@@ -13,6 +13,14 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 # from alien_invasion.utils.loaders import starship_loader
 
+@dataclass(slots=True, kw_only=True)
+class Timeouts:
+    primary: float
+    secondaries: list[float]
+
+    SEC: int = 1000
+
+
 @dataclass(frozen=True)
 class MovementArea:
     """Params of explorable by ship area.
@@ -38,6 +46,7 @@ class Starship(arc.Sprite):
     possibly removing such business-logic from main Controller
     which in our case is View/Section.
     """
+
     def __init__(self, fired_shots: arc.SpriteList, area_coords: list):
         """Creates Starship instance.
 
@@ -52,23 +61,32 @@ class Starship(arc.Sprite):
         img = CONSTANTS.DIR_IMAGES / 'player_60x48.png'
         super().__init__(img)
 
+        # workaround for cycling imports
+        from alien_invasion.settings import STARSHIP
+        from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+        self.loadout: StarshipLoadout = STARSHIP
+
+        self.timeouts = Timeouts(
+            primary=self.loadout.weaponry.primary.recharge_timeout,
+            secondaries=[tm.recharge_timeout for tm in self.loadout.weaponry.secondaries],
+        )
+
         self.movement_borders = MovementArea(*area_coords)
         self.transmission = StarshipTransmission(self, self.movement_borders)
 
-        # TODO: read speed from save file,
         # based on ship configuration
         self.SPEED = 10.5
         self.moving_left = False
         self.moving_right = False
 
-        self.BULLET_SPEED = 5.5
-        self.BULLET_COOLDOWN = 1
+        # self.BULLET_SPEED = 5.5
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
+        # self.last_update_time = 0
 
-    def update(self) -> None:
+    def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
         super().update()
 
@@ -107,9 +125,16 @@ class Starship(arc.Sprite):
                 self.stop()
 
         def update_firing():
+            nonlocal delta_time
+
+            self.loadout.weaponry.primary._timer += delta_time
             # firing
-            if self.firing_primary:
+            if (
+                self.firing_primary and
+                self.loadout.weaponry.primary._timer > self.timeouts.primary / 1000
+            ):
                 self._fire_primary()
+                self.loadout.weaponry.primary._timer = 0
 
         # -------------------
 
@@ -126,7 +151,7 @@ class Starship(arc.Sprite):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png")
-        bullet.change_y = self.BULLET_SPEED
+        bullet.change_y = self.loadout.weaponry.primary.speed
 
         # Position the bullet
         bullet.center_x = self.center_x

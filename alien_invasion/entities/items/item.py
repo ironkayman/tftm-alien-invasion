@@ -1,8 +1,16 @@
+from typing import Any
 from abc import ABC
 
 from enum import IntEnum, auto
 
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    Field,
+    Extra,
+    root_validator,
+    validator,
+    ValidationError,
+)
 
 from alien_invasion.utils.loaders.item import load_item_as_dict
 
@@ -16,54 +24,29 @@ class ItemType(IntEnum):
     WEAPON = auto()
 
 # move to pydadantic for field validation
-class Item(ABC):
+class Item(BaseModel, ABC):
     item_type: ItemType = ItemType.ABC
+    item_name: str
     display_name: str
     description: str
 
     def __init__(self, model_name: str) -> None:
-        self.item_name = model_name
-        for k, v in load_item_as_dict(model_name).items():
-            self.__setattr__(k, v)
+        super().__init__(
+            **load_item_as_dict(model_name),
+            item_name=model_name
+        )
 
+    class Config:
+        extra = Extra.forbid
+        underscore_attrs_are_private = True
+        validate_assignment = True
 
-# def load_equipment_from_categories():
-#     WEAPONRY = DIR_EQUIPMENT / 'weaponry'
-#     WEAPONRY.glob('*.json')
 
 class ItemArmor(Item):
     item_type: ItemType = ItemType.ARMOR
 
     armor: int
 
-class ItemHull(Item):
-    item_type: ItemType = ItemType.HULL
-
-    armor_mount_slots: int
-    secondary_weapon_mount_slots: int
-    
-    __armor_models: list[ItemArmor] = []
-
-    @property
-    def total_armor(self) -> int:
-        return round(sum(
-            [m.armor for m in self.armor_models]
-        ))
-
-    @property
-    def armor_models(self) -> list[ItemArmor]:
-        return self.__armor_models
-
-    # todo move to pydantic for validation?
-    @armor_models.setter
-    def armor_models(self, model_names) -> None:
-        # check if too many given
-        if len(model_names) > self.armor_mount_slots:
-            raise Exception
-
-        for name in model_names:
-            model = ItemArmor(name)
-            self.__armor_models.append(model)
 
 class ItemWeapon(Item):
     """
@@ -71,12 +54,64 @@ class ItemWeapon(Item):
     ----------
     energy_per_bullet : int
         Enegry of ship's reactor consumed for a single bullet.
-    reload_speed : float
+    recharge_timeout : int
         Time between bullet launches in `ms`.
+    speed : int
+        Pixels of space traversed per sec.
+    _timer : float
+        Used to track timings since last sprite's `on_update`.
     """
 
     item_type: ItemType = ItemType.WEAPON
 
+    bullet_damage: int
     energy_per_bullet: int
-    reload_speed: int
+    recharge_timeout: int
+    speed: int
 
+    _timer: float = 0
+
+
+class ItemHull(Item):
+    item_type: ItemType = ItemType.HULL
+
+    armor_mount_slots: int
+    secondary_weapon_mount_slots: int
+    
+    armor: list[ItemArmor] = Field(default_factory=list, allow_mutation=True)
+    weapons: list[ItemWeapon] = Field(default_factory=list, allow_mutation=True)
+
+    # runs on each attribute change
+    @root_validator(pre=True)
+    def check(cls, values: dict[str, Any]):
+        if any ((
+            len(values.get('weapons', [])) > values['secondary_weapon_mount_slots'],
+            len(values.get('armor', [])) > values['armor_mount_slots'],
+        )):
+            raise Exception
+        return values
+
+    @property
+    def total_armor(self) -> int:
+        return sum([
+            m.armor for m in self.armor
+        ])
+
+class ItemEngine(Item):
+    """
+    Attributes
+    ----------
+    energy_restored : int
+        Energy restored per second.
+    energy_cap : int
+        Energy capacity, maximum for reactor.
+    # overdrive_duration : int
+    #     Overdrive in ms duration
+    # overdrive_energy_cap_multiplier : float
+    #     Overdrive mode multiplier for energy restoration cap
+    """
+
+    item_type: ItemType = ItemType.ENGINE
+
+    energy_restored: int
+    energy_cap: int

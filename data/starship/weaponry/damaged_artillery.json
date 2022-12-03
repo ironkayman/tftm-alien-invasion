@@ -3,5 +3,6 @@
     "description": "Another highly destructive and highly damaged creations of engineering of rescent times.",
     "bullet_damage": 30,
     "energy_per_bullet": 3,
-    "reload_speed": 1000
+    "speed": 6,
+    "recharge_timeout": 1000
 }
