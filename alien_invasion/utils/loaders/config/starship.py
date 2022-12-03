@@ -14,7 +14,7 @@ class StarshipLoadout:
         self.hull = StarshipHull(sh['hull'], self)
         self.weaponry = StarshipWeaponry(sh['weaponry'], self)
         self.engine = StarshipEngine(sh['engine'], self)
-        self.thruster = StarshipThruster(sh['thrusters'], self)
+        self.thrusters = StarshipThruster(sh['thrusters'], self)
 
 def load_starship_loadout(config: dict):
     return StarshipLoadout(config)
