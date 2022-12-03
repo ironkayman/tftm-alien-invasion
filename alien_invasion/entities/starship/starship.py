@@ -125,8 +125,11 @@ class Starship(arc.Sprite):
             # and stop if its both L and R pressed
             # calculate energy loss from base
             energy_loss = self.loadout.thrusters.energy_requirement * delta_time
+            # first check for energy low
+            if self.transmission.low_energy:
+                energy_loss = 0
             # both
-            if all(motion):
+            elif all(motion):
                 energy_loss *= 1.3
             # single
             elif any(motion):
