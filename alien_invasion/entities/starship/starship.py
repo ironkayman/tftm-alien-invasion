@@ -190,13 +190,19 @@ class Starship(arc.Sprite):
             # last L/R movement at low energy -> free fall
             if self.last_direction == LastDirection.LEFT:
                 self.change_x = -self.SPEED // 3
+                # stop inside a wall if deep inside it
+                if self.left < self.movement_borders.left - self.width * 0.3:
+                    self.stop()
                 # reverse reaching wall without slowing down
-                if self.transmission.border_reached_left:
+                elif self.transmission.border_reached_left:
                     self.last_direction = LastDirection.RIGHT
             elif self.last_direction == LastDirection.RIGHT:
                 self.change_x = self.SPEED // 3
+                # stop inside a wall if deep inside it
+                if self.right > self.movement_borders.right + self.width * 0.3:
+                    self.stop()
                 # reverse reaching wall without slowing down
-                if self.transmission.border_reached_right:
+                elif self.transmission.border_reached_right:
                     self.last_direction = LastDirection.LEFT
 
         def update_firing():
@@ -254,12 +260,12 @@ class StarshipTransmission:
     @property
     def border_reached_left(self) -> bool:
         """Check if ship touches left border."""
-        return self.starship.left <= self.area.left
+        return self.starship.left < self.area.left
 
     @property
     def border_reached_right(self) -> bool:
         """Check if ship touches right border."""
-        return self.starship.right >= self.area.right
+        return self.starship.right > self.area.right
 
     @property
     def throttle(self) -> bool:
