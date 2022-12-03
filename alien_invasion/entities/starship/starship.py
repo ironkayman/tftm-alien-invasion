@@ -147,7 +147,7 @@ class Starship(arc.Sprite):
             # when at a timer more than 2sec passed of free fall
             self.free_falling = (
                 (
-                    0 < self.free_fall_timer < 2
+                    0 < self.free_fall_timer < 0.5
                     or self.transmission.low_energy
                 ) or (
                     self.free_falling and
