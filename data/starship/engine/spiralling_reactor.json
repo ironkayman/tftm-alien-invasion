@@ -1,6 +1,6 @@
 {
     "display_name": "spiralling reactor",
     "description": "Telescope rotary engine seemingly violently ripped from unspoken foundations of Manser's Observatory. The innerworkings of the engine are yet to be fully understood, but it fits finely into our ship's skeleton and produces enough energy to sustain relatively small starship. Just be couceous of it exploding/collapsing/beeing transported into different spacetime or going critical due to prolonged reality-bending effects, since neither you nor your collegues would like see that happening in proximity of anybodies' home planet.",
-    "energy_restored": 10,
-    "energy_cap": 80
+    "energy_restored": 20,
+    "energy_cap": 60
 }

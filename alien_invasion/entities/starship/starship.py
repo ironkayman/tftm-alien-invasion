@@ -211,11 +211,21 @@ class Starship(arc.Sprite):
         def update_firing():
             nonlocal delta_time
 
+            full_motion = all((self.moving_left, self.moving_right))
             self.loadout.weaponry.primary._timer += delta_time
+            # correcteed timeout:
+            # it behaves as usual until ship is in static full thruster motion,
+            # then timeout is cut to 1/3,
+            # while being only not at low energy capacity for escaping timing abuse
+            timeout_corrected = (
+                self.timeouts.primary if
+                not any((full_motion, self.transmission.low_energy))
+                else self.timeouts.primary * 0.66
+            )
             # firing
             if (
                 self.firing_primary and
-                self.loadout.weaponry.primary._timer > self.timeouts.primary / 1000
+                self.loadout.weaponry.primary._timer > timeout_corrected / 1000
                 and not self.transmission.low_energy
             ):
                 self._fire_primary()
