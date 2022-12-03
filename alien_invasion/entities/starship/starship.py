@@ -137,13 +137,14 @@ class Starship(arc.Sprite):
             # first calculatation
             self.current_energy_capacity -= energy_loss
 
-            # are we now out of energy
-            # if already on low energy its free fall
+            # are we now out of energy?
+            # if already on low energy its free fall for minimum of 2sec
             # but if since free falling (last True value)
             # theres positive amount of energy but were
             # no movement since positivity
             # continue free falling
-            # moving will disrupt free falling state 
+            # moving will disrupt free falling state
+            # when at a timer more than 2sec passed of free fall
             self.free_falling = (
                 (
                     0 < self.free_fall_timer < 2
