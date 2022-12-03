@@ -7,6 +7,7 @@ This includes:
 """
 
 from dataclasses import dataclass
+from enum import IntEnum, auto
 
 import arcade as arc
 
@@ -19,6 +20,12 @@ class Timeouts:
     primary: float
     secondaries: list[float]
     engine: int = 1
+
+
+class LastDirection(IntEnum):
+    LEFT = auto()
+    RIGHT = auto()
+    STATIONARY = auto()
 
 
 @dataclass(frozen=True)
@@ -77,33 +84,28 @@ class Starship(arc.Sprite):
 
         self.moving_left = False
         self.moving_right = False
+        self.last_direction = LastDirection.STATIONARY
+        self.free_falling = False
+        
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
         self.SPEED = self.loadout.thrusters.velocity
 
-        self.one_second_timer = 0
+        # self.one_second_timer = 0
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
         super().update()
 
-        def update_energy_capacity():
+        def restore_energy_capacity():
             nonlocal delta_time
-
-            self.one_second_timer += delta_time
 
             if self.current_energy_capacity < self.loadout.engine.energy_cap:
                 self.current_energy_capacity += self.loadout.engine.energy_restored * delta_time
                 if self.loadout.engine.energy_cap < self.current_energy_capacity:
                     self.current_energy_capacity = self.loadout.engine.energy_cap
-
-            if self.one_second_timer >= self.timeouts.engine:
-                self.current_energy_capacity -= self.loadout.thrusters.energy_requirement
-                self.one_second_timer = 0
-
-            print(f'{self.current_energy_capacity:.2f}/{self.loadout.engine.energy_cap}')
 
         def update_movement():
             """Transmission-based sprite movement updater.
@@ -115,29 +117,55 @@ class Starship(arc.Sprite):
             `self.moving_left` and `self.moving_right` is set inside Section
             with `key_down` and `key_up` events.
             """
+            nonlocal delta_time
+
+            motion = (self.moving_left, self.moving_right)
+            # calculate sprite movement state
+            # and stop if its both L and R pressed
+            energy_loss = self.loadout.thrusters.energy_requirement * delta_time
+            if all(motion):
+                energy_loss = self.loadout.thrusters.energy_requirement * delta_time * 1.3
+            elif any(motion):
+                energy_loss = self.loadout.thrusters.energy_requirement * delta_time * 1.15
+            self.current_energy_capacity -= energy_loss
+
+            self.free_falling = self.transmission.low_energy
+
             # basic L/R movement
             if self.moving_left and not self.transmission.throttle:
                 self.change_x = -self.SPEED
+                self.last_direction = LastDirection.LEFT
             if self.moving_right and not self.transmission.throttle:
                 self.change_x = self.SPEED
+                self.last_direction = (
+                    LastDirection.STATIONARY if (
+                        self.last_direction == LastDirection.LEFT
+                    ) else
+                    LastDirection.RIGHT
+                )
 
             # slow down while approching to left border
-            if self.moving_left and self.transmission.throttle:
+            if self.moving_left and not self.free_falling and self.transmission.throttle and self.transmission.border_reached_left:
                 self.change_x = -self.SPEED // 3
                 if self.left < self.movement_borders.left - self.width * 0.3:
                     self.stop()
-
             # slow down while approching to right border
-            elif self.moving_right and self.transmission.throttle:
+            elif self.moving_right and not self.free_falling and self.transmission.throttle and self.transmission.border_reached_right:
                 self.change_x = self.SPEED // 3
                 if self.right > self.movement_borders.right + self.width * 0.3:
                     self.stop()
 
-            # calculate sprite movement state
-            # and stop if its both L and R pressed
-            motion = (self.moving_left, self.moving_right)
-            if (all(motion) or not any(motion)):
-                self.stop()
+           # L/R movement at low energy -> free fall
+            # if any(motion) and self.free_falling and self.last_direction == LastDirection.LEFT and self.transmission.low_energy:
+            #     self.moving_left = True
+            #     self.change_x = -self.SPEED // 4
+            # elif any(motion) and self.free_falling and self.last_direction == LastDirection.RIGHT and self.transmission.low_energy:
+            #     self.moving_right = True
+            #     self.change_x = self.SPEED // 4
+
+            if not self.transmission.throttle:
+                if (all(motion) or not any(motion)):
+                    self.stop()
 
         def update_firing():
             nonlocal delta_time
@@ -147,15 +175,19 @@ class Starship(arc.Sprite):
             if (
                 self.firing_primary and
                 self.loadout.weaponry.primary._timer > self.timeouts.primary / 1000
+                and not self.transmission.low_energy
             ):
                 self._fire_primary()
+                self.current_energy_capacity -= self.loadout.weaponry.primary.energy_per_bullet
                 self.loadout.weaponry.primary._timer = 0
 
         # -------------------
 
+        restore_energy_capacity()
         update_movement()
         update_firing()
-        update_energy_capacity()
+
+        print(f'{self.current_energy_capacity:.2f}/{self.loadout.engine.energy_cap}')
 
 
     def _fire_primary(self) -> None:
