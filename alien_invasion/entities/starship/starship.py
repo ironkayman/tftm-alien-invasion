@@ -66,8 +66,7 @@ class Starship(arc.Sprite):
         self.moving_right = False
 
         self.BULLET_SPEED = 5.5
-        # recharge_timeout
-        self.BULLET_COOLDOWN = self.loadout.weaponry.primary.reload_speed
+        self.BULLET_COOLDOWN = self.loadout.weaponry.primary.recharge_timeout
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots

@@ -54,7 +54,7 @@ class ItemWeapon(Item):
     ----------
     energy_per_bullet : int
         Enegry of ship's reactor consumed for a single bullet.
-    reload_speed : float
+    recharge_timeout : int
         Time between bullet launches in `ms`.
     """
 
@@ -62,7 +62,7 @@ class ItemWeapon(Item):
 
     bullet_damage: int
     energy_per_bullet: int
-    reload_speed: int
+    recharge_timeout: int
 
 class ItemHull(Item):
     item_type: ItemType = ItemType.HULL
