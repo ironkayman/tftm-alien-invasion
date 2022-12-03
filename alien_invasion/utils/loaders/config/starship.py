@@ -5,13 +5,16 @@ class StarshipLoadout:
     hull : StarshipHull
     weaponry : StarshipWeaponry
     engine : StarshipEngine
+    thruster : StarshipThruster
     """
 
     def __init__(self, config) -> None:
-        self.hull = StarshipHull(config['starship']['hull'], self)
-        self.weaponry = StarshipWeaponry(config['starship']['weaponry'], self)
-        self.engine = StarshipEngine(config['starship']['engine'], self)
-        self.thruster = StarshipThruster(config['starship']['thrusters'], self)
+        sh = config['starship']
+
+        self.hull = StarshipHull(sh['hull'], self)
+        self.weaponry = StarshipWeaponry(sh['weaponry'], self)
+        self.engine = StarshipEngine(sh['engine'], self)
+        self.thruster = StarshipThruster(sh['thrusters'], self)
 
 def load_starship_loadout(config: dict):
     return StarshipLoadout(config)
