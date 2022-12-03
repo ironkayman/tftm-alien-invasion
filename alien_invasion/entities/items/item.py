@@ -56,6 +56,10 @@ class ItemWeapon(Item):
         Enegry of ship's reactor consumed for a single bullet.
     recharge_timeout : int
         Time between bullet launches in `ms`.
+    speed : int
+        Pixels of space traversed per sec.
+    _timer : float
+        Used to track timings since last sprite's `on_update`.
     """
 
     item_type: ItemType = ItemType.WEAPON
@@ -63,6 +67,9 @@ class ItemWeapon(Item):
     bullet_damage: int
     energy_per_bullet: int
     recharge_timeout: int
+    speed: int
+
+    _timer: float = 0
 
 
 class ItemHull(Item):

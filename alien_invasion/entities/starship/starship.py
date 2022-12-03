@@ -79,12 +79,12 @@ class Starship(arc.Sprite):
         self.moving_left = False
         self.moving_right = False
 
-        self.BULLET_SPEED = 5.5
+        # self.BULLET_SPEED = 5.5
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
-        self.last_update_time = 0
+        # self.last_update_time = 0
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
@@ -126,11 +126,15 @@ class Starship(arc.Sprite):
 
         def update_firing():
             nonlocal delta_time
-            self.last_update_time += delta_time
+
+            self.loadout.weaponry.primary._timer += delta_time
             # firing
-            if self.firing_primary and self.last_update_time > self.timeouts.primary / 1000:
+            if (
+                self.firing_primary and
+                self.loadout.weaponry.primary._timer > self.timeouts.primary / 1000
+            ):
                 self._fire_primary()
-                self.last_update_time = 0
+                self.loadout.weaponry.primary._timer = 0
 
         # -------------------
 
@@ -147,7 +151,7 @@ class Starship(arc.Sprite):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png")
-        bullet.change_y = self.BULLET_SPEED
+        bullet.change_y = self.loadout.weaponry.primary.speed
 
         # Position the bullet
         bullet.center_x = self.center_x
