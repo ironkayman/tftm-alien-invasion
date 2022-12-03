@@ -93,6 +93,7 @@ class Starship(arc.Sprite):
 
         self.SPEED = self.loadout.thrusters.velocity
 
+        self.reactivated_since_free_fall = False
         # self.one_second_timer = 0
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
@@ -122,50 +123,81 @@ class Starship(arc.Sprite):
             motion = (self.moving_left, self.moving_right)
             # calculate sprite movement state
             # and stop if its both L and R pressed
+            # calculate energy loss from base
             energy_loss = self.loadout.thrusters.energy_requirement * delta_time
+            # both
             if all(motion):
-                energy_loss = self.loadout.thrusters.energy_requirement * delta_time * 1.3
+                energy_loss *= 1.3
+            # single
             elif any(motion):
-                energy_loss = self.loadout.thrusters.energy_requirement * delta_time * 1.15
+                energy_loss *= 1.15
+            # first calculatation
             self.current_energy_capacity -= energy_loss
 
-            self.free_falling = self.transmission.low_energy
-
-            # basic L/R movement
-            if self.moving_left and not self.transmission.throttle:
-                self.change_x = -self.SPEED
-                self.last_direction = LastDirection.LEFT
-            if self.moving_right and not self.transmission.throttle:
-                self.change_x = self.SPEED
-                self.last_direction = (
-                    LastDirection.STATIONARY if (
-                        self.last_direction == LastDirection.LEFT
-                    ) else
-                    LastDirection.RIGHT
+            # are we now out of energy
+            # if already on low energy its free fall
+            # but if since free falling (last True value)
+            # theres positive amount of energy but were
+            # no movement since positivity
+            # continue free falling
+            # moving will disrupt free falling state 
+            self.free_falling = (
+                self.transmission.low_energy
+                or (
+                    self.free_falling and
+                    not self.transmission.low_energy and
+                    not any(motion)
                 )
+            )
 
-            # slow down while approching to left border
-            if self.moving_left and not self.free_falling and self.transmission.throttle and self.transmission.border_reached_left:
+            # standart movement behavior
+            if not self.free_falling:
+                # last movement direction for cahnge of outage
+                # this caises to free fall in that direction
+                if self.moving_left:
+                    self.last_direction = LastDirection.LEFT
+                if self.moving_right:
+                    self.last_direction = LastDirection.RIGHT
+                if all(motion) or not any(motion):
+                    self.last_direction = LastDirection.STATIONARY
+
+                # basic L/R movement
+                if self.moving_left and not self.transmission.throttle:
+                    self.change_x = -self.SPEED
+                if self.moving_right and not self.transmission.throttle:
+                    self.change_x = self.SPEED
+
+                # slow down while approching to left border
+                if self.moving_left and self.transmission.throttle and self.transmission.border_reached_left:
+                    self.change_x = -self.SPEED // 3
+                    # stop inside a wall
+                    if self.left < self.movement_borders.left - self.width * 0.3:
+                        self.stop()
+                # slow down while approching to right border
+                elif self.moving_right and self.transmission.throttle and self.transmission.border_reached_right:
+                    self.change_x = self.SPEED // 3
+                    # stop inside a wall
+                    if self.right > self.movement_borders.right + self.width * 0.3:
+                        self.stop()
+
+                # stop at no movement or both L and R
+                if not self.transmission.throttle:
+                    if (all(motion) or not any(motion)):
+                        self.stop()
+                # exit
+                return
+
+            # last L/R movement at low energy -> free fall
+            if self.last_direction == LastDirection.LEFT:
                 self.change_x = -self.SPEED // 3
-                if self.left < self.movement_borders.left - self.width * 0.3:
-                    self.stop()
-            # slow down while approching to right border
-            elif self.moving_right and not self.free_falling and self.transmission.throttle and self.transmission.border_reached_right:
+                # reverse reaching wall without slowing down
+                if self.transmission.border_reached_left:
+                    self.last_direction = LastDirection.RIGHT
+            elif self.last_direction == LastDirection.RIGHT:
                 self.change_x = self.SPEED // 3
-                if self.right > self.movement_borders.right + self.width * 0.3:
-                    self.stop()
-
-           # L/R movement at low energy -> free fall
-            # if any(motion) and self.free_falling and self.last_direction == LastDirection.LEFT and self.transmission.low_energy:
-            #     self.moving_left = True
-            #     self.change_x = -self.SPEED // 4
-            # elif any(motion) and self.free_falling and self.last_direction == LastDirection.RIGHT and self.transmission.low_energy:
-            #     self.moving_right = True
-            #     self.change_x = self.SPEED // 4
-
-            if not self.transmission.throttle:
-                if (all(motion) or not any(motion)):
-                    self.stop()
+                # reverse reaching wall without slowing down
+                if self.transmission.border_reached_right:
+                    self.last_direction = LastDirection.LEFT
 
         def update_firing():
             nonlocal delta_time
@@ -222,12 +254,12 @@ class StarshipTransmission:
     @property
     def border_reached_left(self) -> bool:
         """Check if ship touches left border."""
-        return self.starship.left < self.area.left
+        return self.starship.left <= self.area.left
 
     @property
     def border_reached_right(self) -> bool:
         """Check if ship touches right border."""
-        return self.starship.right > self.area.right
+        return self.starship.right >= self.area.right
 
     @property
     def throttle(self) -> bool:
