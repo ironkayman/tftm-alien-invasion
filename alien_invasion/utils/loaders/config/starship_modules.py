@@ -17,6 +17,8 @@ from alien_invasion.entities.items.item import (
 
 from .starship import StarshipLoadout
 
+# class StarshipLoadout:
+
 # from functools import wraps
 # def include_starship_loadout(starship_subclass) -> object:
 #     starship_subclass.Config.arbitrary_types_allowed = True

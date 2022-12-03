@@ -52,23 +52,29 @@ class Starship(arc.Sprite):
         img = CONSTANTS.DIR_IMAGES / 'player_60x48.png'
         super().__init__(img)
 
+        # workaround for cycling imports
+        from alien_invasion.settings import STARSHIP
+        from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+        self.loadout: StarshipLoadout = STARSHIP
+
         self.movement_borders = MovementArea(*area_coords)
         self.transmission = StarshipTransmission(self, self.movement_borders)
 
-        # TODO: read speed from save file,
         # based on ship configuration
         self.SPEED = 10.5
         self.moving_left = False
         self.moving_right = False
 
         self.BULLET_SPEED = 5.5
-        self.BULLET_COOLDOWN = 1
+        # recharge_timeout
+        self.BULLET_COOLDOWN = self.loadout.weaponry.primary.reload_speed
         self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
+        self.last_update_time = 0
 
-    def update(self) -> None:
+    def on_update(self, delta_time: float = 1 / 60) -> None:
         """Update movement based on its self states."""
         super().update()
 
@@ -107,9 +113,12 @@ class Starship(arc.Sprite):
                 self.stop()
 
         def update_firing():
+            nonlocal delta_time
+            self.last_update_time += delta_time
             # firing
-            if self.firing_primary:
+            if self.firing_primary and self.last_update_time > self.BULLET_COOLDOWN / 1000:
                 self._fire_primary()
+                self.last_update_time = 0
 
         # -------------------
 

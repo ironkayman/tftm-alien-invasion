@@ -91,7 +91,7 @@ class PlayerArea(arc.Section):
 
         # player update func considers its movement states
         # which were potentially changed
-        self.player.update()
+        self.player.on_update(delta_time)
         self.player_bullet_list.update()
 
         purge_bullets_left_screen_area()
@@ -105,6 +105,7 @@ class PlayerArea(arc.Section):
         """Process player-sprite related key press events."""
         # set the paddle direction and movement speed
 
+        print('symbol', symbol)
         if symbol == self.key_left:
             self.ship.moving_left = True
         elif symbol == self.key_right:

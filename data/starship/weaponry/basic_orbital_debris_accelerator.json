@@ -3,5 +3,5 @@
     "description": "A very basic and janky build of a particle accrelerator connected directly to a ship energy reactor. In reality its another artificial rift.",
     "bullet_damage": 1,
     "energy_per_bullet": 3,
-    "reload_speed": 1000
+    "reload_speed": 200
 }

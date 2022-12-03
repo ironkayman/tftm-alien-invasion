@@ -4,6 +4,7 @@ class StarshipLoadout:
     ----------
     hull : StarshipHull
     weaponry : StarshipWeaponry
+    engine : StarshipEngine
     """
 
     def __init__(self, config) -> None:

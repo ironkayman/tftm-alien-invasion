@@ -1,3 +1,6 @@
 from alien_invasion.utils.loaders import config_loader
 
-KEYMAP = config_loader()['keymap']
+CONFIG_DICT = config_loader()
+
+KEYMAP = CONFIG_DICT['keymap']
+STARSHIP = CONFIG_DICT['starship']
