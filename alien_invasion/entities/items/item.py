@@ -20,7 +20,7 @@ class ItemType(IntEnum):
     ARMOR = auto()
     ENGINE = auto()
     HULL = auto()
-    THRUSTERS = auto()
+    THRUSTER = auto()
     WEAPON = auto()
 
 # move to pydadantic for field validation
@@ -115,3 +115,16 @@ class ItemEngine(Item):
 
     energy_restored: int
     energy_cap: int
+
+class ItemThruster(Item):
+    """
+    Attributes
+    ----------
+    velocity : int
+    energy_requirement : int
+    """
+
+    item_type: ItemType = ItemType.THRUSTER
+
+    velocity: int
+    energy_requirement: int

@@ -35,7 +35,7 @@
             "model": "spiralling_reactor"
         },
         "thrusters": {
-            "model": "pre_war_era_propulsion_thrusters"
+            "model": "pre_war_propulsion_thrusters"
         }
     }
 }
