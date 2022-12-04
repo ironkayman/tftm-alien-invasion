@@ -4,16 +4,26 @@
     <img src="./docs/imgs/archetype.png" alt="arc" width="430" style="display: block; margin: auto; "/>
 </p>
 
-`TFtM: Alien Invasion` is an proof-of-concept unfiction classic arcade shoot-em-up written on python with arcade library and based around the lore of **Maelstorm Takes Toll** fictional universe.
+`TFtM: Alien Invasion` is a pet project unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
 
-## Introduction (unfiction)
-This game exists inside an inuniverse narrative as a closed proof-of-concept project of a game by some gamedev company recaping the events of the past, 60 years after the events took place and since then rendering all advanced technology virtually lost due to being outside of anybodys' control.
+## Introduction
+```
+This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift hit the gamedev wing of an office. Since all the mess the deparment was significantly shrunk to focus on remaining projects and some equipment since was auctioned and resold multiple times.
+
+I was approached by company itself some time later to restore data as a data recovery freelancer with a permission to open source the restored data and archival puposes. Data restoration from narraphysic influence is a profitable source of income nowdays. Turns out the data itself was pretty corrupt so I said it'll take time, they're fine with that as long as at least something representing the original concept will work.
+
+The source in this repository is everything I managed to recover by far and reconstruct in a cohesive more-or-less working state with a hefty amount of my own's work patched in where plausibility and guess could help when recovery is too risky and/or entirely impossible due to disks' narrative identity being completely scrambled all over the place.
+
+I'll update the source as soon as I can recover it and throw in together some working version.
+
+- Mike
+```
 
 ## Gameplay
 
-Starship mechanics describes in detail at [mechanics.md](docs/mechanics.md).
+Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
-Default controls (described at `configs/config.json::current_keymap`):
+Default controls (confirured at `configs/config.json::current_keymap`):
 
 - in-menu select: `enter`
 - in-game exit: `q`
@@ -28,5 +38,3 @@ Images present are licenced by [Creative Commons � Attribution-NonCommercial 4
 Readme preview:
 - [1042x1432 Proportions And Measurements](http://getdrawings.com/get-drawing#hand-anatomy-drawing-37.jpg) - edited: cropped, removed fill
 - [945x650 Anatomy Of Hands By Richterbach](http://getdrawings.com/get-drawing#hand-anatomy-drawing-52.jpg) - edited: cropped, removed fill
-
-Further reading: https://wiki.creativecommons.org/wiki/4.0/Attribution_and_marking
