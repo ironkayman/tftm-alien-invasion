@@ -10,19 +10,19 @@
 ```
 This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift
 hit the gamedev wing of an office.
-Since all the mess the deparment was significantly shrunk to focus on remaining projects
-and some equipment since was auctioned and resold multiple times.
+Since all the mess the deparment was significantly shrunk down to focus on remaining projects
+worth on persuit and some equipment was auctioned and resold multiple times.
 
 I was approached by company itself some time later to restore data
 as a data recovery freelancer with a permission to open source the restored data
-and archival puposes.
+and company public archival puposes.
 Data restoration from narraphysic influence is a profitable source of income nowdays.
-Turns out the data itself was pretty corrupt so I said it'll take time, they're fine with that
+Turns out the data itself was pretty corrupt so I said it'll take time - they're fine with that
 as long as at least something representing the original concept will work.
 
 The source in this repository is everything I managed to recover by far and reconstruct
 in a cohesive more-or-less working state with a hefty amount of my own's work patched in
-where plausibility and guess could help when recovery is too risky and/or entirely impossible
+where recovery is too risky and/or entirely impossible
 due to disks' narrative identity being completely scrambled all over the place.
 
 I'll update the source as soon as I can recover it and throw in together some working version.
