@@ -34,7 +34,7 @@ I'll update the source as soon as I can recover it and throw in together some wo
 
 Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
-Default controls (confirured at `configs/config.json::current_keymap`):
+Default controls (confirured at [configs/config.json](configs/config.json)`::current_keymap`):
 
 - in-menu select: `enter`
 - in-game exit: `q`
@@ -44,7 +44,7 @@ Default controls (confirured at `configs/config.json::current_keymap`):
 
 ## Credits
 
-Images present are licenced by [Creative Commons � Attribution-NonCommercial 4.0 International � CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).
+Images present are licenced by [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).
 
 Readme preview:
 - [1042x1432 Proportions And Measurements](http://getdrawings.com/get-drawing#hand-anatomy-drawing-37.jpg) - edited: cropped, removed fill
