@@ -3,10 +3,10 @@ PYTHON	:= $(POETRY) run python
 
 default: start
 
-.PHONY: start prepare
+.PHONY: start install
 
 start:
 	$(PYTHON) ./run.py
 
-prepare:
+install:
 	$(POETRY) install
