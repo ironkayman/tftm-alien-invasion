@@ -9,4 +9,5 @@ start:
 	$(PYTHON) ./run.py
 
 install:
+	$(POETRY) config virtualenvs.in-project true --local
 	$(POETRY) install
