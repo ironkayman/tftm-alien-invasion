@@ -194,6 +194,10 @@ class Starship(arc.Sprite):
                 # exit
                 return
 
+            # fisable moving and firing during free fall initialisation
+            # and dont forcibly disbale it during free-fall following updates
+            # so the player may himself press again keys for moving/fireing
+            # separately
             if self.free_fall_timer == 0:
                 self.moving_left = False
                 self.moving_right = False
