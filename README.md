@@ -10,12 +10,12 @@
 ```
 This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift
 hit the gamedev wing of an office.
-Since all the mess the deparment was significantly shrunk down to focus on remaining projects
+Since all the mess settled down the deparment was significantly shrunk down to focus on remaining projects
 worth on persuit and some equipment was auctioned and resold multiple times.
 
-I was approached by company itself some time later to restore data
+I was approached by company itself some time later to restore data on those drives
 as a data recovery freelancer with a permission to open source the restored data
-and company public archival puposes.
+for company public archival puposes.
 Data restoration from narraphysic influence is a profitable source of income nowdays.
 Turns out the data itself was pretty corrupt so I said it'll take time - they're fine with that
 as long as at least something representing the original concept will work.
