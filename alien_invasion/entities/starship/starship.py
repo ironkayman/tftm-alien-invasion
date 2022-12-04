@@ -100,25 +100,17 @@ class Starship(arc.Sprite):
         """Update movement based on its self states."""
         super().update()
 
-        def restore_energy_capacity():
-            nonlocal delta_time
+        def update_energy_capacity():
+            """Control engine energy flow and free fall mode.
+            """
+            nonlocal delta_time, frame_energy_change
 
+            # restore energy
             if self.current_energy_capacity < self.loadout.engine.energy_cap:
                 self.current_energy_capacity += self.loadout.engine.energy_restored * delta_time
-                if self.loadout.engine.energy_cap < self.current_energy_capacity:
+                frame_energy_change += self.loadout.engine.energy_restored * delta_time
+                if self.current_energy_capacity > self.loadout.engine.energy_cap:
                     self.current_energy_capacity = self.loadout.engine.energy_cap
-
-        def update_movement():
-            """Transmission-based sprite movement updater.
-            
-            Since its a ViewModel all external logic is moved here
-            for maximasing variables availability for interacting with
-            environment and other entitties.
-            
-            `self.moving_left` and `self.moving_right` is set inside Section
-            with `key_down` and `key_up` events.
-            """
-            nonlocal delta_time
 
             motion = (self.moving_left, self.moving_right)
             # calculate sprite movement state
@@ -136,6 +128,7 @@ class Starship(arc.Sprite):
                 energy_loss *= 1.15
             # first calculatation
             self.current_energy_capacity -= energy_loss
+            frame_energy_change -= energy_loss
 
             # are we now out of energy?
             # if already on low energy its free fall for minimum of 2sec
@@ -147,7 +140,7 @@ class Starship(arc.Sprite):
             # when at a timer more than 2sec passed of free fall
             self.free_falling = (
                 (
-                    0 < self.free_fall_timer < 1
+                    0 < self.free_fall_timer < 1 # 1 sec
                     or self.transmission.low_energy
                 ) or (
                     self.free_falling and
@@ -155,6 +148,30 @@ class Starship(arc.Sprite):
                     not any(motion)
                 )
             )
+
+            # disable moving and firing during free fall initialisation (time == 0)
+            # and dont forcibly disbale it during free-fall following updates
+            # so the player may himself press again keys for moving/fireing
+            # separately
+            if self.free_falling and self.free_fall_timer == 0:
+                self.moving_left = False
+                self.moving_right = False
+                self.firing_primary = False
+
+
+        def update_movement():
+            """Transmission-based sprite movement updater.
+            
+            Since its a ViewModel all external logic is moved here
+            for maximasing variables availability for interacting with
+            environment and other entitties.
+            
+            `self.moving_left` and `self.moving_right` is set inside Section
+            with `key_down` and `key_up` events.
+            """
+            nonlocal delta_time
+
+            motion = (self.moving_left, self.moving_right)
 
             # standart movement behavior
             if not self.free_falling:
@@ -192,20 +209,13 @@ class Starship(arc.Sprite):
                     if (all(motion) or not any(motion)):
                         self.stop()
                 # exit
+                # ---------------------------------------
                 return
 
-            # fisable moving and firing during free fall initialisation
-            # and dont forcibly disbale it during free-fall following updates
-            # so the player may himself press again keys for moving/fireing
-            # separately
-            if self.free_fall_timer == 0:
-                self.moving_left = False
-                self.moving_right = False
-                self.firing_primary = False
-
-            self.free_fall_timer += delta_time
-
-            # last L/R movement at low energy -> free fall
+            # control free fall
+            # ---------------------------------
+            # last movement at low energy was LEFT
+            # -> free fall LEFT
             if self.last_direction == LastDirection.LEFT:
                 self.change_x = -self.SPEED // 3
                 # stop inside a wall if deep inside it
@@ -214,6 +224,8 @@ class Starship(arc.Sprite):
                 # reverse reaching wall without slowing down
                 elif self.transmission.border_reached_left:
                     self.last_direction = LastDirection.RIGHT
+            # last movement at low energy was RIGHT
+            # -> free fall RIGHT
             elif self.last_direction == LastDirection.RIGHT:
                 self.change_x = self.SPEED // 3
                 # stop inside a wall if deep inside it
@@ -224,7 +236,11 @@ class Starship(arc.Sprite):
                     self.last_direction = LastDirection.LEFT
 
         def update_firing():
-            nonlocal delta_time
+            """Check for firing button pressed.
+            
+            Fire if enought energy, rapid fire condiition and weapon timeout.
+            """
+            nonlocal delta_time, frame_energy_change
 
             full_motion = all((self.moving_left, self.moving_right))
             self.loadout.weaponry.primary._timer += delta_time
@@ -246,14 +262,22 @@ class Starship(arc.Sprite):
                 self._fire_primary()
                 self.current_energy_capacity -= self.loadout.weaponry.primary.energy_per_bullet
                 self.loadout.weaponry.primary._timer = 0
+                frame_energy_change -= self.loadout.weaponry.primary.energy_per_bullet
 
         # -------------------
 
-        restore_energy_capacity()
+        frame_energy_change: float = 0.0
+        # including free fall mode conditions
+        update_energy_capacity()
+        # update ship systems considering current energy level
         update_movement()
         update_firing()
+        # update free-fall timer
+        if self.free_falling:
+            self.free_fall_timer += delta_time
 
-        print(f'{self.current_energy_capacity:.2f}/{self.loadout.engine.energy_cap}')
+
+        print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
 
 
     def _fire_primary(self) -> None:
