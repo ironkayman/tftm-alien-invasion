@@ -147,12 +147,12 @@ class Starship(arc.Sprite):
             # when at a timer more than 2sec passed of free fall
             self.free_falling = (
                 (
-                    0 < self.free_fall_timer < 0.5
+                    0 < self.free_fall_timer < 1
                     or self.transmission.low_energy
                 ) or (
                     self.free_falling and
                     not self.transmission.low_energy and
-                    not any((any(motion), self.firing_primary))
+                    not any(motion)
                 )
             )
 
@@ -194,8 +194,11 @@ class Starship(arc.Sprite):
                 # exit
                 return
 
-            self.moving_left = False
-            self.moving_right = False
+            if self.free_fall_timer == 0:
+                self.moving_left = False
+                self.moving_right = False
+                self.firing_primary = False
+
             self.free_fall_timer += delta_time
 
             # last L/R movement at low energy -> free fall
@@ -221,8 +224,6 @@ class Starship(arc.Sprite):
 
             full_motion = all((self.moving_left, self.moving_right))
             self.loadout.weaponry.primary._timer += delta_time
-            if self.free_falling:
-                self.firing_primary = False
             # correcteed timeout:
             # it behaves as usual until ship is in static full thruster motion,
             # then timeout is cut to 2/3,
