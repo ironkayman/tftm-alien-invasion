@@ -5,6 +5,7 @@ from alien_invasion.settings import KEYMAP
 from .sections import (
     AlienArea,
     PlayerArea,
+    PilotOverlay,
     BackgroundEngine,
 )
 
@@ -43,9 +44,19 @@ class Invasion(arc.View):
             name="player_area"
         )
 
+        self.pilot_overlay = PilotOverlay(
+            left=0, bottom=0,
+            width=self.window.width,
+            height=self.window.height,
+            # prevents arcade events capture
+            accept_keyboard_events=False,
+            name="pilot_overlay",
+        )
+
         self.section_manager.add_section(self.background_engine)
         self.section_manager.add_section(self.alien_area)
         self.section_manager.add_section(self.player_area)
+        self.section_manager.add_section(self.pilot_overlay)
 
         self.window.set_mouse_visible(False)
 
@@ -55,16 +66,6 @@ class Invasion(arc.View):
 
     def on_draw(self) -> None:
         arc.start_render()
-
-        # Render FPS formated with 2 decimal places
-        arc.draw_text(
-            f"FPS: {arc.get_fps():.2f}",
-            start_x=35,
-            start_y=self.window.height - 35,
-            color=arc.color.WHITE,
-            font_size=12,
-            font_name="Courier New",
-        )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == KEYMAP['quit']:
