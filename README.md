@@ -1,29 +1,31 @@
-# Tales From the Maelstorm: Alien Invasion
+# Tales From the Maelstrom: Alien Invasion
 
 <p align="center">
     <img src="./docs/imgs/archetype.png" alt="arc" width="430" style="display: block; margin: auto; "/>
 </p>
 
-`TFtM: Alien Invasion` is a pet project unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
+> Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
 
 ## Introduction
 ```
 This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift
 hit the gamedev wing of an office.
-Since all the mess settled down the deparment was significantly shrunk down to focus on remaining projects
-worth on persuit and some equipment was auctioned and resold multiple times.
+Since all the mess settled the deparment was significantly shrunk down to focus on remaining projects
+worth on persuit while some equipment was auctioned and resold multiple times until
+it was impossible to track it or the transactions.
 
-I was approached by company itself some time later to restore data on those drives
+Meanwhile I was approached by ETE representative to restore data on those drives
 as a data recovery freelancer with a permission to open source the restored data
 for company public archival puposes.
+
 Data restoration from narraphysic influence is a profitable source of income nowdays.
-Turns out the data itself was pretty corrupt so I said it'll take time - they're fine with that
-as long as at least something representing the original concept will work.
+Turns out the data itself was pretty corrupt so I said it'll take some time -
+they're fine with that as long as at least something representing the original will work.
 
 The source in this repository is everything I managed to recover by far and reconstruct
 in a cohesive more-or-less working state with a hefty amount of my own's work patched in
 where recovery is too risky and/or entirely impossible
-due to disks' narrative identity being completely scrambled all over the place.
+due to disks' narrative identity being completely scrambled.
 
 I'll update the source as soon as I can recover it and throw in together some working version.
 
