@@ -1,7 +1,7 @@
 # Tales From the Maelstrom: Alien Invasion
 
 <p align="center">
-    <img src="./docs/imgs/sh.png" alt="arc" width="430" style="display: block; margin: auto; "/>
+    <img src="./docs/imgs/sh_3.png" alt="arc" width="430" style="display: block; margin: auto; "/>
 </p>
 
 > Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
