@@ -9,33 +9,18 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 
 
-class Background(arc.Section):
+class Background(arc.Scene):
     """Background logic."""
 
-    def __init__(
-        self,
-        left: int,
-        bottom: int,
-        width: int,
-        height: int,
-        **kwargs,
-    ) -> None:
+    def __init__(self) -> None:
         """Animated backfround logic setup.
         
         Prepares 4 sprites as a background for
         UIManager at `human_interface` section.
         """
-        super().__init__(
-            left,
-            bottom,
-            width,
-            height,
-            **kwargs,
-            accept_keyboard_events=False,
-        )
-        arc.set_background_color(arc.color.BLACK)
+        super().__init__()
 
-        self.background_layers = arc.SpriteList()
+        arc.set_background_color(arc.color.BLACK)
 
         # unanimated background
         self.backfall = arc.Sprite(
@@ -46,7 +31,10 @@ class Background(arc.Section):
         )
         self.backfall.color = (85, 70, 110)
         self.backfall.alpha = 170
-        self.background_layers.append(self.backfall)
+        self.add_sprite_list(
+            name='backfall',
+            sprite_list=self.backfall,
+        )
 
 
         # structure at screen center behind buttons
@@ -56,7 +44,10 @@ class Background(arc.Section):
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
-        self.background_layers.append(self.cental_node)
+        self.add_sprite_list(
+            name='central_node',
+            sprite_list=self.cental_node,
+        )
 
 
         # inner asteroids, should periodically float up-and-down
@@ -66,7 +57,7 @@ class Background(arc.Section):
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 40,
         )
-        self.background_layers.append(self.asteroids_float)
+        self.add_sprite_list(name='asteroids_float', sprite_list=self.asteroids_float)
 
         # outter asteroid circle, spins slowly
         self.asteroids_spin = arc.Sprite(
@@ -80,7 +71,7 @@ class Background(arc.Section):
         # self.asteroids_spin.color = (240, 220, 200)
         # make more bluish and darker tint
         self.asteroids_spin.color = (200, 220, 240)
-        self.background_layers.append(self.asteroids_spin)
+        self.add_sprite_list(name='asteroids_spin', sprite_list=self.asteroids_spin)
 
         # variables for periodic center_y change of asteroids_float
         self.last_update_time = 0
@@ -96,9 +87,10 @@ class Background(arc.Section):
 
         # spin outer asteroids
         self.asteroids_spin.angle += 0.02
+        # super().on_update(dt)
 
-    def on_draw(self):
+    def draw(self):
         """
         Render background section.
         """
-        self.background_layers.draw(pixelated=False)
+        super().draw(pixelated=False)
