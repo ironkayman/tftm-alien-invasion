@@ -6,7 +6,7 @@ from alien_invasion import CONSTANTS
 from alien_invasion.views.invasion.sections.backgroud_engine import BackgroundEngine
 
 from .sections import HumanInterface
-from .sections import Background
+from .scenes import Background
 
 
 class MainMenu(arc.View):
@@ -17,6 +17,7 @@ class MainMenu(arc.View):
 
         self.background = Background()
 
+        # isolate UI
         self.human_interface = HumanInterface(
             left=0, bottom=0,
             width=self.window.width,
