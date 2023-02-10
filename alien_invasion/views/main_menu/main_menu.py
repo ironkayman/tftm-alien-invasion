@@ -35,3 +35,4 @@ class MainMenu(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
+        self.human_interface.draw()
