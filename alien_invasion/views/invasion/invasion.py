@@ -3,12 +3,12 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from .sections import (
-    AlienArea,
     PlayerArea,
     PilotOverlay,
 )
 from .scenes import (
     Background,
+    AlienArea,
 )
 
 class Invasion(arc.View):
@@ -18,14 +18,7 @@ class Invasion(arc.View):
 
         self.background = Background()
 
-        self.alien_area = AlienArea(
-            left=0, bottom=0,
-            width=self.window.width,
-            height=self.window.height,
-            # prevents arcade events capture
-            accept_keyboard_events=False,
-            name="alien_area",
-        )
+        self.alien_area = AlienArea()
 
         self.player_area = PlayerArea(
             left=0, bottom=0,
@@ -47,7 +40,7 @@ class Invasion(arc.View):
         )
 
         # self.section_manager.add_section(self.background_engine)
-        self.section_manager.add_section(self.alien_area)
+        # self.section_manager.add_section(self.alien_area)
         self.section_manager.add_section(self.player_area)
         self.section_manager.add_section(self.pilot_overlay)
 
