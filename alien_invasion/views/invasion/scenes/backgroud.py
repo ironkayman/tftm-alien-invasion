@@ -2,8 +2,6 @@
 Module for background management.
 """
 
-from pathlib import Path
-
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -42,27 +40,14 @@ class BackgroundImage(arc.Sprite):
         )
 
 
-class BackgroundEngine(arc.Section):
+class Background(arc.Scene):
     """Background logic."""
 
-    def __init__(
-        self,
-        left: int,
-        bottom: int,
-        width: int,
-        height: int,
-        **kwargs,
-    ) -> None:
+    def __init__(self) -> None:
         """
         Initialise background images/particle layers.
         """
-        super().__init__(
-            left,
-            bottom,
-            width,
-            height,
-            **kwargs
-        )
+        super().__init__()
 
         arc.set_background_color(arc.color.BLACK)
 
@@ -154,9 +139,8 @@ class BackgroundEngine(arc.Section):
         self.emitter_stardust_primary = create_layer_stardust_primary()
         self.emitter_microcomet = create_layer_microcomets()
 
-    def on_update(self, _) -> None:
+    def on_update(self, _: float = 1 / 60) -> None:
         """Compute background layer changes."""
-
         def compute_viewport_layer_3() -> None:
             """
             Reposition textures of layer 3/image background.
@@ -178,7 +162,7 @@ class BackgroundEngine(arc.Section):
             self.emitter_microcomet,
             self.backgrounds,)]
 
-    def on_draw(self):
+    def draw(self):
         """
         Render background section.
         """

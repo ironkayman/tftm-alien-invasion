@@ -6,7 +6,9 @@ from .sections import (
     AlienArea,
     PlayerArea,
     PilotOverlay,
-    BackgroundEngine,
+)
+from .scenes import (
+    Background,
 )
 
 class Invasion(arc.View):
@@ -14,16 +16,7 @@ class Invasion(arc.View):
         """Creates entity vars"""
         super().__init__()
 
-        self.game_state: CONSTANTS.GAME_STATE = None
-
-        self.background_engine = BackgroundEngine(
-            left=0, bottom=0,
-            width=self.window.width,
-            height=self.window.height,
-            # prevents arcade events capture
-            accept_keyboard_events=False,
-            name="background_engine",
-        )
+        self.background = Background()
 
         self.alien_area = AlienArea(
             left=0, bottom=0,
@@ -53,7 +46,7 @@ class Invasion(arc.View):
             name="pilot_overlay",
         )
 
-        self.section_manager.add_section(self.background_engine)
+        # self.section_manager.add_section(self.background_engine)
         self.section_manager.add_section(self.alien_area)
         self.section_manager.add_section(self.player_area)
         self.section_manager.add_section(self.pilot_overlay)
@@ -66,8 +59,12 @@ class Invasion(arc.View):
 
     def on_draw(self) -> None:
         arc.start_render()
+        self.background.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == KEYMAP['quit']:
             print('exiting ...')
             arc.exit()
+
+    def on_update(self, delta_time: float):
+        self.background.on_update(delta_time)

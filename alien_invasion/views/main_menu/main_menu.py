@@ -3,7 +3,6 @@ import arcade.gui
 
 from alien_invasion import CONSTANTS
 
-from alien_invasion.views.invasion.sections.backgroud_engine import BackgroundEngine
 
 from .sections import HumanInterface
 from .scenes import Background
