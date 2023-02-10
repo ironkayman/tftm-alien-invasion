@@ -96,10 +96,9 @@ class Starship(arc.Sprite):
         self.reactivated_since_free_fall = False
         self.free_fall_timer = 0
 
-    def on_update(self, delta_time: float = 1 / 60) -> None:
+    def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
-        super().update()
-
+        # print(delta_time)
         def update_energy_capacity():
             """Control engine energy flow and free fall mode.
             """
@@ -187,19 +186,19 @@ class Starship(arc.Sprite):
 
                 # basic L/R movement
                 if self.moving_left and not self.transmission.throttle:
-                    self.change_x = -self.SPEED
+                    self.change_x = -self.SPEED * delta_time
                 if self.moving_right and not self.transmission.throttle:
-                    self.change_x = self.SPEED
+                    self.change_x = self.SPEED * delta_time
 
                 # slow down while approching to left border
                 if self.moving_left and self.transmission.throttle and self.transmission.border_reached_left:
-                    self.change_x = -self.SPEED // 3
+                    self.change_x = -self.SPEED // 3 * delta_time
                     # stop inside a wall
                     if self.left < self.movement_borders.left - self.width * 0.3:
                         self.stop()
                 # slow down while approching to right border
                 elif self.moving_right and self.transmission.throttle and self.transmission.border_reached_right:
-                    self.change_x = self.SPEED // 3
+                    self.change_x = self.SPEED // 3 * delta_time
                     # stop inside a wall
                     if self.right > self.movement_borders.right + self.width * 0.3:
                         self.stop()
@@ -217,7 +216,7 @@ class Starship(arc.Sprite):
             # last movement at low energy was LEFT
             # -> free fall LEFT
             if self.last_direction == LastDirection.LEFT:
-                self.change_x = -self.SPEED // 3
+                self.change_x = -self.SPEED // 3 * delta_time
                 # stop inside a wall if deep inside it
                 if self.left < self.movement_borders.left - self.width * 0.3:
                     self.stop()
@@ -227,7 +226,7 @@ class Starship(arc.Sprite):
             # last movement at low energy was RIGHT
             # -> free fall RIGHT
             elif self.last_direction == LastDirection.RIGHT:
-                self.change_x = self.SPEED // 3
+                self.change_x = self.SPEED // 3 * delta_time
                 # stop inside a wall if deep inside it
                 if self.right > self.movement_borders.right + self.width * 0.3:
                     self.stop()
@@ -253,13 +252,14 @@ class Starship(arc.Sprite):
                 full_motion and ((self.current_energy_capacity / self.loadout.engine.energy_cap) * 100) >= 30
                 else self.timeouts.primary
             )
+
             # firing
             if (
                 self.firing_primary and
                 self.loadout.weaponry.primary._timer > timeout_corrected / 1000
                 and not self.transmission.low_energy
             ):
-                self._fire_primary()
+                self._fire_primary(delta_time)
                 self.current_energy_capacity -= self.loadout.weaponry.primary.energy_per_bullet
                 self.loadout.weaponry.primary._timer = 0
                 frame_energy_change -= self.loadout.weaponry.primary.energy_per_bullet
@@ -276,11 +276,10 @@ class Starship(arc.Sprite):
         if self.free_falling:
             self.free_fall_timer += delta_time
 
+        # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
+        super().update()
 
-        print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
-
-
-    def _fire_primary(self) -> None:
+    def _fire_primary(self, delta_time: float) -> None:
         """Fire bullets guns blazing logic.
         
         Creates a bullet sets its position
@@ -289,7 +288,7 @@ class Starship(arc.Sprite):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png")
-        bullet.change_y = self.loadout.weaponry.primary.speed
+        bullet.change_y = self.loadout.weaponry.primary.speed * delta_time
 
         # Position the bullet
         bullet.center_x = self.center_x

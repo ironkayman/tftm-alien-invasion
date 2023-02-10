@@ -24,19 +24,15 @@ class Invasion(arc.View):
             left=0, bottom=0,
             width=self.window.width,
             height=64,
+            name="player_area",
             key_left=KEYMAP['player_starship_movement_left'],
             key_right=KEYMAP['player_starship_movement_right'],
             key_fire_primary=KEYMAP['player_starship_fire_primary'],
-            name="player_area"
         )
 
-        self.pilot_overlay = PilotOverlay()
+        self.pilot_overlay = PilotOverlay(self.player_area)
 
-        # self.section_manager.add_section(self.background_engine)
-        # self.section_manager.add_section(self.alien_area)
         self.section_manager.add_section(self.player_area)
-        # self.section_manager.add_section(self.pilot_overlay)
-
         self.window.set_mouse_visible(False)
 
     def setup(self) -> None:
@@ -46,6 +42,7 @@ class Invasion(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
+        self.player_area.draw()
         self.pilot_overlay.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
@@ -55,4 +52,5 @@ class Invasion(arc.View):
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
+        self.player_area.on_update(delta_time)
         self.pilot_overlay.on_update(delta_time)
