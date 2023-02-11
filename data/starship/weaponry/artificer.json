@@ -1,0 +1,8 @@
+{
+    "display_name": "Artificer",
+    "description": "",
+    "bullet_damage": 400,
+    "energy_per_bullet": 60,
+    "speed": 80,
+    "recharge_timeout": 1220
+}

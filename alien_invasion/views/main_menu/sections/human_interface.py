@@ -36,7 +36,7 @@ class StartButton(CallbackButton):
     bid = EnumButton.START
 
 
-class HumanInterface(arc.Section):
+class HumanInterface(arc.Section, arc.Scene):
     """Logic and interface for main menu buttons"""
 
     def __init__(
@@ -48,13 +48,15 @@ class HumanInterface(arc.Section):
         **kwargs,
     ) -> None:
         """Initialise UIManager and register custom buttons."""
-        super().__init__(
+        # Manual MRO resolution
+        arc.Section.__init__(self,
             left,
             bottom,
             width,
             height,
             **kwargs
         )
+        arc.Scene.__init__(self)
 
         self.manager = arc.gui.UIManager(self.view)
         # enabling moved to parent View
@@ -164,7 +166,7 @@ class HumanInterface(arc.Section):
         """
         return self.selected_widget.bid if self.selected_widget else -1
 
-    def on_draw(self) -> None:
+    def draw(self) -> None:
         self.manager.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:

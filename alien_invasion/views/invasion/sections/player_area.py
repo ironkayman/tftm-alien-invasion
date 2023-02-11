@@ -3,7 +3,7 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 from alien_invasion.entities import Starship
 
-class PlayerArea(arc.Section):
+class PlayerArea(arc.Section, arc.Scene):
     """Player ship area of movement.
     
     Handles and coordinates sprite lists
@@ -28,7 +28,8 @@ class PlayerArea(arc.Section):
         **kwargs
     ) -> None:
         """Area of a view in which ship is placed"""
-        super().__init__(
+        # Manual MRO resolution
+        arc.Section.__init__(self,
             left, bottom, width, height,
             accept_keyboard_events={
                 key_left,
@@ -38,6 +39,7 @@ class PlayerArea(arc.Section):
             },
             **kwargs
         )
+        arc.Scene.__init__(self)
 
         # keys assigned to move the paddle
         self.key_left: int = key_left
@@ -47,18 +49,16 @@ class PlayerArea(arc.Section):
         # also up, left wont register righ, right up  wond register left
         self.key_fire_primary: int = key_fire_primary
 
-        self.player = arc.SpriteList()
-        self.player_bullet_list: arc.SpriteList = arc.SpriteList()
+        self.starship_bullets: arc.SpriteList = arc.SpriteList()
 
         # the player ship
-        self.ship = Starship(
-            fired_shots=self.player_bullet_list,
+        self.starship = Starship(
+            fired_shots=self.starship_bullets,
             area_coords=[self.left, self.right, width, height]
         )
-        self.ship.center_x = self.window.width / 2
-        self.ship.center_y = self.ship.height
+        self.starship.center_x = self.window.width / 2
+        self.starship.center_y = self.starship.height
 
-        self.player.append(self.ship)
 
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
@@ -66,40 +66,21 @@ class PlayerArea(arc.Section):
         def purge_bullets_left_screen_area() -> None:
             """Processes bullets"""
             # remove all out of window player bullets
-            for player_bullet in self.player_bullet_list:
+            for player_bullet in self.starship_bullets:
                 if player_bullet.bottom > self.window.height:
                     player_bullet.remove_from_sprite_lists()
 
-        # def prevent_starship_moving_outside_veiw() -> None:
-        #     """check if player ship reaches view boundaries"""
-
-        #     starship = self.player[0]
-        #     if starship.left < self.left:
-        #         starship.moving_left = False
-        #         # consider ship axis step movement, return him partially to screen
-        #         # this solution prevents jittering at high ship speed
-        #         if starship.left < self.left - starship.width // 2:
-        #             starship.left = self.left - starship.width * 0.3
-
-        #     if starship.right > self.right:
-        #         starship.moving_right = False
-        #         # hitbox_rightmost_axis_value = max(starship.get_adjusted_hit_box(), key=lambda point: point[0])[0]
-        #         if starship.right > self.right + starship.width // 2:
-        #             starship.right = self.right + starship.width * 0.3
-
-        # prevent_starship_moving_outside_veiw()
-
         # player update func considers its movement states
         # which were potentially changed
-        self.player.on_update(delta_time)
-        self.player_bullet_list.update()
+        self.starship.on_update(delta_time)
+        self.starship_bullets.update()
 
         purge_bullets_left_screen_area()
 
-    def on_draw(self) -> None:
+    def draw(self) -> None:
         """Redraws its sprites"""
-        self.player.draw()
-        self.player_bullet_list.draw()
+        self.starship.draw()
+        self.starship_bullets.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key press events."""
@@ -107,11 +88,11 @@ class PlayerArea(arc.Section):
 
         print('symbol', symbol)
         if symbol == self.key_left:
-            self.ship.moving_left = True
+            self.starship.moving_left = True
         elif symbol == self.key_right:
-            self.ship.moving_right = True
+            self.starship.moving_right = True
         elif symbol == self.key_fire_primary:
-            self.ship.firing_primary = True
+            self.starship.firing_primary = True
         elif symbol == arc.key.B:
             breakpoint()
 
@@ -120,13 +101,13 @@ class PlayerArea(arc.Section):
         # since ship movement if based on change_x
         # stop it, since ship-sprite movement
         # is traggeable but not stoppable
-        self.ship.stop()
+        self.starship.stop()
         # trancate keys to ship movement state,
         # the rest is handled by the class itself
         # and its update method
         if symbol == self.key_left:
-            self.ship.moving_left = False
+            self.starship.moving_left = False
         elif symbol == self.key_right:
-            self.ship.moving_right = False
+            self.starship.moving_right = False
         elif symbol == self.key_fire_primary:
-            self.ship.firing_primary = False
+            self.starship.firing_primary = False

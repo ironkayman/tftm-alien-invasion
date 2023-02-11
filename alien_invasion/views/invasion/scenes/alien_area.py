@@ -7,23 +7,10 @@ Alien spawner - chain of moving emitters for particles, but particles are aliens
 also they cant overlap and should find pathfinding
 """
 
-class AlienArea(arc.Section):
+class AlienArea(arc.Scene):
     """Aliens' area of movement."""
-    def __init__(
-        self,
-        left: int,
-        bottom: int,
-        width: int,
-        height: int,
-        **kwargs,
-    ) -> None:
-        super().__init__(
-            left,
-            bottom,
-            width,
-            height,
-            **kwargs
-        )
+    def __init__(self) -> None:
+        super().__init__()
 
         self.aliens: arc.SpriteList = arc.SpriteList()
         self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
