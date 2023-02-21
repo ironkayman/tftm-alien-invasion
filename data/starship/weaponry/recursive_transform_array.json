@@ -1,0 +1,8 @@
+{
+    "display_name": "Recursive Transform Array",
+    "description": "Weaponised RTA hooked to narraphysic realm presence generator",
+    "bullet_damage": 400,
+    "energy_per_bullet": 10,
+    "speed": 120,
+    "recharge_timeout": 5
+}
