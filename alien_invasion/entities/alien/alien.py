@@ -18,8 +18,21 @@ class Alien(arc.Sprite):
                 hit_box_algorithm='Detailed',
             ))
         self.set_texture(0)
-        self.set_position(CONSTANTS.CL_DISPLAY.WIDTH // 2, CONSTANTS.CL_DISPLAY.HEIGHT // 2)
 
-    def update(self) -> None:
+    @property
+    def state(self) -> int:
+        return self.cur_texture_index
+
+    @state.setter
+    def set_state(self, value: int) -> None:
+        """Set current texture index/state.
+
+        Since textures and states are almost the same.
+        """
+        self.set_texture(value)
+
+    def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
+        movesets = self.config.states[self.cur_texture_index].movesets
+
         super().update()

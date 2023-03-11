@@ -27,11 +27,10 @@ class AlienArea(arc.Scene):
             sprite_list=self.aliens,
         )
 
-    def on_update(self, dt: float = 1 / 60) -> None:
+    def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
-        for a in self.aliens:
-            print(a.center_x, a.center_y)
-        return
+        for alien in self.aliens:
+            alien.on_update(delta_time)
 
 
     def draw(self):
