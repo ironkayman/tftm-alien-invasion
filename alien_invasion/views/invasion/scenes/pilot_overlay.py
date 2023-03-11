@@ -32,5 +32,15 @@ class PilotOverlay(arc.Scene):
             font_name="Courier New",
         )
 
+        # golden ridge overlay
+        # arc.draw_rectangle_outline(
+        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
+        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
+        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
+        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+        #     (237, 207, 80),
+        #     1,
+        # )
+
     def on_update(self, delta_time: float = 1 / 60) -> None:
         pass
