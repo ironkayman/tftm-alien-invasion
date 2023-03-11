@@ -2,7 +2,6 @@ import arcade as arc
 
 from alien_invasion.utils.loaders.alien import loader
 from alien_invasion.entities import Alien
-from alien_invasion.entities.alien.alien import AlienEmitable
 
 from alien_invasion import CONSTANTS
 
@@ -31,18 +30,10 @@ class AlienArea(arc.Scene):
         self.emitter = arc.Emitter(
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT // 2),
             emit_controller=arc.EmitInterval(0.02),
-            particle_factory=lambda emitter: AlienEmitable(
+            particle_factory=lambda emitter: Alien(
                 config=config,
-                particle_props={
-                    'change_xy': arc.rand_in_circle((0.0, 0.0), 10),
-                }
-            )
-            # particle_factory=lambda emitter: arc.EternalParticle(
-            #     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
-            #     change_xy=arc.rand_in_circle((0.0, 0.0), 10),
-            #     scale=1,
-            #     alpha=250,
-            # )
+                change_xy= arc.rand_in_circle((0.0, 0.0), 10),
+            )  # type: ignore
         )
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
