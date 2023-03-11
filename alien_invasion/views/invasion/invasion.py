@@ -42,6 +42,7 @@ class Invasion(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
+        self.alien_area.draw()
         self.player_area.draw()
         self.pilot_overlay.draw()
 
@@ -52,5 +53,6 @@ class Invasion(arc.View):
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
+        self.alien_area.on_update(delta_time)
         self.player_area.on_update(delta_time)
         self.pilot_overlay.on_update(delta_time)

@@ -1,8 +1,7 @@
 import arcade as arc
 
-from alien_invasion import CONSTANTS
-
 from alien_invasion.utils.loaders.alien import loader
+from alien_invasion.entities import Alien
 
 
 """
@@ -18,5 +17,25 @@ class AlienArea(arc.Scene):
         self.aliens: arc.SpriteList = arc.SpriteList()
         self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
 
-        aliens_categories = loader()
-        print(aliens_categories)
+        alien_categories = loader()
+        for config in alien_categories:
+            alien = Alien(config)
+            self.aliens.append(alien)
+
+        self.add_sprite_list(
+            name='aliens',
+            sprite_list=self.aliens,
+        )
+
+    def on_update(self, dt: float = 1 / 60) -> None:
+        """Compute background layer changes."""
+        for a in self.aliens:
+            print(a.center_x, a.center_y)
+        return
+
+
+    def draw(self):
+        """
+        Render background section.
+        """
+        super().draw(pixelated=True)
