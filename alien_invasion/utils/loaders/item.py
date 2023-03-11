@@ -9,11 +9,11 @@ def search(name):
     Raises
     ------
     IndexError
-        No ite was found at `glob`
+        No item was found at `glob`
     """
     search_root = CONSTANTS.DIR_DATA / 'starship'
     return tuple(search_root
-        .glob(f'*/{name}.json'))[0]
+        .glob(f'*/{name}.toml'))[0]
 
 def load_item_as_dict(name: str) -> object:
     """ """
