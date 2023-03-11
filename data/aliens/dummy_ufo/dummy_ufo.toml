@@ -1,0 +1,17 @@
+[info]
+    name = "Dummy UFO"
+    # TODO: fragmentation engine
+    # small (1 fragment), medium (<4 frg) , large (<9 frg), giant (<13 frg), unimaginable (<43 frg)
+    size = 'small'
+    # available damage types and states are governed by given types below
+    type = ['corporeal']
+    xp = 10
+
+[state]
+
+[state.initial]
+    # looks inside resources/sprites, searched after state name
+    # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
+    moveset = ['spiralling', 'escaping']
+    hp = 200
+    death_damage_cap = false

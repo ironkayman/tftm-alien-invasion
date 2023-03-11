@@ -1,5 +1,5 @@
 [info]
-    name = "sontra_castle_wall"
+    name = "Sontra Castle Wall"
     # TODO: fragmentation engine
     # small (1 fragment), medium (<4 frg) , large (<9 frg), giant (<13 frg), unimaginable (<43 frg)
     size = 'small'
