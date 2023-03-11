@@ -94,3 +94,24 @@ class Background(arc.Scene):
         Render background section.
         """
         super().draw(pixelated=False)
+
+        # draw under specific progression conditions
+        #
+        # golden frame
+        # arc.draw_rectangle_outline(
+        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
+        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
+        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
+        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+        #     (237, 207, 80),
+        #     1,
+        # )
+        # golden column
+        # arc.draw_rectangle_outline(
+        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
+        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
+        #     50,
+        #     220,
+        #     (237, 207, 80),
+        #     1,
+        # )
