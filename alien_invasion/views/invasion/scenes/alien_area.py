@@ -19,3 +19,4 @@ class AlienArea(arc.Scene):
         self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
 
         aliens_categories = loader()
+        print(aliens_categories)
