@@ -2,7 +2,9 @@ import arcade as arc
 
 from alien_invasion.utils.loaders.alien import loader
 from alien_invasion.entities import Alien
+from alien_invasion.entities.alien.alien import AlienEmitable
 
+from alien_invasion import CONSTANTS
 
 """
 Alien spawner - chain of moving emitters for particles, but particles are aliens
@@ -26,9 +28,28 @@ class AlienArea(arc.Scene):
             name='aliens',
             sprite_list=self.aliens,
         )
+        self.emitter = arc.Emitter(
+            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT // 2),
+            emit_controller=arc.EmitInterval(0.02),
+            particle_factory=lambda emitter: AlienEmitable(
+                config=config,
+                particle_props={
+                    'change_xy': arc.rand_in_circle((0.0, 0.0), 10),
+                }
+            )
+            # particle_factory=lambda emitter: arc.EternalParticle(
+            #     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
+            #     change_xy=arc.rand_in_circle((0.0, 0.0), 10),
+            #     scale=1,
+            #     alpha=250,
+            # )
+        )
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
+
+        if self.emitter:
+            self.emitter.update()
         for alien in self.aliens:
             alien.on_update(delta_time)
 
@@ -37,4 +58,5 @@ class AlienArea(arc.Scene):
         """
         Render background section.
         """
+        self.emitter.draw()
         super().draw(pixelated=True)
