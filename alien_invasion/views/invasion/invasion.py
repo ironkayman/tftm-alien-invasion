@@ -18,8 +18,6 @@ class Invasion(arc.View):
 
         self.background = Background()
 
-        self.alien_area = AlienArea()
-
         self.player_area = PlayerArea(
             left=0, bottom=0,
             width=self.window.width,
@@ -31,6 +29,8 @@ class Invasion(arc.View):
         )
 
         self.pilot_overlay = PilotOverlay(self.player_area)
+
+        self.alien_area = AlienArea(self.player_area.starship)
 
         self.section_manager.add_section(self.player_area)
         self.window.set_mouse_visible(False)

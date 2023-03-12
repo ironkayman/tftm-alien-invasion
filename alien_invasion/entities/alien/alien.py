@@ -29,6 +29,8 @@ class Alien(arc.Sprite):
             ))
         self.set_texture(0)
 
+        self.hp = self.config.states[0].hp
+
         self.center_x = center_xy[0]
         self.center_y = center_xy[1]
         self.change_x = change_xy[0]
