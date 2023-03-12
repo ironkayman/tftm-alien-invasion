@@ -1,25 +1,42 @@
+"""Object respresention processor for any `Alien` entity.
+"""
+
 from pathlib import Path
 from enum import IntEnum, auto
 
 from pydantic import BaseModel, validator
 
-from ..config.file_opener import reader
-
 from .entity_dir import AlientResources
 
 
 class AlienSize(IntEnum):
-    """Alien size as Enum"""
+    """Allowed enemy sizes"""
 
     small = auto()
     medium = auto()
 
 
 class AlienType(IntEnum):
+    """Allowed enemy types"""
+
     corporeal = auto()
 
 
 class AlienInfo(BaseModel):
+    """Structured representation of `info` block of alien's central config.
+
+    Attrbutes
+    ---------
+    name: str
+        Alien's vusible name.
+    size: str
+        Aliens size.
+    xp: int
+        Amount of Experience gained.
+    type: set[AlienType]
+        Alien's enemy types.
+    """
+
     name: str
     size: str
     xp: int
@@ -30,21 +47,43 @@ class AlienInfo(BaseModel):
 
     @validator('size', pre=True)
     def get_alien_size_enum(cls, val: str) -> AlienSize:
-        """Str -> IntEnum"""
+        """Alien's Size naming - Str -> IntEnum mapping"""
         return AlienSize[val]
 
     @validator('type', pre=True)
     def get_alien_type_enum(cls, val: list) -> set[AlienType]:
+        """Alien's Type naming - Str -> IntEnum mapping"""
         return set(map(lambda c: AlienType[c], val))
 
 
 class AlienMoveset(IntEnum):
-    """str -> IntEnum possible moveset values"""
+    """Allowed movesets for an arbitrary state."""
 
     spiralling = auto()
     escaping = auto()
 
+
 class AlienState(BaseModel):
+    """Scheme for `Alien` states data strcture
+
+    Attributes
+    ----------
+    name: str
+        State name.
+    movesets: set[AlienMoveset]
+        Movesets available for this alien's state represented as Enums.
+    hp: int
+        HitPoints for this state.
+    death_damage_cap: bool
+        Does damage beyond hp = 0 is translated to damage to alen's nex state.
+        `True` - damage is capped whch means that next state does not
+        absorb this state's incoming damage.
+        `False` - remaining from hp = 0 damage is absorbed by
+        next alien's state if any present, dealng damage to its HP bar.
+    texture: Path
+        Path to a state's texure.
+    """
+
     name: str
     movesets: set[AlienMoveset]
     hp: int
@@ -53,13 +92,27 @@ class AlienState(BaseModel):
 
     @validator('movesets', pre=True)
     def get_movesets(cls, val) -> set[AlienMoveset]:
+        """Turns moveset string names to Enums"""
         return set(map(lambda m: AlienMoveset[m], val))
 
     def __init__(self,
         core_props_container: tuple[str, dict],
         texture_props_container: tuple[str, Path]
     ) -> None:
-        """
+        """Maps groups of entity's properties to a coherent data structure
+
+        Parameters
+        ----------
+        core_props_container: tuple[str, dict]
+            Tupled pair of specific state name
+            and it's internal properties.
+
+            NOTE: Naming conventions:
+                One would consider `core_` preperties
+                as primary information, not the states.
+        texture_props_container: tuple[str, Path]
+            Tuple of alien's state [0] and
+            its designated `Path` to a texture.
         """
         state_name = core_props_container[0]
         core_props = core_props_container[1]
@@ -85,13 +138,25 @@ class AlienConfig:
     Contains at `self.config` a `dict` representation
     of TOML config and `pathlib.Path`s'
     to images of enemy states (see `load_texture_per_state`).
+
+    Attributes
+    ----------
+    info: AlienInfo
+        Inforamtion about specific `Alien`.
+    states: list[AlienState] = []
+        Listed alien's states.
     """
 
     info: AlienInfo
     states: list[AlienState] = []
 
     def __init__(self, resource_dir: Path) -> None:
-        """
+        """Constructs universal object representation of `Alien`.
+
+        Consructs data structure of mapped properties from entity's
+        config directory by mapping out the paths to specific resources
+        and saving them at finalised config file object.
+
         Raises
         ------
         NotImplementedError

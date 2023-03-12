@@ -1,5 +1,7 @@
+"""Alien class definition.
+"""
+
 import random
-from copy import deepcopy
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -7,9 +9,24 @@ from alien_invasion import CONSTANTS
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 class Alien(arc.Sprite):
+    """Alien sprite class.
 
-    __hp_old: int|None = None
-    __hp_curr: int|None = None
+    Manages HP, states, emits hit-effects (from `hit_effect_list`).
+    Created from configuration objects `AlienConfig` and
+    `Particle`-like properties during its
+    factory creation inside an `arc.Emitter`.
+
+    Attributes
+    ----------
+    __hp_old: int
+        State's HP before hit, modified by `property` `.hp`.
+    __hp_curr: int
+        State's HP after recieveing bullet damage.
+
+    """
+
+    __hp_old: int
+    __hp_curr: int
 
     def __init__(self,
         config: AlienConfig,
@@ -37,6 +54,7 @@ class Alien(arc.Sprite):
             ))
         self.set_texture(0)
 
+        # Particle properties
         self.center_x = center_xy[0]
         self.center_y = center_xy[1]
         self.change_x = change_xy[0]
@@ -49,35 +67,56 @@ class Alien(arc.Sprite):
         self.__hp_curr = self.hp_pools[0]
         self.__hp_old = self.__hp_curr
 
+        # prepare monkeypatched spritelist to replace
+        # emitter's service ._particles spritelist
         self.__hit_effect_list = hit_effect_list
+        # create hit-particles emitter
         self.__configure_emitter()
 
     def __configure_emitter(self):
+        """Creates emitter for particles after being hit.
+        """
         self.__hit_emitter = arc.Emitter(
             center_xy=(self.center_x, self.center_y),
             emit_controller=arc.EmitBurst(0), # no particle given at spawn
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
-                # center_xy=(self.center_x, self.center_y),
                 change_xy=arc.rand_vec_spread_deg(90, 20, 0.4),
                 lifetime=random.uniform(0.4, 1.4),
                 scale=0.3,
                 alpha=200
             ),
         )
+        # replace internal spritelist,
+        # with enabled spacial haching
         self.__hit_emitter._particles = self.__hit_effect_list
 
     def _restart_hit_effect_emitter(self) -> arc.Emitter:
+        """Recreate particle burst
+
+        Since this emitter emits particles by
+        configuration from `.emit_controller`, recreate emitter's controller
+        by defining its new value, now with non-zero amount of particles
+        when we see thnat emitter completes itself (`.is_complete`).
+
+        Returns
+        -------
+        arc.Emitter
+            Hit-particle emitter.
+        """
         if self.__hit_emitter.rate_factory.is_complete():
             self.__hit_emitter.rate_factory = arc.EmitBurst(3)
         return self.__hit_emitter
 
     @property
     def hp(self) -> int:
+        """Getter for HP"""
         return self.__hp_curr
 
     @hp.setter
     def hp(self, hp_new: int) -> None:
+        """Setter and manager for alien's HP considering current `state`.
+        """
         self.__hp_old = self.__hp_curr
         self.__hp_curr = hp_new
 
@@ -88,23 +127,40 @@ class Alien(arc.Sprite):
 
     @property
     def state(self) -> int:
+        """Gets aliens's current `state`
+
+        Its a wrapper around current texture.
+        Since textures are paired with state by Alien architecture
+        and multiplicity of textures is `arc.Sprite` requires a selection of one,
+        consider index of selected texture as a current state index.
+
+        Returns
+        -------
+        int
+            Current `State` index/texture index.
+        """
         return self.cur_texture_index
 
     @state.setter
     def set_state(self, value: int) -> None:
         """Set current texture index/state.
 
-        Since textures and states are almost the same.
+        Since textures and states are almost the same
+        - see getter `.state`.
         """
         self.set_texture(value)
 
     def update(self) -> None:
-        """Update movement based on its self states."""
+        """Particle's update method.
+
+        Updates movement from allowed movesets by current `state`.
+        """
         if self.mutation_callback:
             self.mutation_callback(self)
 
         movesets = self.config.states[self.cur_texture_index].movesets
 
+        # logic for hit-particles emitter continued updates
         if self.__hp_old > self.__hp_curr:
             self._restart_hit_effect_emitter()
             self.__hp_old = self.__hp_curr
@@ -114,9 +170,24 @@ class Alien(arc.Sprite):
         self.__hit_emitter.update()
         super().update()
 
-
     def can_reap(self) -> bool:
-        """Determine if Particle can be deleted"""
+        """Determine if Particle can be deleted.
+
+        Particle-specofoc method which acts as its deletion flag.
+
+        Deletion is allowed either:
+
+        1. when health reaches 0
+        at the lst state's healthbar;
+        2. when alien leaves viewport visible space
+        by going below y-axis.
+
+        Returns
+        -------
+        bool
+            Allow parent emitter to delete this
+            particle before the next update call.
+        """
         return any((
             (self.__hp_curr <= 0 and self.state == len(self.config.states) - 1),
             self.top < 0,

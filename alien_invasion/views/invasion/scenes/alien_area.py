@@ -1,3 +1,6 @@
+"""Scane and a manager for aliens' movement and interaction logic.
+"""
+
 import arcade as arc
 
 from alien_invasion.utils.loaders.alien import loader
@@ -7,13 +10,13 @@ from alien_invasion.entities.starship import Starship
 
 from alien_invasion import CONSTANTS
 
-"""
-Alien spawner - chain of moving emitters for particles, but particles are aliens
-also they cant overlap and should find pathfinding
-"""
 
 class AlienArea(arc.Scene):
-    """Aliens' area of movement."""
+    """Aliens' Scene
+
+    Contains logic for starship-bulets-aliens' interactions.
+    """
+
     def __init__(self, starship: Starship) -> None:
         super().__init__()
 
@@ -21,8 +24,21 @@ class AlienArea(arc.Scene):
 
         self.aliens_types: arc.SpriteList = arc.SpriteList()
         self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
+        # spritelist for all partcles which should be emitter when
+        # any aliens s ht by a bullet, is given to all Alien instances
+        # and is modified there internally
+        #
+        # ARCHITECTURAL NOTE: External definition solves the problem of impossibilty
+        # to draw this spritelist inside alien-instances (particle intances)
+        # since they do not have regulary called .draw method and
+        # rely on being drawn solely by emitter's internal spritelist (.particles)
+        # internal optimzational logic,
+        # so, as a workaround, we draw this spritelist outside of particles
+        # or their emitter.
         self.alien_was_hit_effect_particles = arc.SpriteList()
 
+        # TODO: connect with level loader and
+        # specific allowed aliens
         alien_categories = loader()
         config = alien_categories[0]
 
@@ -32,7 +48,8 @@ class AlienArea(arc.Scene):
             sprite_list=self.aliens_types,
         )
 
-
+        # Alens are spawned as particle-like objects
+        # from an eternal Emitter wth time interval between spawns
         self.spawner = arc.Emitter(
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(0.6),
@@ -42,20 +59,20 @@ class AlienArea(arc.Scene):
                 change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
             )  # type: ignore
         )
-        # self.spawner._particles = arc.SpriteList(use_spatial_hash=False)
         # dont add sprite list to scene since spawner counts it
-        # self.add_sprite_list(
-        #     name='aliens',
-        #     sprite_list=self.spawner._particles,
-        # )
+        # but cant track it so we create only a pointer namespace
         self.aliens = self.spawner._particles
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
 
+        # update alien emitter/spawner
         self.spawner.update()
 
         collisions = []
+        # detects cullet collisions
+        # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
+        # changes in being-hit animation
         for bullet in self.starship.fired_shots:
             collisions = arc.check_for_collision_with_list(
                 bullet, self.spawner._particles
@@ -72,5 +89,6 @@ class AlienArea(arc.Scene):
         Render background section.
         """
         self.spawner.draw()
+        # Externally (outside of particles and emitter) draw hit effect sprites
         self.alien_was_hit_effect_particles.draw()
         super().draw(pixelated=True)

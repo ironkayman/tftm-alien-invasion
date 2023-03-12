@@ -1,14 +1,15 @@
-from typing import cast, Any
-from pathlib import Path
+"""Main loader for `Alien` configs.
 
-from pydantic import BaseModel
+Accumultaes every `Alien` to their
+designanted `AlienConfig` configuration object.
+"""
 
 from .config import AlienConfig
 from alien_invasion import CONSTANTS
 
 
 def loader() -> list[AlienConfig]:
-    """Creates configs-dicts for all aliens forund in data directory.
+    """Creates configs for all aliens found in specified data directory path.
 
     Returns
     -------
