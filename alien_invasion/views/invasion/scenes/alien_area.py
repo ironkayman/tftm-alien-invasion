@@ -21,22 +21,24 @@ class AlienArea(arc.Scene):
 
         self.aliens_types: arc.SpriteList = arc.SpriteList()
         self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
+        self.alien_was_hit_effect_particles = arc.SpriteList()
 
         alien_categories = loader()
-        for config in alien_categories:
-            alien = Alien(config)
-            self.aliens_types.append(alien)
+        config = alien_categories[0]
+
 
         self.add_sprite_list(
             name='aliens_types',
             sprite_list=self.aliens_types,
         )
 
+
         self.spawner = arc.Emitter(
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(0.4),
             particle_factory=lambda emitter: Alien(
                 config=config,
+                hit_effect_list=self.alien_was_hit_effect_particles,
                 change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
             )  # type: ignore
         )
@@ -70,4 +72,5 @@ class AlienArea(arc.Scene):
         Render background section.
         """
         self.spawner.draw()
+        self.alien_was_hit_effect_particles.draw()
         super().draw(pixelated=True)
