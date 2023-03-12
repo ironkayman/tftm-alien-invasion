@@ -13,5 +13,5 @@
     # looks inside resources/sprites, searched after state name
     # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
     movesets = ['spiralling', 'escaping']
-    hp = 200
+    hp = 3
     death_damage_cap = false

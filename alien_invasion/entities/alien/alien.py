@@ -8,8 +8,10 @@ from alien_invasion.utils.loaders.alien import AlienConfig
 
 class Alien(arc.Sprite):
 
-    __hp_old: int = 0
-    __hp_curr: int = 0
+    __hp_old: int|None = None
+    __hp_curr: int|None = None
+
+    hit_emitter: None|arc.Emitter = None
 
     def __init__(self,
         config: AlienConfig,
@@ -45,36 +47,43 @@ class Alien(arc.Sprite):
         self.alpha = alpha
         self.mutation_callback = mutation_callback
 
-        self.__hit_emitter = arc.Emitter(
-            center_xy=(self.center_x, self.center_y),
+        self.__hp_curr = self.hp_pools[0]
+        self.__hp_old = self.__hp_curr
+
+        self.hit_emitter = arc.Emitter(
+            center_xy=(400, 300),
             emit_controller=arc.EmitBurst(5),
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
                 change_xy=arc.rand_in_circle((0.0, 0.0), 2.0),
                 lifetime=random.uniform(1.0 - 1.0, 1.0),
-                scale=1.0,
-                alpha=32
-            )
+                scale=0.2,
+                alpha=200
+            ),
+            # emit_done_cb=self._hit_emitter_del
         )
+
+    # def _hit_emitter_del(self, self_2) -> None:
+    #     print(self_2.hit_emitter)
+    #     self_2.hit_emitter = None
 
     @property
     def hp(self) -> int:
-        self.__hp_curr = self.hp_pools[self.state]
         return self.__hp_curr
 
     @hp.setter
     def hp(self, hp_new: int) -> None:
-        hp_old = self.hp_pools[self.state]
-        self.hp_pools[self.state] = hp_new
+        hp_old = self.__hp_curr
 
         self.__hp_old = hp_old
         self.__hp_curr = hp_new
 
+        # self.__hit_emitter()
+        # self.hit_emitter.update()
+        # self.hit_emitter.draw()
         if hp_new <= 0:
             if self.state < len(self.config.states) - 1:
                 self.state += 1
-            else:
-                self.kill()
 
     @property
     def state(self) -> int:
@@ -94,20 +103,18 @@ class Alien(arc.Sprite):
             self.mutation_callback(self)
 
         movesets = self.config.states[self.cur_texture_index].movesets
+        # breakpoint()
+        # print(self.hit_emitter.get_count())
 
+        self.hit_emitter.update()
+        # somehow we need to draw particles inside another particle - be it alien
+        # if self.hit_emitter.get_count() > 0:
+        #     print(self.hit_emitter.get_count())
         if self.__hp_old > self.__hp_curr:
-            # print(self.__hp_old, self.__hp_curr)
             self.__hp_old = self.__hp_curr
-
-            self.__hit_emitter.center_x = self.center_x
-            self.__hit_emitter.center_y = self.center_y
-
-            self.__hit_emitter.update()
-            # self.__hit_emitter.draw()
-
         super().update()
 
 
     def can_reap(self) -> bool:
         """Determine if Particle can be deleted"""
-        return False
+        return self.__hp_curr <= 0 and self.state == len(self.config.states) - 1

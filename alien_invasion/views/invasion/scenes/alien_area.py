@@ -56,7 +56,7 @@ class AlienArea(arc.Scene):
         collisions = []
         for bullet in self.starship.fired_shots:
             collisions = arc.check_for_collision_with_list(
-                bullet, self.aliens
+                bullet, self.spawner._particles
             )
             if not collisions: continue
             bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
