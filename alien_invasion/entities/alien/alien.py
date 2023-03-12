@@ -1,3 +1,4 @@
+from copy import deepcopy
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -20,16 +21,15 @@ class Alien(arc.Sprite):
         """
         super().__init__()
         self.config = config
+        self.hp_pools = [s.hp for s in config.states]
         for state in self.config.states:
             self.textures.append(arc.load_texture(
                 file_name=state.texture,
                 flipped_vertically=True,
                 can_cache=True,
-                hit_box_algorithm='Detailed',
+                hit_box_algorithm='Simple',
             ))
         self.set_texture(0)
-
-        self.hp = self.config.states[0].hp
 
         self.center_x = center_xy[0]
         self.center_y = center_xy[1]
@@ -40,6 +40,22 @@ class Alien(arc.Sprite):
         self.alpha = alpha
         self.mutation_callback = mutation_callback
 
+    @property
+    def hp(self) -> int:
+        return self.hp_pools[self.state]
+
+    @hp.setter
+    def hp(self, hp_new: int) -> None:
+        hp_old = self.hp_pools[self.state]
+        self.hp_pools[self.state] = hp_new
+        print(hp_old, '->', hp_new)
+        self.__hp_old = hp_old
+        self.__hp_curr = hp_new
+        if hp_new <= 0:
+            if self.state < len(self.config.states) - 1:
+                self.state += 1
+            else:
+                self.kill()
 
     @property
     def state(self) -> int:

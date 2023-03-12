@@ -86,7 +86,6 @@ class PlayerArea(arc.Section, arc.Scene):
         """Process player-sprite related key press events."""
         # set the paddle direction and movement speed
 
-        print('symbol', symbol)
         if symbol == self.key_left:
             self.starship.moving_left = True
         elif symbol == self.key_right:

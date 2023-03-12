@@ -31,14 +31,16 @@ class AlienArea(arc.Scene):
             name='aliens_types',
             sprite_list=self.aliens_types,
         )
+
         self.spawner = arc.Emitter(
-            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT // 2),
+            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(0.2),
             particle_factory=lambda emitter: Alien(
                 config=config,
-                change_xy= arc.rand_in_circle((0.0, 0.0), 2),
+                change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
             )  # type: ignore
         )
+        self.spawner._particles = arc.SpriteList(use_spatial_hash=True)
         # dont add sprite list to scene since spawner counts it
         # self.add_sprite_list(
         #     name='aliens',
@@ -61,11 +63,6 @@ class AlienArea(arc.Scene):
 
             for alien in collisions:
                 alien.hp -= bullet_damage
-
-                print(alien.hp)
-                if alien.hp < 0:
-                    alien.kill()
-
 
     def draw(self):
         """
