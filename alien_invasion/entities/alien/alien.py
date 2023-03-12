@@ -59,8 +59,8 @@ class Alien(arc.Sprite):
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
                 # center_xy=(self.center_x, self.center_y),
-                change_xy=arc.rand_vec_spread_deg(90, 20, 0.2),
-                lifetime=random.uniform(1.0, 3.0),
+                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4),
+                lifetime=random.uniform(0.4, 1.4),
                 scale=0.3,
                 alpha=200
             ),
@@ -111,10 +111,7 @@ class Alien(arc.Sprite):
         if self.__hit_emitter:
             self.__hit_emitter.center_x = self.center_x
             self.__hit_emitter.center_y = self.center_y
-            self.__hit_emitter.update()
-        if self.__hit_emitter.get_count():
-            print(self.__hit_emitter.get_count(), end=': ')
-            print(self.__hit_emitter._particles[-1].change_x, self.__hit_emitter._particles[-1].change_y)
+        self.__hit_emitter.update()
         super().update()
 
 

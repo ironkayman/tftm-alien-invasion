@@ -35,7 +35,7 @@ class AlienArea(arc.Scene):
 
         self.spawner = arc.Emitter(
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
-            emit_controller=arc.EmitInterval(0.4),
+            emit_controller=arc.EmitInterval(0.6),
             particle_factory=lambda emitter: Alien(
                 config=config,
                 hit_effect_list=self.alien_was_hit_effect_particles,
