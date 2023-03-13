@@ -3,7 +3,8 @@
 
 import arcade as arc
 
-from alien_invasion.utils.loaders.alien import loader
+from alien_invasion.utils.loaders.level import loader as load_levels
+
 from alien_invasion.entities import Alien
 
 from alien_invasion.entities.starship import Starship
@@ -22,8 +23,6 @@ class AlienArea(arc.Scene):
 
         self.starship = starship
 
-        self.aliens_types: arc.SpriteList = arc.SpriteList()
-        self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
         # spritelist for all partcles which should be emitter when
         # any aliens s ht by a bullet, is given to all Alien instances
         # and is modified there internally
@@ -36,17 +35,13 @@ class AlienArea(arc.Scene):
         # so, as a workaround, we draw this spritelist outside of particles
         # or their emitter.
         self.alien_was_hit_effect_particles = arc.SpriteList()
+        # unused
+        self.aliens_bullet_list: arc.SpriteList = arc.SpriteList()
 
-        # TODO: connect with level loader and
-        # specific allowed aliens
-        alien_categories = loader()
-        config = alien_categories[0]
+        self.LEVELS = load_levels()
 
+        config = list(self.LEVELS)[0].waves[0].spawns[0]
 
-        self.add_sprite_list(
-            name='aliens_types',
-            sprite_list=self.aliens_types,
-        )
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns

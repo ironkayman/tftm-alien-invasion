@@ -24,3 +24,17 @@ def loader() -> list[AlienConfig]:
 
         alien_configs.append(AlienConfig(alien_folder))
     return alien_configs
+
+def load_alien_by_name(alien_name: str) -> AlienConfig:
+    """Loads alien config by its service name.
+
+    Returns
+    -------
+    AlienConfig
+        Returns alien's config if alien is found.
+    """
+    alien_folder = CONSTANTS.DIR_ALIENS / alien_name
+    # ignore folders with .skip in its' names
+    if alien_folder.name.endswith('.skip'):
+        raise NotImplementedError('cant skip alien whom required by a specific wave')
+    return AlienConfig(alien_folder)
