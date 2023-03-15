@@ -2,10 +2,11 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+from ..sections import PlayerArea
 
 class PilotOverlay(arc.Scene):
     """Starship's pilot overlay UI components."""
-    def __init__(self, player_area: arc.Scene|arc.Section) -> None:
+    def __init__(self, player_area: PlayerArea) -> None:
         super().__init__()
         self.starship = player_area.starship
 

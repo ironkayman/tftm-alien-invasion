@@ -4,7 +4,6 @@
 import arcade as arc
 
 from alien_invasion.utils.loaders.level import loader as load_levels
-
 from alien_invasion.entities import Alien
 
 from alien_invasion.entities.starship import Starship
@@ -42,6 +41,9 @@ class AlienArea(arc.Scene):
 
         config = list(self.LEVELS)[0].waves[0].spawns[0]
 
+        level = next(self.LEVELS)
+
+        # level.launch(self.starship)
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns

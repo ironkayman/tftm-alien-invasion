@@ -1,7 +1,4 @@
-"""Loadable entites of level structure.
-"""
-
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 
 from alien_invasion.utils.loaders.alien import load_alien_by_name
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -37,21 +34,3 @@ class Wave(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-
-class Level(BaseModel):
-    """Description of a single level consisting of `Wave`s.
-
-    Attributes
-    -----------
-    waves : tuple[Wave]
-        Tuple of level waves.
-    """
-
-    waves: tuple[Wave] = Field(default_factory=object, exclude=True)
-
-    def __init__(self, config: dict) -> None:
-        super().__init__(
-            waves=tuple(map(
-                lambda w: Wave(w), config['waves']
-            )),
-        )

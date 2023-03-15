@@ -4,7 +4,7 @@ from alien_invasion import CONSTANTS
 
 from ..config.file_opener import reader
 
-from .level import Level
+from alien_invasion.views.invasion.scenes import Level
 
 def loader() -> Generator[Level, None, None]:
     """Gets predifined levels in a Generator object.

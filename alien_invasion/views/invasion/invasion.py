@@ -5,11 +5,14 @@ from alien_invasion.settings import KEYMAP
 from .sections import (
     PlayerArea,
 )
+from alien_invasion.utils.loaders.level import loader as load_levels
+
 from .scenes import (
     Background,
-    AlienArea,
+    Level,
     PilotOverlay,
 )
+
 
 class Invasion(arc.View):
     def __init__(self) -> None:
@@ -30,19 +33,23 @@ class Invasion(arc.View):
 
         self.pilot_overlay = PilotOverlay(self.player_area)
 
-        self.alien_area = AlienArea(self.player_area.starship)
+        self.LEVELS = load_levels()
+        try:
+           self.level: Level = next(self.LEVELS)
+        except StopIteration:
+            return
 
         self.section_manager.add_section(self.player_area)
         self.window.set_mouse_visible(False)
 
     def setup(self) -> None:
         """Initialises entities"""
-        self.game_state = CONSTANTS.GAME_STATE.RUNNING
+        self.level.setup(self.player_area.starship)
 
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
-        self.alien_area.draw()
+        self.level.draw()
         self.player_area.draw()
         self.pilot_overlay.draw()
 
@@ -53,6 +60,6 @@ class Invasion(arc.View):
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
-        self.alien_area.on_update(delta_time)
+        self.level.on_update(delta_time)
         self.player_area.on_update(delta_time)
         self.pilot_overlay.on_update(delta_time)
