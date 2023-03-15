@@ -1,6 +1,8 @@
 """Loadable entites of level structure.
 """
 
+from random import randrange
+
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -33,9 +35,10 @@ class Level(arc.Scene):
         """
 
         self.starship = starship
-        wave: Wave = self.waves[self._current_wave]
+        self.__current_wave: Wave = self.waves[self._current_wave]
 
-        config = wave.spawns[0]
+        # select random config
+        self.__current_alien_config = self.__current_wave.spawns[0]
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
@@ -43,7 +46,7 @@ class Level(arc.Scene):
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(0.6),
             particle_factory=lambda emitter: Alien(
-                config=config,
+                config=self.__current_alien_config,
                 hit_effect_list=self.alien_was_hit_effect_particles,
                 change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
             )  # type: ignore
@@ -54,6 +57,9 @@ class Level(arc.Scene):
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
+
+        # select random config
+        self.__current_alien_config = self.__current_wave.spawns[randrange(len(self.__current_wave.spawns))]
 
         # update alien emitter/spawner
         self.spawner.update()
