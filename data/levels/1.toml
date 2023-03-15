@@ -2,7 +2,7 @@ name = "1"
 
 [[waves]]
 # alien types present of a level
-spawns = ['dummy_ufo']
+spawns = ['dummy_ufo', 'castle_wall_sontra']
 # randomly generate enemies but their total health
 # should not get bigger than that number
 total_enemy_health = 400
