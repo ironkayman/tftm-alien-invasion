@@ -27,6 +27,7 @@ class Alien(arc.Sprite):
 
     __hp_old: int
     __hp_curr: int
+    __current_state_index = 0
 
     def __init__(self,
         config: AlienConfig,
@@ -52,7 +53,8 @@ class Alien(arc.Sprite):
                 can_cache=True,
                 hit_box_algorithm='Simple',
             ))
-        self.set_texture(0)
+        # set default first state texture
+        self.texture = self.textures[self.__current_state_index]
 
         # Particle properties
         self.center_x = center_xy[0]
@@ -120,10 +122,10 @@ class Alien(arc.Sprite):
         self.__hp_old = self.__hp_curr
         self.__hp_curr = hp_new
 
-        if hp_new <= 0:
+        if self.__hp_curr <= 0:
             if self.state < len(self.config.states) - 1:
                 self.state += 1
-                hp_new = self.config.states[self.state].hp
+                self.__hp_curr = self.config.states[self.state].hp
 
     @property
     def state(self) -> int:
@@ -139,16 +141,17 @@ class Alien(arc.Sprite):
         int
             Current `State` index/texture index.
         """
-        return self.cur_texture_index
+        return self.__current_state_index
 
     @state.setter
-    def set_state(self, value: int) -> None:
+    def state(self, value: int) -> None:
         """Set current texture index/state.
 
         Since textures and states are almost the same
         - see getter `.state`.
         """
-        self.set_texture(value)
+        self.__current_state_index += value
+        self.texture = self.textures[self.__current_state_index]
 
     def update(self) -> None:
         """Particle's update method.
