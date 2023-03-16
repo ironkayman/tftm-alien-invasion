@@ -195,17 +195,17 @@ class Alien(arc.Sprite):
                 if self.center_x == ship_x:
                     self.change_x = 0
                 elif self.center_x > ship_x:
-                    self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                    self.change_x = -self.__starship.SPEED * delta_time * 0.3
                 elif self.center_x < ship_x:
-                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                    self.change_x = self.__starship.SPEED * delta_time * 0.3
 
             elif AlienMoveset.escaping in movesets:
                 if self.center_x == ship_x:
-                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 2.3
+                    self.change_x = self.__starship.SPEED * delta_time * 2.3
                 elif self.center_x > ship_x:
-                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                    self.change_x = self.__starship.SPEED * delta_time * 0.3
                 elif self.center_x < ship_x:
-                    self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                    self.change_x = -self.__starship.SPEED * delta_time * 0.3
 
         update_health()
         update_movement()
