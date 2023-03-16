@@ -6,6 +6,9 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+from alien_invasion.entities import Starship
+from alien_invasion.utils.loaders.alien.config import AlienMoveset
+
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 class Alien(arc.Sprite):
@@ -32,6 +35,7 @@ class Alien(arc.Sprite):
     def __init__(self,
         config: AlienConfig,
         hit_effect_list: arc.SpriteList,
+        starship: Starship,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
         center_xy: arc.Point = (0.0, 0.0),
@@ -44,6 +48,7 @@ class Alien(arc.Sprite):
         """Crearte instance of alien from given `config`
         """
         super().__init__()
+        self.__starship = starship
         self.config = config
         self.hp_pools = [s.hp for s in config.states]
         for state in self.config.states:
@@ -158,7 +163,7 @@ class Alien(arc.Sprite):
         self.__current_state_index = value
         self.texture = self.textures[self.__current_state_index]
 
-    def update(self) -> None:
+    def on_update(self, delta_time) -> None:
         """Particle's update method.
 
         Updates movement from allowed movesets by current `state`.
@@ -176,6 +181,18 @@ class Alien(arc.Sprite):
             self.__hit_emitter.center_x = self.center_x
             self.__hit_emitter.center_y = self.center_y
         self.__hit_emitter.update()
+
+
+        # configure movement based on state's movesets
+        state = self.config.states[self.__current_state_index]
+        if AlienMoveset.tracking in state.movesets:
+            sx = self.__starship.center_x
+            if self.center_x > sx:
+                self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+            elif self.center_x < sx:
+                self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+
+        # self.change_x, self.change_y = *arc.rand_vec_spread_deg(-90, 12, 2.0),
         super().update()
 
     def can_reap(self) -> bool:

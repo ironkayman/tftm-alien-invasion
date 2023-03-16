@@ -1,15 +1,15 @@
 """Loadable entites of level structure.
 """
 
-from random import randrange
-
 import arcade as arc
 
 from alien_invasion import CONSTANTS
 
 from .wave import Wave
-
+from alien_invasion.entities import Starship
 from alien_invasion.entities import Alien
+
+from .state_aware_emitter import AlienSpawner
 
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s.
@@ -28,7 +28,7 @@ class Level(arc.Scene):
         self.waves = [Wave(w) for w in config['waves']]
         self.alien_was_hit_effect_particles = arc.SpriteList()
 
-    def setup(self, starship) -> None:
+    def setup(self, starship: Starship) -> None:
         """Starts the level.
 
         Iterates through waves, spawning it's aliens and manages time.
@@ -37,12 +37,12 @@ class Level(arc.Scene):
         self.starship = starship
         self.__current_wave: Wave = self.waves[self._current_wave]
 
-        for alien_config in self.__current_wave.spawns:
-            print(alien_config.states)
+        # for alien_config in self.__current_wave.spawns:
+        #     AlienSpawner(alien_config)
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
-        self.spawner = arc.Emitter(
+        self.spawner = AlienSpawner(
             center_xy=(
                 CONSTANTS.DISPLAY.WIDTH // 2,
                 CONSTANTS.DISPLAY.HEIGHT - 20
@@ -56,6 +56,7 @@ class Level(arc.Scene):
                     (CONSTANTS.DISPLAY.WIDTH // 2, 0)
                 ),
                 hit_effect_list=self.alien_was_hit_effect_particles,
+                starship=self.starship,
                 change_xy=arc.rand_vec_spread_deg(-90, 12, 2.0),
             )  # type: ignore
         )
@@ -83,7 +84,7 @@ class Level(arc.Scene):
                     alien.hp -= bullet_damage
 
         # update alien emitter/spawner
-        self.spawner.update()
+        self.spawner.on_update(delta_time)
         process_collisions_damage_aliens()
 
     def draw(self):

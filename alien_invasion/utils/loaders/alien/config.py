@@ -14,12 +14,23 @@ class AlienSize(IntEnum):
 
     small = auto()
     medium = auto()
+    large = auto()
+    colossal = auto()
+    unimaginable = auto()
 
 
 class AlienType(IntEnum):
     """Allowed enemy types"""
 
+    # Tier 1
     corporeal = auto()
+    ancient = auto()
+    # Tier 2
+    possessed = auto()
+    undead = auto()
+    # Tier 3
+    narrativistic = auto()
+    metaphysic = auto()
 
 
 class AlienInfo(BaseModel):
@@ -57,9 +68,20 @@ class AlienInfo(BaseModel):
 
 
 class AlienMoveset(IntEnum):
-    """Allowed movesets for an arbitrary state."""
+    """Allowed movesets for an arbitrary state.
+
+    Attributes
+    ----------
+    spiralling : int
+        Flies across screen (left<->right) in overlapping circles.
+    tracking : int
+        Vaguely follows starship's x-axis and when needed dodges bullets.
+    escaping : int
+        Opposite of `tracking`, tries never to cross x-axis of a starship.
+    """
 
     spiralling = auto()
+    tracking = auto()
     escaping = auto()
 
 

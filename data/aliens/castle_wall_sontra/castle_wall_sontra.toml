@@ -4,8 +4,7 @@
     # small (1 fragment), medium (<4 frg) , large (<9 frg), giant (<13 frg), unimaginable (<43 frg)
     size = 'small'
     # available damage types and states are governed by given types below
-    # type = ['narrific', 'corporeal', 'ancient', 'possessed', 'undead']
-    type = ['corporeal']
+    type = ['narrativistic', 'corporeal', 'ancient', 'possessed', 'undead']
     xp = 800
 
 # [drops]
