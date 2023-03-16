@@ -62,6 +62,7 @@ class Alien(arc.Sprite):
         self.change_x = change_xy[0]
         self.change_y = change_xy[1]
         self.angle = angle
+        self.scale = scale
         self.change_angle = change_angle
         self.alpha = alpha
         self.mutation_callback = mutation_callback

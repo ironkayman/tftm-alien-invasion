@@ -37,19 +37,26 @@ class Level(arc.Scene):
         self.starship = starship
         self.__current_wave: Wave = self.waves[self._current_wave]
 
-        # select random config
-        self.__current_alien_config_store = self.__current_wave.spawns[0]
-        self._current_alien_config = self.__current_wave.spawns[0]
+        for alien_config in self.__current_wave.spawns:
+            print(alien_config.states)
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
         self.spawner = arc.Emitter(
-            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
-            emit_controller=arc.EmitInterval(0.6),
+            center_xy=(
+                CONSTANTS.DISPLAY.WIDTH // 2,
+                CONSTANTS.DISPLAY.HEIGHT - 20
+            ),
+            emit_controller=arc.EmitInterval(0.2),
             particle_factory=lambda emitter: Alien(
-                config=self._current_alien_config,
+                config=self.__current_wave.spawns[0],
+                # relative to emitter's center_xy
+                center_xy=arc.rand_on_line(
+                    (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
+                    (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+                ),
                 hit_effect_list=self.alien_was_hit_effect_particles,
-                change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
+                change_xy=arc.rand_vec_spread_deg(-90, 12, 2.0),
             )  # type: ignore
         )
         # dont add sprite list to scene since spawner counts it
@@ -59,45 +66,25 @@ class Level(arc.Scene):
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
 
-        # select random config
-        # self._current_alien_config = self.__current_wave.spawns[randrange(len(self.__current_wave.spawns))]
+        def process_collisions_damage_aliens():
+            collisions = []
+            # detects cullet collisions
+            # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
+            # changes in being-hit animation
+            for bullet in self.starship.fired_shots:
+                collisions = arc.check_for_collision_with_list(
+                    bullet, self.spawner._particles
+                )
+                if not collisions: continue
+                bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
+                bullet.kill()
+
+                for alien in collisions:
+                    alien.hp -= bullet_damage
 
         # update alien emitter/spawner
         self.spawner.update()
-
-        collisions = []
-        # detects cullet collisions
-        # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
-        # changes in being-hit animation
-        for bullet in self.starship.fired_shots:
-            collisions = arc.check_for_collision_with_list(
-                bullet, self.spawner._particles
-            )
-            if not collisions: continue
-            bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
-            bullet.kill()
-
-            for alien in collisions:
-                alien.hp -= bullet_damage
-
-    @property
-    def _current_alien_config(self):
-        return self.__current_alien_config_store
-
-    @_current_alien_config.setter
-    def _current_alien_config(self, value):
-        self.__current_alien_config_store = value
-        self.spawner = arc.Emitter(
-            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
-            emit_controller=arc.EmitInterval(0.6),
-            particle_factory=lambda emitter: Alien(
-                config=self.__current_alien_config_store,
-                hit_effect_list=self.alien_was_hit_effect_particles,
-                change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
-            )  # type: ignore
-        )
-        print('self.__current_alien_config_store:', self.__current_alien_config_store)
-
+        process_collisions_damage_aliens()
 
     def draw(self):
         """
