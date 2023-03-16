@@ -34,3 +34,6 @@ class AlienSpawner(arc.Emitter):
         particles_to_reap = [p for p in self._particles if cast(Particle, p).can_reap()]
         for dead_particle in particles_to_reap:
             dead_particle.kill()
+
+    def draw(self, pixelated=False):
+        self._particles.draw(pixelated=pixelated)

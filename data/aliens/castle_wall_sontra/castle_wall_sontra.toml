@@ -2,7 +2,7 @@
     name = "Sontra Castle Wall"
     # TODO: fragmentation engine
     # small (1 fragment), medium (<4 frg) , large (<9 frg), giant (<13 frg), unimaginable (<43 frg)
-    size = 'small'
+    size = 'large'
     # available damage types and states are governed by given types below
     type = ['narrativistic', 'corporeal', 'ancient', 'possessed', 'undead']
     xp = 800
@@ -17,7 +17,7 @@
 [state.initial]
     # looks inside resources/sprites, searched after state name
     # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
-    movesets = ['spiralling', 'escaping']
+    movesets = ['tracking']
     hp = 3
     death_damage_cap = false
 
