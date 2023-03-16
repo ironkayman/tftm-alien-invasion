@@ -171,28 +171,44 @@ class Alien(arc.Sprite):
         if self.mutation_callback:
             self.mutation_callback(self)
 
-        movesets = self.config.states[self.cur_texture_index].movesets
+        def update_health() -> None:
+            """Updates health `hp`
+            """
+            # logic for hit-particles emitter continued updates
+            if self.__hp_old > self.__hp_curr:
+                self._restart_hit_effect_emitter()
+                self.__hp_old = self.__hp_curr
+            if self.__hit_emitter:
+                self.__hit_emitter.center_x = self.center_x
+                self.__hit_emitter.center_y = self.center_y
+            self.__hit_emitter.update()
 
-        # logic for hit-particles emitter continued updates
-        if self.__hp_old > self.__hp_curr:
-            self._restart_hit_effect_emitter()
-            self.__hp_old = self.__hp_curr
-        if self.__hit_emitter:
-            self.__hit_emitter.center_x = self.center_x
-            self.__hit_emitter.center_y = self.center_y
-        self.__hit_emitter.update()
+        def update_movement() -> None:
+            """Based on current moveset and ship's pos calculate movement
+            """
+            # configure movement based on state's movesets
+            movesets = self.config.states[self.__current_state_index].movesets
+            ship_x = self.__starship.center_x
 
+            if AlienMoveset.tracking in movesets:
+                # todo add slight drift
+                if self.center_x == ship_x:
+                    self.change_x = 0
+                elif self.center_x > ship_x:
+                    self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                elif self.center_x < ship_x:
+                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
 
-        # configure movement based on state's movesets
-        state = self.config.states[self.__current_state_index]
-        if AlienMoveset.tracking in state.movesets:
-            sx = self.__starship.center_x
-            if self.center_x > sx:
-                self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
-            elif self.center_x < sx:
-                self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+            elif AlienMoveset.escaping in movesets:
+                if self.center_x == ship_x:
+                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 2.3
+                elif self.center_x > ship_x:
+                    self.change_x = self.__starship.loadout.thrusters.velocity * delta_time * 0.3
+                elif self.center_x < ship_x:
+                    self.change_x = -self.__starship.loadout.thrusters.velocity * delta_time * 0.3
 
-        # self.change_x, self.change_y = *arc.rand_vec_spread_deg(-90, 12, 2.0),
+        update_health()
+        update_movement()
         super().update()
 
     def can_reap(self) -> bool:

@@ -17,6 +17,6 @@
     death_damage_cap = false
 
 [state.shattered]
-    movesets = ['spiralling', 'escaping']
+    movesets = ['escaping']
     hp = 1
     death_damage_cap = false

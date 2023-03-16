@@ -9,7 +9,7 @@ from .wave import Wave
 from alien_invasion.entities import Starship
 from alien_invasion.entities import Alien
 
-from .state_aware_emitter import AlienSpawner
+from .spawner import AlienSpawner
 
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s.
@@ -47,7 +47,7 @@ class Level(arc.Scene):
                 CONSTANTS.DISPLAY.WIDTH // 2,
                 CONSTANTS.DISPLAY.HEIGHT - 20
             ),
-            emit_controller=arc.EmitInterval(0.2),
+            emit_controller=arc.EmitInterval(1.2),
             particle_factory=lambda emitter: Alien(
                 config=self.__current_wave.spawns[0],
                 # relative to emitter's center_xy
@@ -57,7 +57,7 @@ class Level(arc.Scene):
                 ),
                 hit_effect_list=self.alien_was_hit_effect_particles,
                 starship=self.starship,
-                change_xy=arc.rand_vec_spread_deg(-90, 12, 2.0),
+                change_xy=arc.rand_vec_spread_deg(-90, 12, 1.0),
             )  # type: ignore
         )
         # dont add sprite list to scene since spawner counts it
