@@ -147,8 +147,6 @@ class AlienConfig:
         Listed alien's states.
     """
 
-    info: AlienInfo
-    states: list[AlienState] = []
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.
@@ -163,7 +161,12 @@ class AlienConfig:
             - If more than a single toml file was found in a folder
             - If error during reading to dict of a config was found
         """
+
+        self.info: AlienInfo
+        self.states: list[AlienState] = []
+
         self._resource_dir = resource_dir
+        print('resource_dir', resource_dir)
         self._config = {}
         self._resources = AlientResources(self._resource_dir, self._config)
         self.info = AlienInfo(self._resources.config['info'])

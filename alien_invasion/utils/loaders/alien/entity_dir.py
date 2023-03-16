@@ -19,9 +19,6 @@ class AlientResources:
 
     IMAGE_FORMAT = 'png'
 
-    config: dict
-    texture_paths: dict[str, Path] = {}
-
     def __init__(self, resource_dir: Path, config: dict) -> None:
         """Prepares director location and build resource config.
 
@@ -32,6 +29,8 @@ class AlientResources:
         config: dict
             External pointer to save finalised annd structured data into.
         """
+        self.texture_paths: dict[str, Path] = {}
+
         self.resource_dir = resource_dir
         self.config = config
         # loads texture_paths, overwrites given self.config

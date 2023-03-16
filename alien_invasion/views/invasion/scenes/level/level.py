@@ -38,7 +38,8 @@ class Level(arc.Scene):
         self.__current_wave: Wave = self.waves[self._current_wave]
 
         # select random config
-        self.__current_alien_config = self.__current_wave.spawns[0]
+        self.__current_alien_config_store = self.__current_wave.spawns[0]
+        self._current_alien_config = self.__current_wave.spawns[0]
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
@@ -46,7 +47,7 @@ class Level(arc.Scene):
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(0.6),
             particle_factory=lambda emitter: Alien(
-                config=self.__current_alien_config,
+                config=self._current_alien_config,
                 hit_effect_list=self.alien_was_hit_effect_particles,
                 change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
             )  # type: ignore
@@ -59,7 +60,7 @@ class Level(arc.Scene):
         """Compute background layer changes."""
 
         # select random config
-        self.__current_alien_config = self.__current_wave.spawns[randrange(len(self.__current_wave.spawns))]
+        # self._current_alien_config = self.__current_wave.spawns[randrange(len(self.__current_wave.spawns))]
 
         # update alien emitter/spawner
         self.spawner.update()
@@ -78,6 +79,25 @@ class Level(arc.Scene):
 
             for alien in collisions:
                 alien.hp -= bullet_damage
+
+    @property
+    def _current_alien_config(self):
+        return self.__current_alien_config_store
+
+    @_current_alien_config.setter
+    def _current_alien_config(self, value):
+        self.__current_alien_config_store = value
+        self.spawner = arc.Emitter(
+            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
+            emit_controller=arc.EmitInterval(0.6),
+            particle_factory=lambda emitter: Alien(
+                config=self.__current_alien_config_store,
+                hit_effect_list=self.alien_was_hit_effect_particles,
+                change_xy= arc.rand_vec_spread_deg(-90, 40, 2.0),
+            )  # type: ignore
+        )
+        print('self.__current_alien_config_store:', self.__current_alien_config_store)
+
 
     def draw(self):
         """

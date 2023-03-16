@@ -150,7 +150,7 @@ class Alien(arc.Sprite):
         Since textures and states are almost the same
         - see getter `.state`.
         """
-        self.__current_state_index += value
+        self.__current_state_index = value
         self.texture = self.textures[self.__current_state_index]
 
     def update(self) -> None:
