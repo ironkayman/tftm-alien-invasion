@@ -126,6 +126,10 @@ class Alien(arc.Sprite):
             if self.state < len(self.config.states) - 1:
                 self.state += 1
                 self.__hp_curr = self.config.states[self.state].hp
+                # since hit emitter fires only at hd difference,
+                # we increase old hp when swtching to a new state,
+                # to bypass new hp being pulled from a new source
+                self.__hp_old = self.__hp_curr + 1
 
     @property
     def state(self) -> int:
