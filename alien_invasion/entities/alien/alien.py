@@ -6,12 +6,12 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+from .mixins import OnUpdateMixin
 from alien_invasion.entities import Starship
-from alien_invasion.utils.loaders.alien.config import AlienMoveset
 
 from alien_invasion.utils.loaders.alien import AlienConfig
 
-class Alien(arc.Sprite):
+class Alien(arc.Sprite, OnUpdateMixin):
     """Alien sprite class.
 
     Manages HP, states, emits hit-effects (from `hit_effect_list`).
@@ -30,7 +30,7 @@ class Alien(arc.Sprite):
 
     __hp_old: int
     __hp_curr: int
-    __current_state_index = 0
+    _current_state_index = 0
 
     def __init__(self,
         config: AlienConfig,
@@ -48,7 +48,7 @@ class Alien(arc.Sprite):
         """Crearte instance of alien from given `config`
         """
         super().__init__()
-        self.__starship = starship
+        self._starship = starship
         self.config = config
         self.hp_pools = [s.hp for s in config.states]
         for state in self.config.states:
@@ -59,7 +59,7 @@ class Alien(arc.Sprite):
                 hit_box_algorithm='Simple',
             ))
         # set default first state texture
-        self.texture = self.textures[self.__current_state_index]
+        self.texture = self.textures[self._current_state_index]
 
         # Particle properties
         self.center_x = center_xy[0]
@@ -151,7 +151,7 @@ class Alien(arc.Sprite):
         int
             Current `State` index/texture index.
         """
-        return self.__current_state_index
+        return self._current_state_index
 
     @state.setter
     def state(self, value: int) -> None:
@@ -160,8 +160,8 @@ class Alien(arc.Sprite):
         Since textures and states are almost the same
         - see getter `.state`.
         """
-        self.__current_state_index = value
-        self.texture = self.textures[self.__current_state_index]
+        self._current_state_index = value
+        self.texture = self.textures[self._current_state_index]
 
     def on_update(self, delta_time) -> None:
         """Particle's update method.
@@ -183,32 +183,8 @@ class Alien(arc.Sprite):
                 self.__hit_emitter.center_y = self.center_y
             self.__hit_emitter.update()
 
-        def update_movement() -> None:
-            """Based on current moveset and ship's pos calculate movement
-            """
-            # configure movement based on state's movesets
-            movesets = self.config.states[self.__current_state_index].movesets
-            ship_x = self.__starship.center_x
-
-            if AlienMoveset.tracking in movesets:
-                # todo add slight drift
-                if self.center_x == ship_x:
-                    self.change_x = 0
-                elif self.center_x > ship_x:
-                    self.change_x = -self.__starship.SPEED * delta_time * 0.3
-                elif self.center_x < ship_x:
-                    self.change_x = self.__starship.SPEED * delta_time * 0.3
-
-            elif AlienMoveset.escaping in movesets:
-                if self.center_x == ship_x:
-                    self.change_x = self.__starship.SPEED * delta_time * 2.3
-                elif self.center_x > ship_x:
-                    self.change_x = self.__starship.SPEED * delta_time * 0.3
-                elif self.center_x < ship_x:
-                    self.change_x = -self.__starship.SPEED * delta_time * 0.3
-
         update_health()
-        update_movement()
+        self._on_update_plot_movement(delta_time)
         super().update()
 
     def can_reap(self) -> bool:
