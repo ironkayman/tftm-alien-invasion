@@ -7,6 +7,8 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 
 from .mixins import OnUpdateMixin
+from alien_invasion.entities.starship.starship import LastDirection
+
 from alien_invasion.entities import Starship
 
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -28,8 +30,8 @@ class Alien(arc.Sprite, OnUpdateMixin):
 
     """
 
-    __hp_old: int
     __hp_curr: int
+    __hp_old: int
     _current_state_index = 0
 
     def __init__(self,
@@ -80,6 +82,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.__hit_effect_list = hit_effect_list
         # create hit-particles emitter
         self.__configure_emitter()
+
+        self.moving_left = False
+        self.moving_right = False
+        self.last_direction = LastDirection.STATIONARY
+        self.last_direction_elapsed: float = 0
 
     def __configure_emitter(self):
         """Creates emitter for particles after being hit.
@@ -162,6 +169,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """
         self._current_state_index = value
         self.texture = self.textures[self._current_state_index]
+
+    @property
+    def SPEED(self) -> int:
+        """Alien's Speed derived from current state's property"""
+        return self.config.states[self.state].speed
 
     def on_update(self, delta_time) -> None:
         """Particle's update method.

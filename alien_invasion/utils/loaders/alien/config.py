@@ -108,6 +108,7 @@ class AlienState(BaseModel):
 
     name: str
     movesets: set[AlienMoveset]
+    speed: int
     hp: int
     death_damage_cap: bool
     texture: Path
@@ -148,6 +149,7 @@ class AlienState(BaseModel):
         super().__init__(
             name=state_name,
             movesets=core_props['movesets'],
+            speed=core_props['speed'],
             hp=core_props['hp'],
             death_damage_cap=core_props['death_damage_cap'],
             texture=texture_props
