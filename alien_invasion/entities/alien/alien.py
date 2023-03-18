@@ -82,11 +82,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.__hit_effect_list = hit_effect_list
         # create hit-particles emitter
         self.__configure_emitter()
+        self._spacial_danger_ranges: arc.SpriteList = self._starship.fired_shots
+        self.dodging = False
+        self._timer_track = 0.0
+        self._timer_dodge = 0.0
 
-        self.moving_left = False
-        self.moving_right = False
-        self.last_direction = LastDirection.STATIONARY
-        self.last_direction_elapsed: float = 0
 
     def __configure_emitter(self):
         """Creates emitter for particles after being hit.
@@ -195,6 +195,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
                 self.__hit_emitter.center_y = self.center_y
             self.__hit_emitter.update()
 
+        self._on_update_evade_bullets(delta_time)
         update_health()
         self._on_update_plot_movement(delta_time)
         super().update()
