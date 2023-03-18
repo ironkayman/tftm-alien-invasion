@@ -195,9 +195,9 @@ class Alien(arc.Sprite, OnUpdateMixin):
                 self.__hit_emitter.center_y = self.center_y
             self.__hit_emitter.update()
 
-        self._on_update_evade_bullets(delta_time)
         update_health()
         self._on_update_plot_movement(delta_time)
+        self._on_update_evade_bullets(delta_time)
         super().update()
 
     def can_reap(self) -> bool:

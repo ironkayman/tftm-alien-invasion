@@ -35,7 +35,10 @@ def on_update_evade_bullets(self, delta_time) -> None:
             # the bullet passed more of left side -> dodge to the right
             if (self.center_x - b.center_x) < 0:
                 self.change_x *= -1
+        else:
+            self.dodging = False
+            self._timer_dodge = 0
     # dodge timer reset proportianally to proximity to a bullet
-    if self._timer_dodge > cl[1] / 800:
+    if self.dodging and self._timer_dodge > cl[1] / 800:
         self._timer_dodge = 0
         self.dodging = False

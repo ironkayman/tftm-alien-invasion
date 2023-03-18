@@ -20,15 +20,15 @@ def on_update_plot_movement(self, delta_time) -> None:
 
     if AlienMoveset.tracking in movesets:
         if not self.dodging:
-            self._timer_track += delta_time
-            if math.fabs(self.center_x - ship_x) < self._starship.width:
+            if math.fabs(self.center_x - ship_x) < self._starship.width / 2:
                 self.change_x = 0
-            elif self.center_x > ship_x and self._timer_track > 0.3:
+            elif self.center_x > ship_x:
                 self._timer_track = 0
                 self.change_x = -self.SPEED * delta_time
-            elif self.center_x < ship_x and (self._timer_track > 0.3):
+            elif self.center_x < ship_x:
                 self._timer_track = 0
                 self.change_x = self.SPEED * delta_time
+            self._timer_track += delta_time
         else:
             self._timer_dodge += delta_time
 
