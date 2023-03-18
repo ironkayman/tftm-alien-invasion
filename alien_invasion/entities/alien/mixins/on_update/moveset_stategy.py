@@ -1,4 +1,5 @@
 from typing import cast
+import math
 
 import arcade as arc
 
@@ -20,8 +21,8 @@ def on_update_plot_movement(self, delta_time) -> None:
     if AlienMoveset.tracking in movesets:
         if not self.dodging:
             self._timer_track += delta_time
-            if self.center_x == ship_x:
-                pass
+            if math.fabs(self.center_x - ship_x) < self._starship.width:
+                self.change_x = 0
             elif self.center_x > ship_x and self._timer_track > 0.3:
                 self._timer_track = 0
                 self.change_x = -self.SPEED * delta_time
