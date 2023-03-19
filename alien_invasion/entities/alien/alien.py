@@ -83,6 +83,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         hit_effect_list: arc.SpriteList,
         starship: Starship,
         alien_bullets: arc.SpriteList,
+        parent_sprite_list: arc.SpriteList,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
         center_xy: arc.Point = (0.0, 0.0),
@@ -95,7 +96,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """Crearte instance of alien from given `config`
         """
         super().__init__()
-
+        self._aliens = parent_sprite_list
         self.timeouts = Alien.Timeouts(
             primary=1000,
         )

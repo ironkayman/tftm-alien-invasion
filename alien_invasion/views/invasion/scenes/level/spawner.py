@@ -2,6 +2,8 @@
 """
 
 from typing import cast
+from functools import partial
+
 
 import arcade as arc
 from arcade import Particle
@@ -15,7 +17,12 @@ class AlienSpawner(arc.Emitter):
         self,
         **emitter_kwargs,
     ) -> None:
-        return super().__init__(**emitter_kwargs)
+        super().__init__(**emitter_kwargs)
+        # makes it possible to pass parent sprite list
+        self.particle_factory = partial(
+            self.particle_factory,
+            parent_sprite_list=self._particles
+        )
 
     def on_update(self, delta_time):
         """Impliments on_update method on par with standard .update
