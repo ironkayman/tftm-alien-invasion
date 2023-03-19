@@ -7,6 +7,7 @@ This includes:
 """
 
 from dataclasses import dataclass
+from random import random
 
 import arcade as arc
 
@@ -42,6 +43,11 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
     loadout: StarshipLoadout
 
+    _hp_curr: int
+    _hp_old: int
+    _current_state_index = 0
+    _can_reap: bool = False
+
     @dataclass(slots=True, kw_only=True)
     class Timeouts:
         primary: float
@@ -60,12 +66,30 @@ class Starship(arc.Sprite, OnUpdateMixin):
             Description of an area at which
             ship is allowed to move.
         """
-        img = CONSTANTS.DIR_IMAGES / 'player_60x48.png'
-        super().__init__(img, hit_box_algorithm='Simple',)
+        super().__init__()
 
         # workaround for cycling imports
         from alien_invasion.settings import STARSHIP
         self.loadout = STARSHIP
+
+        self.states = [
+            {
+                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.png',
+                'hp': sum([item.armor for item in self.loadout.hull.armor])
+            },
+            {
+                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.danger.png',
+                'hp': 1
+            }
+        ]
+        for state in self.states:
+            self.textures.append(arc.load_texture(
+                file_name=state['texture'],
+                can_cache=True,
+            ))
+        # set default first state texture
+        self.texture = self.textures[self._current_state_index]
+        self._hp_curr = self.states[self._current_state_index]['hp']
 
         self.timeouts = Starship.Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
@@ -121,3 +145,56 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
+
+    @property
+    def state(self) -> int:
+        """Gets starship's current `state`
+
+        Its a wrapper around current texture.
+        Since textures are paired with state by Alien architecture
+        and multiplicity of textures is `arc.Sprite` requires a selection of one,
+        consider index of selected texture as a current state index.
+
+        Returns
+        -------
+        int
+            Current `State` index/texture index.
+        """
+        return self._current_state_index
+
+    @state.setter
+    def state(self, value: int) -> None:
+        """Set current texture index/state.
+
+        Since textures and states are almost the same
+        - see getter `.state`.
+        """
+        self._current_state_index = value
+        self.texture = self.textures[self._current_state_index]
+
+    @property
+    def hp(self) -> int:
+        """Getter for HP"""
+        return self._hp_curr
+
+    @hp.setter
+    def hp(self, hp_new: int) -> None:
+        """Setter and manager for alien's HP considering current `state`.
+        """
+        self._hp_old = self._hp_curr
+        self._hp_curr = hp_new
+
+        if self._hp_curr <= 0:
+            if self.state < len(self.states) - 1:
+                self.state += 1
+                self._hp_curr = self.states[self.state]['hp']
+            else:
+                if (chance := random()) > 0.22:
+                    self._hp_curr = self.states[self.state]['hp']
+                else:
+                    self._can_reap = True
+                print('chance:', chance)
+            self._hp_old = self._hp_curr
+
+    def can_reap(self) -> bool:
+        return self._can_reap

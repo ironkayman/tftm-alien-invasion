@@ -100,6 +100,9 @@ class Level(arc.Scene):
             if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
                 bullet.remove_from_sprite_lists()
 
+        if self.starship.can_reap():
+            print('game over')
+
     def draw(self):
         """
         Render background section.
