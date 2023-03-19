@@ -23,14 +23,14 @@ def on_update_plot_movement(self, delta_time) -> None:
             if math.fabs(self.center_x - ship_x) < self._starship.width / 2:
                 self.change_x = 0
             elif self.center_x > ship_x:
-                self._timer_track = 0
+                self._timers.reset_track()
                 self.change_x = -self.SPEED * delta_time
             elif self.center_x < ship_x:
-                self._timer_track = 0
+                self._timers.reset_track()
                 self.change_x = self.SPEED * delta_time
-            self._timer_track += delta_time
+            self._timers.track += delta_time
         else:
-            self._timer_dodge += delta_time
+            self._timers.dodge += delta_time
 
 
     elif AlienMoveset.escaping in movesets:

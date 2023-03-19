@@ -2,6 +2,8 @@
 """
 
 import random
+from dataclasses import dataclass
+
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -34,6 +36,48 @@ class Alien(arc.Sprite, OnUpdateMixin):
     __hp_old: int
     _current_state_index = 0
 
+    @dataclass(slots=True, kw_only=True)
+    class Timeouts:
+        """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+
+        Attributes
+        ----------
+        primary : float
+            Primary weapon firing timeout.
+        """
+
+        primary: float
+
+
+    @dataclass(slots=True)
+    class Timers:
+        """Alien object timers increased by `delta_times` in `on_update` methods
+
+        Attributes
+        ----------
+        primary : float
+            Timer for primary weapon.
+        dodge : float
+            Time elapsed during execution of last move during dodging.
+        track : float
+            Timer couting the time passed after
+            last movement change in during tracking moveset.
+        """
+
+        primary: float = 0.0
+        dodge: float = 0.0
+        track: float = 0.0
+
+        def reset_primary(self) -> None:
+            self.primary = 0
+
+        def reset_dodge(self) -> None:
+            self.dodge = 0
+
+        def reset_track(self) -> None:
+            self.track = 0
+
+
     def __init__(self,
         config: AlienConfig,
         hit_effect_list: arc.SpriteList,
@@ -51,9 +95,16 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """Crearte instance of alien from given `config`
         """
         super().__init__()
+
+        self.timeouts = Alien.Timeouts(
+            primary=1000,
+        )
+        self._timers = Alien.Timers()
+
         self._starship = starship
         self.config = config
         self.hp_pools = [s.hp for s in config.states]
+
         for state in self.config.states:
             self.textures.append(arc.load_texture(
                 file_name=state.texture,
@@ -85,11 +136,8 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.__configure_emitter()
         self._spacial_danger_ranges: arc.SpriteList = self._starship.fired_shots
         self.dodging = False
-        self._timer_track = 0.0
-        self._timer_dodge = 0.0
 
         self.fired_shots = alien_bullets
-        self._timer_firing = 0.0
 
 
     def __configure_emitter(self):

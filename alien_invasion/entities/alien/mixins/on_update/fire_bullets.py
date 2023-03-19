@@ -17,11 +17,10 @@ def on_update_fire_bullets(self, delta_time: float) -> None:
 
     if AlienMoveset.tracking not in movesets: return
 
-    self._timer_firing += delta_time
-    timeout_corrected = 1000
+    self._timers.primary += delta_time
 
     if (
-        self._timer_firing > timeout_corrected / 1000
+        self._timers.primary > self.timeouts.primary / 1000
     ):
         self._fire(delta_time)
-        self._timer_firing = 0
+        self._timers.reset_primary()

@@ -27,7 +27,7 @@ def on_update_evade_bullets(self, delta_time) -> None:
             # if aggressive moveset present and dodge is active
             # stop dodging by chance not in favour of time past dodging
             if AlienMoveset.tracking in movesets and self.dodging:
-                if random() < self._timer_dodge * 0.1 * cl[1]:
+                if random() < self._timers.dodge * 0.1 * cl[1]:
                     self.dodging = False
                     break
             self.dodging = True
@@ -37,8 +37,8 @@ def on_update_evade_bullets(self, delta_time) -> None:
                 self.change_x *= -1
         else:
             self.dodging = False
-            self._timer_dodge = 0
+            self._timers.reset_dodge()
     # dodge timer reset proportianally to proximity to a bullet
-    if self.dodging and self._timer_dodge > cl[1] / 800:
-        self._timer_dodge = 0
+    if self.dodging and self._timers.dodge > cl[1] / 800:
+        self._timers.reset_dodge()
         self.dodging = False
