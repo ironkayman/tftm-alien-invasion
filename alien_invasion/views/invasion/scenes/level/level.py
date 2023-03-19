@@ -43,29 +43,53 @@ class Level(arc.Scene):
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
-        self.spawner = AlienSpawner(
-            center_xy=(
-                CONSTANTS.DISPLAY.WIDTH // 2,
-                CONSTANTS.DISPLAY.HEIGHT - 20
-            ),
-            emit_controller=arc.EmitInterval(1.2),
-            particle_factory=lambda emitter, parent_sprite_list: Alien(
-                config=self.__current_wave.spawns[0],
-                # relative to emitter's center_xy
-                center_xy=arc.rand_on_line(
-                    (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
-                    (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+        self.spawners = [
+            AlienSpawner(
+                center_xy=(
+                    CONSTANTS.DISPLAY.WIDTH // 2,
+                    CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                hit_effect_list=self.alien_was_hit_effect_particles,
-                starship=self.starship,
-                alien_bullets=self.alien_bullets,
-                change_xy=arc.rand_vec_spread_deg(-90, 12, 1.0),
-                parent_sprite_list=parent_sprite_list,
-            )  # type: ignore
-        )
+                emit_controller=arc.EmitInterval(2.0),
+                particle_factory=lambda emitter, parent_sprite_list: Alien(
+                    config=self.__current_wave.spawns[0],
+                    # relative to emitter's center_xy
+                    center_xy=arc.rand_on_line(
+                        (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
+                        (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+                    ),
+                    hit_effect_list=self.alien_was_hit_effect_particles,
+                    starship=self.starship,
+                    alien_bullets=self.alien_bullets,
+                    change_xy=arc.rand_vec_spread_deg(-90, 12, 1.0),
+                    parent_sprite_list=parent_sprite_list,
+                )  # type: ignore
+            ),
+            AlienSpawner(
+                center_xy=(
+                    CONSTANTS.DISPLAY.WIDTH // 2,
+                    CONSTANTS.DISPLAY.HEIGHT - 20
+                ),
+                emit_controller=arc.EmitInterval(4.0),
+                particle_factory=lambda emitter, parent_sprite_list: Alien(
+                    config=self.__current_wave.spawns[1],
+                    # relative to emitter's center_xy
+                    center_xy=arc.rand_on_line(
+                        (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
+                        (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+                    ),
+                    hit_effect_list=self.alien_was_hit_effect_particles,
+                    starship=self.starship,
+                    alien_bullets=self.alien_bullets,
+                    change_xy=arc.rand_vec_spread_deg(-90, 12, 0.6),
+                    parent_sprite_list=parent_sprite_list,
+                    scale=3.0,
+                    angle=arc.rand_angle_360_deg(),
+                )  # type: ignore
+            ),
+        ]
         # dont add sprite list to scene since spawner counts it
         # but cant track it so we create only a pointer namespace
-        self.aliens = self.spawner._particles
+        # self.aliens = self.spawner._particles
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
@@ -76,8 +100,8 @@ class Level(arc.Scene):
             # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
             # changes in being-hit animation
             for bullet in self.starship.fired_shots:
-                collisions = arc.check_for_collision_with_list(
-                    bullet, self.spawner._particles
+                collisions = arc.check_for_collision_with_lists(
+                    bullet, [self.spawners[0]._particles, self.spawners[1]._particles]
                 )
                 if not collisions: continue
                 bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
@@ -87,7 +111,8 @@ class Level(arc.Scene):
                     alien.hp -= bullet_damage
 
         # update alien emitter/spawner
-        self.spawner.on_update(delta_time)
+        self.spawners[0].on_update(delta_time)
+        self.spawners[1].on_update(delta_time)
         process_collisions_damage_aliens()
         self.alien_bullets.update()
 
@@ -108,7 +133,8 @@ class Level(arc.Scene):
         """
         Render background section.
         """
-        self.spawner.draw()
+        self.spawners[0].draw()
+        self.spawners[1].draw()
         # Externally (outside of particles and emitter) draw hit effect sprites
         self.alien_was_hit_effect_particles.draw()
         self.alien_bullets.draw()

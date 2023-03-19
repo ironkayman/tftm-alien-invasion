@@ -97,10 +97,6 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """
         super().__init__()
         self._aliens = parent_sprite_list
-        self.timeouts = Alien.Timeouts(
-            primary=1000,
-        )
-        self._timers = Alien.Timers()
 
         self._starship = starship
         self.config = config
@@ -139,6 +135,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.dodging = False
 
         self.fired_shots = alien_bullets
+
+        self.timeouts = Alien.Timeouts(
+            primary=self.SPEED * self.scale**2 * 10,
+        )
+        self._timers = Alien.Timers()
 
 
     def __configure_emitter(self):
@@ -283,7 +284,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png", flipped_vertically=True, scale=0.5)
+        bullet = arc.Sprite(
+            ":resources:images/space_shooter/laserRed01.png",
+            flipped_vertically=True,
+            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale),
+        )
         bullet.change_y = -self.SPEED * delta_time * 4
 
         # Position the bullet
