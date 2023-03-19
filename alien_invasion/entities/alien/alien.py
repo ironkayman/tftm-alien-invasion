@@ -38,6 +38,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         config: AlienConfig,
         hit_effect_list: arc.SpriteList,
         starship: Starship,
+        alien_bullets: arc.SpriteList,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
         center_xy: arc.Point = (0.0, 0.0),
@@ -86,6 +87,9 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.dodging = False
         self._timer_track = 0.0
         self._timer_dodge = 0.0
+
+        self.fired_shots = alien_bullets
+        self._timer_firing = 0.0
 
 
     def __configure_emitter(self):
@@ -198,6 +202,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         update_health()
         self._on_update_plot_movement(delta_time)
         self._on_update_evade_bullets(delta_time)
+        self._on_update_fire_bullets(delta_time)
         super().update()
 
     def can_reap(self) -> bool:
@@ -222,3 +227,19 @@ class Alien(arc.Sprite, OnUpdateMixin):
             (self.__hp_curr <= 0 and self.state == len(self.config.states) - 1),
             self.top < 0,
         ))
+
+    def _fire(self, delta_time: float) -> None:
+        """Creates a bullet sets its position
+        and moves it inside passed `self.fired_shots`.
+        """
+        # consider shooting functionalities of Starship
+        # moving inside separate class as with Transmission
+        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png", flipped_vertically=True, scale=0.5)
+        bullet.change_y = -self.SPEED * delta_time * 4
+
+        # Position the bullet
+        bullet.center_x = self.center_x
+        bullet.bottom = self.bottom - 20
+
+        # Add the bullet to the appropriate lists
+        self.fired_shots.append(bullet)
