@@ -101,7 +101,7 @@ class Level(arc.Scene):
                 bullet.remove_from_sprite_lists()
 
         if self.starship.can_reap():
-            print('game over')
+            pass
 
     def draw(self):
         """
