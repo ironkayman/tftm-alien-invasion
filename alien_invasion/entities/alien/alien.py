@@ -116,7 +116,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.center_x = center_xy[0]
         self.center_y = center_xy[1]
         self.change_x = change_xy[0]
-        self.change_y = change_xy[1]
+        self.change_y = self.SPEED * -0.01
         self.angle = angle
         self.scale = scale
         self.change_angle = change_angle

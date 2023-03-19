@@ -113,6 +113,15 @@ class Level(arc.Scene):
         # update alien emitter/spawner
         self.spawners[0].on_update(delta_time)
         self.spawners[1].on_update(delta_time)
+
+        # ship's bullets can clear out aliens' bullets
+        for bullet in self.starship.fired_shots:
+            collisions = arc.check_for_collision_with_list(
+                bullet, self.alien_bullets
+            )
+            for c in collisions:
+                c.kill()
+
         process_collisions_damage_aliens()
         self.alien_bullets.update()
 
