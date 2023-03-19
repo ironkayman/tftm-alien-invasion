@@ -49,12 +49,14 @@ class PlayerArea(arc.Section, arc.Scene):
         # also up, left wont register righ, right up  wond register left
         self.key_fire_primary: int = key_fire_primary
 
-        self.starship_bullets: arc.SpriteList = arc.SpriteList()
+        self.starship_bullets = arc.SpriteList()
+        self.alien_bullets = arc.SpriteList()
 
         # the player ship
         self.starship = Starship(
             fired_shots=self.starship_bullets,
-            area_coords=[self.left, self.right, width, height]
+            area_coords=[self.left, self.right, width, height],
+            alien_shots=self.alien_bullets,
         )
         self.starship.center_x = self.window.width / 2
         self.starship.center_y = self.starship.height
@@ -63,19 +65,10 @@ class PlayerArea(arc.Section, arc.Scene):
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
 
-        def purge_bullets_left_screen_area() -> None:
-            """Processes bullets"""
-            # remove all out of window player bullets
-            for player_bullet in self.starship_bullets:
-                if player_bullet.bottom > self.window.height:
-                    player_bullet.remove_from_sprite_lists()
-
         # player update func considers its movement states
         # which were potentially changed
         self.starship.on_update(delta_time)
         self.starship_bullets.update()
-
-        purge_bullets_left_screen_area()
 
     def draw(self) -> None:
         """Redraws its sprites"""
@@ -92,8 +85,6 @@ class PlayerArea(arc.Section, arc.Scene):
             self.starship.moving_right = True
         elif symbol == self.key_fire_primary:
             self.starship.firing_primary = True
-        elif symbol == arc.key.B:
-            breakpoint()
 
     def on_key_release(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key release events."""

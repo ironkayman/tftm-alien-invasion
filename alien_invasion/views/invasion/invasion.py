@@ -44,6 +44,8 @@ class Invasion(arc.View):
 
     def setup(self) -> None:
         """Initialises entities"""
+        # move passing of bullet lists outside of starship
+        # for more transparency
         self.level.setup(self.player_area.starship)
 
     def on_draw(self) -> None:

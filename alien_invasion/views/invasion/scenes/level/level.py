@@ -27,7 +27,6 @@ class Level(arc.Scene):
         super().__init__()
         self.waves = [Wave(w) for w in config['waves']]
         self.alien_was_hit_effect_particles = arc.SpriteList()
-        self.alien_bullets = arc.SpriteList()
 
     def setup(self, starship: Starship) -> None:
         """Starts the level.
@@ -37,6 +36,7 @@ class Level(arc.Scene):
 
         self.starship = starship
         self.__current_wave: Wave = self.waves[self._current_wave]
+        self.alien_bullets = starship.alien_shots
 
         # for alien_config in self.__current_wave.spawns:
         #     AlienSpawner(alien_config)
@@ -89,6 +89,16 @@ class Level(arc.Scene):
         self.spawner.on_update(delta_time)
         process_collisions_damage_aliens()
         self.alien_bullets.update()
+
+        # remove all out of window player bullets
+        for bullet in self.alien_bullets:
+            if bullet.top < 0:
+                bullet.remove_from_sprite_lists()
+
+        # remove all out of window player bullets
+        for bullet in self.starship.fired_shots:
+            if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
+                bullet.remove_from_sprite_lists()
 
     def draw(self):
         """

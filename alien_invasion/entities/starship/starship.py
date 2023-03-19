@@ -17,6 +17,9 @@ from .types import TMovementArea
 from .mixins import OnUpdateMixin
 from .transmission import Transmission
 
+from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+
+
 class Starship(arc.Sprite, OnUpdateMixin):
     """ViewModel Starship entity.
     
@@ -30,6 +33,15 @@ class Starship(arc.Sprite, OnUpdateMixin):
     which in our case is View/Section.
     """
 
+    moving_left = False
+    moving_right = False
+    last_direction = LastDirection.STATIONARY
+    free_falling = False
+
+    firing_primary = False
+
+    loadout: StarshipLoadout
+
     @dataclass(slots=True, kw_only=True)
     class Timeouts:
         primary: float
@@ -37,7 +49,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         engine: int = 1
 
 
-    def __init__(self, fired_shots: arc.SpriteList, area_coords: list):
+    def __init__(self, fired_shots: arc.SpriteList, area_coords: list, alien_shots: arc.SpriteList,):
         """Creates Starship instance.
 
         Parameters
@@ -49,12 +61,11 @@ class Starship(arc.Sprite, OnUpdateMixin):
             ship is allowed to move.
         """
         img = CONSTANTS.DIR_IMAGES / 'player_60x48.png'
-        super().__init__(img)
+        super().__init__(img, hit_box_algorithm='Simple',)
 
         # workaround for cycling imports
         from alien_invasion.settings import STARSHIP
-        from alien_invasion.utils.loaders.config.starship import StarshipLoadout
-        self.loadout: StarshipLoadout = STARSHIP
+        self.loadout = STARSHIP
 
         self.timeouts = Starship.Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
@@ -65,12 +76,6 @@ class Starship(arc.Sprite, OnUpdateMixin):
         self.transmission = Transmission(self) # <- movement_borders
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
-        self.moving_left = False
-        self.moving_right = False
-        self.last_direction = LastDirection.STATIONARY
-        self.free_falling = False
-        
-        self.firing_primary = False
 
         self.fired_shots: arc.SpriteList = fired_shots
 
@@ -78,6 +83,8 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
         self.reactivated_since_free_fall = False
         self.free_fall_timer = 0
+
+        self.alien_shots = alien_shots
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
@@ -92,12 +99,14 @@ class Starship(arc.Sprite, OnUpdateMixin):
         if self.free_falling:
             self.free_fall_timer += delta_time
 
+        self._on_update_manage_health(delta_time)
+
         # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
         super().update()
 
     def _fire_primary(self, delta_time: float) -> None:
         """Fire bullets guns blazing logic.
-        
+
         Creates a bullet sets its position
         and moves it inside passed `self.fired_shots`.
         """

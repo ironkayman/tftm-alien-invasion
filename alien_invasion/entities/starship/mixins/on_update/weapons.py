@@ -1,12 +1,18 @@
+from typing import cast
+
+from alien_invasion import CONSTANTS
+
 def on_update_firing(
     self,
     delta_time: float,
     frame_energy_change: float
 ):
     """Check for firing button pressed.
-    
+
     Fire if enought energy, rapid fire condiition and weapon timeout.
     """
+    # from ...starship import Starship
+    # self = cast(self, Starship)
 
     full_motion = all((self.moving_left, self.moving_right))
     self.loadout.weaponry.primary._timer += delta_time
