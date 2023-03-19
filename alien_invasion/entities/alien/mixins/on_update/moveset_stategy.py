@@ -1,3 +1,4 @@
+from random import random
 from typing import cast
 import math
 
@@ -31,7 +32,7 @@ def on_update_plot_movement(self, delta_time) -> None:
 
     if AlienMoveset.tracking in movesets:
         if not self.dodging:
-            if math.fabs(self.center_x - ship_x) < self._starship.width / 2:
+            if math.fabs(self.center_x - ship_x) < self._starship.width / 3.3: # 2 allow not to be hit
                 self.change_x = 0
             elif self.center_x > ship_x:
                 self._timers.reset_track()
