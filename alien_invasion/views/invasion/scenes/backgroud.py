@@ -53,25 +53,25 @@ class Background(arc.Scene):
 
         self.backgrounds = arc.SpriteList()
 
-        def create_layer_microcomets() -> None:
+        def create_layer_microcomets() -> arc.Emitter:
             """Create layers of rare but fast moving objects."""
             return arc.Emitter(
                 center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
                 emit_controller=arc.EmitInterval(0.75),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
-                    change_xy=(0.0, -45.0),
+                    change_xy=(0.0, -16.0),
                     lifetime=5,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, CONSTANTS.DISPLAY.HEIGHT)
+                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.1,
-                    alpha=35
+                    alpha=40
                 )
             )
 
-        def create_layer_stardust_primary() -> None:
+        def create_layer_stardust_primary() -> arc.Emitter:
             """Creates relatively faster moving particle background.
 
             Create primary moving layer above
@@ -79,21 +79,21 @@ class Background(arc.Scene):
             """
             return arc.Emitter(
                 center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
-                emit_controller=arc.EmitInterval(7.5),
+                emit_controller=arc.EmitInterval(0.9),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -0.2),
+                    change_xy=(0.0, -1.5),
                     lifetime=180,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, CONSTANTS.DISPLAY.HEIGHT)
+                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.04,
-                    alpha=100
+                    alpha=60,
                 )
             )
 
-        def create_layer_stardust_secondary() -> None:
+        def create_layer_stardust_secondary() -> arc.Emitter:
             """Creates slower moving particle background.
 
             Create secondary and more slow layer above
@@ -101,17 +101,17 @@ class Background(arc.Scene):
             """
             return arc.Emitter(
                 center_xy=(0, CONSTANTS.DISPLAY.HEIGHT),
-                emit_controller=arc.EmitInterval(5.5),
+                emit_controller=arc.EmitInterval(0.6),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -0.12),
+                    change_xy=(0.0, -1.0),
                     lifetime=240,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, CONSTANTS.DISPLAY.HEIGHT)
+                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.04,
-                    alpha=60
+                    alpha=30
                 )
             )
 
@@ -120,15 +120,15 @@ class Background(arc.Scene):
                 CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
             )
             sprites: list[arc.Sprite] = [
-                BackgroundImage(texture=bg_pair[0], scale=3),
-                BackgroundImage(texture=bg_pair[1], scale=3),
+                BackgroundImage(texture=bg_pair[0], scale=1.2),
+                BackgroundImage(texture=bg_pair[1], scale=1.2),
             ]
 
             self.backgrounds.extend(sprites)
-            self.backgrounds.alpha = 110
+            self.backgrounds.alpha = 80
 
             # velocity
-            self.backgrounds[0].change_y = -0.05
+            self.backgrounds[0].change_y = -0.6
             self.backgrounds[1].change_y = self.backgrounds[0].change_y
 
             # position 1 above 0 for the first update_l1 iteration loop
