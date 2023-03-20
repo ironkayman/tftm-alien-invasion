@@ -49,7 +49,7 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                emit_controller=arc.EmitInterval(2.0),
+                emit_controller=arc.EmitInterval(1.0),
                 particle_factory=lambda emitter, parent_sprite_list: Alien(
                     config=self.__current_wave.spawns[0],
                     # relative to emitter's center_xy
@@ -69,7 +69,7 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                emit_controller=arc.EmitInterval(4.0),
+                emit_controller=arc.EmitInterval(3.0),
                 particle_factory=lambda emitter, parent_sprite_list: Alien(
                     config=self.__current_wave.spawns[1],
                     # relative to emitter's center_xy
@@ -82,14 +82,14 @@ class Level(arc.Scene):
                     alien_bullets=self.alien_bullets,
                     change_xy=arc.rand_vec_spread_deg(-90, 12, 0.6),
                     parent_sprite_list=parent_sprite_list,
-                    scale=3.0,
+                    scale=2.0,
                     angle=arc.rand_angle_360_deg(),
                 )  # type: ignore
             ),
         ]
         # dont add sprite list to scene since spawner counts it
         # but cant track it so we create only a pointer namespace
-        # self.aliens = self.spawner._particles
+        # self.aliens = self.spawners[0]._particles, self.spawners[1]._particles
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
@@ -120,7 +120,7 @@ class Level(arc.Scene):
                 bullet, self.alien_bullets
             )
             for c in collisions:
-                c.kill()
+                c.remove_from_sprite_lists()
 
         process_collisions_damage_aliens()
         self.alien_bullets.update()
@@ -134,6 +134,18 @@ class Level(arc.Scene):
         for bullet in self.starship.fired_shots:
             if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
                 bullet.remove_from_sprite_lists()
+
+        # process collisions between starship and aliens
+        if (collisions := arc.check_for_collision_with_lists(
+            self.starship,
+            [
+                self.spawners[0]._particles,
+                self.spawners[1]._particles,
+            ]
+        )):
+            for c in collisions:
+                c.remove_from_sprite_lists()
+                self.starship.hp -= round(self.starship.hp * 0.2)
 
         if self.starship.can_reap():
             pass

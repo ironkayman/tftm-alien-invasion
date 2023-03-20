@@ -109,6 +109,16 @@ class Starship(arc.Sprite, OnUpdateMixin):
         self.free_fall_timer = 0
 
         self.alien_shots = alien_shots
+        self.set_hit_box(
+            (
+                (-2, 5),
+                (2, 5),
+                (5, 0),
+                (2, -5),
+                (-2, -5),
+                (-5, 0),
+            )
+        )
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""

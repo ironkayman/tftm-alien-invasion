@@ -20,5 +20,5 @@ def on_update_manage_healh(
     # create from these values total health
     collisions = arc.check_for_collision_with_list(self, self.alien_shots)
     for collision in collisions:
-        self.hp -= 1
+        self.hp -= 9
         collision.remove_from_sprite_lists()
