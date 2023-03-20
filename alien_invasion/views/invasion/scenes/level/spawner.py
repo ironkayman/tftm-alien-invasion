@@ -43,4 +43,4 @@ class AlienSpawner(arc.Emitter):
             dead_particle.kill()
 
     def draw(self, pixelated=False):
-        self._particles.draw(pixelated=pixelated)
+        self._particles.draw(pixelated=pixelated, filter=arc.gl.NEAREST)

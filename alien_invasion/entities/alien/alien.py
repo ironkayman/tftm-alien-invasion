@@ -253,6 +253,9 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self._on_update_plot_movement(delta_time)
         self._on_update_evade_bullets(delta_time)
         self._on_update_fire_bullets(delta_time)
+        # if alien reaches ship's top, dont change alien's x-axis
+        if self._starship.top > self.center_y:
+            self.change_x = 0
         super().update()
 
     def can_reap(self) -> bool:

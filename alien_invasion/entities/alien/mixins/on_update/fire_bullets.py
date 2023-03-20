@@ -20,7 +20,7 @@ def on_update_fire_bullets(self, delta_time: float) -> None:
     self._timers.primary += delta_time
 
     if (
-        self._timers.primary > self.timeouts.primary / 1000
+        self._timers.primary > self.timeouts.primary / 1000 / self.SPEED * 100
     ):
         self._fire(delta_time)
         self._timers.reset_primary()

@@ -74,6 +74,10 @@ class PlayerArea(arc.Section, arc.Scene):
         """Redraws its sprites"""
         self.starship.draw()
         self.starship_bullets.draw()
+        self.starship.draw_hit_box(
+            color=arc.color.BLUE_BELL,
+            line_thickness=1.5,
+        )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key press events."""
