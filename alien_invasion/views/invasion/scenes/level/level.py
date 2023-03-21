@@ -49,7 +49,7 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                emit_controller=arc.EmitInterval(1.0),
+                emit_controller=arc.EmitInterval(1.6),
                 particle_factory=lambda emitter, parent_sprite_list: Alien(
                     config=self.__current_wave.spawns[0],
                     # relative to emitter's center_xy
