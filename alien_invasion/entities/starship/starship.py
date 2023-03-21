@@ -133,8 +133,6 @@ class Starship(arc.Sprite, OnUpdateMixin):
         if self.free_falling:
             self.free_fall_timer += delta_time
 
-        self._on_update_manage_health(delta_time)
-
         # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
         super().update()
 

@@ -94,7 +94,7 @@ class Level(arc.Scene):
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
 
-        def process_collisions_damage_aliens():
+        def process_collisions_aliens_damage_bullets():
             collisions = []
             # detects cullet collisions
             # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
@@ -110,42 +110,56 @@ class Level(arc.Scene):
                 for alien in collisions:
                     alien.hp -= bullet_damage
 
+        def process_collisions_bullets_clearout():
+            # ship's bullets can clear out aliens' bullets
+            for bullet in self.starship.fired_shots:
+                collisions = arc.check_for_collision_with_list(
+                    bullet, self.alien_bullets
+                )
+                for c in collisions:
+                    c.remove_from_sprite_lists()
+
+        def process_out_of_bounds_bullets():
+            # remove all out of window player bullets
+            for bullet in self.alien_bullets:
+                if bullet.top < 0:
+                    bullet.remove_from_sprite_lists()
+
+            # remove all out of window player bullets
+            for bullet in self.starship.fired_shots:
+                if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
+                    bullet.remove_from_sprite_lists()
+
+        def process_collisions_starship_damage_bullets():
+            collisions = arc.check_for_collision_with_list(self.starship, self.alien_bullets)
+            for collision in collisions:
+                self.starship.hp -= 9
+                collision.remove_from_sprite_lists()
+
+        def process_collisions_aliens_starship_sprites():
+            # process collisions between starship and aliens
+            if (collisions := arc.check_for_collision_with_lists(
+                self.starship,
+                [
+                    self.spawners[0]._particles,
+                    self.spawners[1]._particles,
+                ]
+            )):
+                for c in collisions:
+                    c.remove_from_sprite_lists()
+                    self.starship.hp -= round(self.starship.hp * 0.2)
+
+
         # update alien emitter/spawner
         self.spawners[0].on_update(delta_time)
         self.spawners[1].on_update(delta_time)
-
-        # ship's bullets can clear out aliens' bullets
-        for bullet in self.starship.fired_shots:
-            collisions = arc.check_for_collision_with_list(
-                bullet, self.alien_bullets
-            )
-            for c in collisions:
-                c.remove_from_sprite_lists()
-
-        process_collisions_damage_aliens()
         self.alien_bullets.update()
 
-        # remove all out of window player bullets
-        for bullet in self.alien_bullets:
-            if bullet.top < 0:
-                bullet.remove_from_sprite_lists()
-
-        # remove all out of window player bullets
-        for bullet in self.starship.fired_shots:
-            if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
-                bullet.remove_from_sprite_lists()
-
-        # process collisions between starship and aliens
-        if (collisions := arc.check_for_collision_with_lists(
-            self.starship,
-            [
-                self.spawners[0]._particles,
-                self.spawners[1]._particles,
-            ]
-        )):
-            for c in collisions:
-                c.remove_from_sprite_lists()
-                self.starship.hp -= round(self.starship.hp * 0.2)
+        process_collisions_bullets_clearout()
+        process_collisions_aliens_damage_bullets()
+        process_out_of_bounds_bullets()
+        process_collisions_starship_damage_bullets()
+        process_collisions_aliens_starship_sprites()
 
         if self.starship.can_reap():
             pass

@@ -1,7 +1,6 @@
 from .energy import on_update_energy_capacity
 from .movement import on_update_movement
 from .weapons import on_update_firing
-from .health import on_update_manage_healh
 
 class OnUpdateMixin():
 
@@ -24,10 +23,3 @@ class OnUpdateMixin():
         frame_energy_change: float
     ):
         on_update_firing(self, delta_time, frame_energy_change)
-
-    def _on_update_manage_health(
-        self,
-        delta_time: float,
-    ):
-        on_update_manage_healh(self, delta_time)
-
