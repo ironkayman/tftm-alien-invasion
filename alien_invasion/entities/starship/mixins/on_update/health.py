@@ -1,4 +1,7 @@
-"""
+"""On_update extension for health management
+
+
+TODO: consider moving logic to level on_update submethod
 """
 
 import arcade as arc
@@ -9,7 +12,7 @@ def on_update_manage_healh(
     self,
     delta_time: float,
 ):
-    """Manage health.
+    """Checks collisions with alien shots, but not alien sprites
     """
 
     # workaround circular imports

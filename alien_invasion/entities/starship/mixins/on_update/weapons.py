@@ -1,3 +1,6 @@
+"""On_update extension for firing bullets on demand
+"""
+
 from typing import cast
 
 from alien_invasion import CONSTANTS

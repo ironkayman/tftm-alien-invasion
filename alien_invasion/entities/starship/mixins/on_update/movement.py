@@ -1,3 +1,6 @@
+"""On_update extension for movement logic
+"""
+
 from ...constants import LastDirection
 
 def on_update_movement(self, delta_time: float):

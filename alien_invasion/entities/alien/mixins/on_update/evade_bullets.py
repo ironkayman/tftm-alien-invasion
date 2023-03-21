@@ -1,3 +1,6 @@
+"""On_update extension for evading bullets
+"""
+
 from typing import cast
 from random import random
 
@@ -7,6 +10,8 @@ from alien_invasion.utils.loaders.alien.config import AlienMoveset
 
 
 def on_update_evade_bullets(self, delta_time) -> None:
+    """Considers position of fired by starship shots and tries to dodge them
+    """
 
     # workaround circular imports
     from ...alien import Alien

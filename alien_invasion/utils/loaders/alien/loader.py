@@ -1,4 +1,4 @@
-"""Main loader for `Alien` configs.
+"""Main loader for `Alien` configs
 
 Accumultaes every `Alien` to their
 designanted `AlienConfig` configuration object.

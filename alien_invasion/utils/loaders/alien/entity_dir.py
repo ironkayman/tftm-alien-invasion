@@ -1,4 +1,4 @@
-"""Module for `Alien` resources' scheme.
+"""Module for `Alien` resources' scheme
 
 Module contains `Alien`-class specific logic for loading
 from a directory before `Alien`-instance creation.

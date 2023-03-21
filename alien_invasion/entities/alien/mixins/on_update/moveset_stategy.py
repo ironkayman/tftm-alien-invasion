@@ -1,15 +1,37 @@
+"""On_update extension for movement management
+"""
+
 from random import random
 from typing import cast
 import math
 
-import arcade as arc
-
 from alien_invasion.utils.loaders.alien.config import AlienMoveset
 
 
-def on_update_plot_movement(self, delta_time) -> None:
-    """Based on current moveset and ship's pos calculate movement
+def on_update_plot_movement(self, delta_time: float) -> None:
+    """Based on current moveset and ship's posirion calculate its movement
     """
+
+    def get_alien_count_proportion_on_x_axis() -> float:
+        """Get proportianal float value of aliens.
+
+        Returns
+        -------
+        float
+            Relative floating-point value of aliens
+            on the right side of the current entity,
+            divided by same count on the right.
+        """
+        aliens_count_on_right = len(tuple(filter(
+            lambda a: a.center_x > self.center_x,
+            self._aliens
+        ))) or 1
+        aliens_count_on_left = len(tuple(filter(
+            lambda a: a.center_x < self.center_x,
+            self._aliens
+        ))) or 1
+        # >0 - left more, <0 - right more
+        return aliens_count_on_left / aliens_count_on_right
 
     # workaround circular imports
     from ...alien import Alien
@@ -18,17 +40,7 @@ def on_update_plot_movement(self, delta_time) -> None:
     # configure movement based on state's movesets
     movesets = self.config.states[self.state].movesets
     ship_x = self._starship.center_x
-
-    aliens_on_right = len(tuple(filter(
-        lambda a: a.center_x > self.center_x,
-        self._aliens
-    ))) or 1
-    aliens_on_left = len(tuple(filter(
-        lambda a: a.center_x < self.center_x,
-        self._aliens
-    ))) or 1
-    # >0 - left more, <0 - right more
-    relative_amount = aliens_on_left / aliens_on_right
+    relative_amount = get_alien_count_proportion_on_x_axis()
 
     if AlienMoveset.tracking in movesets:
         if not self.dodging:

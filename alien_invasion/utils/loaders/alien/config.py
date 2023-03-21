@@ -1,4 +1,4 @@
-"""Object respresention processor for any `Alien` entity.
+"""Object respresention processor for any `Alien` entity
 """
 
 from pathlib import Path

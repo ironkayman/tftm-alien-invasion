@@ -1,4 +1,4 @@
-"""Alien class definition.
+"""Alien class definition and its wrapper logic
 """
 
 import random
@@ -9,7 +9,6 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 
 from .mixins import OnUpdateMixin
-from alien_invasion.entities.starship.starship import LastDirection
 
 from alien_invasion.entities import Starship
 
