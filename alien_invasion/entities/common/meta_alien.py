@@ -1,12 +1,15 @@
 import arcade as arc
 
-class MetaAlien(arc.Particle):
+from loadout import Loadout
 
+class MetaAlien(arc.Particle):
+    """
+    """
 
     def __init__(self, spawner: arc.Emitter, **particle_kwargs) -> None:
         super().__init__(**particle_kwargs)
 
-        self._loadout: 
+        self._loadout: Loadout
 
         self.hp = property(doc="""
         """)

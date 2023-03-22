@@ -1,4 +1,4 @@
-from base_item import Item, ItemType
+from .base_item import Item, ItemType
 
 class ItemEngine(Item):
     """

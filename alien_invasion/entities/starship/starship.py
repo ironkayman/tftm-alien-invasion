@@ -18,7 +18,7 @@ from .types import TMovementArea
 from .mixins import OnUpdateMixin
 from .transmission import Transmission
 
-from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+# from alien_invasion.utils.loaders.config.starship import StarshipLoadout
 
 
 class Starship(arc.Sprite, OnUpdateMixin):
@@ -41,7 +41,6 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
     firing_primary = False
 
-    loadout: StarshipLoadout
 
     _hp_curr: int
     _hp_old: int
