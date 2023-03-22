@@ -284,6 +284,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         """Creates a bullet sets its position
         and moves it inside passed `self.fired_shots`.
         """
+        print(self.sprite_lists)
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = arc.Sprite(
