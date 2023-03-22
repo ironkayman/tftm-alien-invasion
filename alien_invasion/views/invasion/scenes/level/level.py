@@ -50,7 +50,7 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
                 emit_controller=arc.EmitInterval(1.6),
-                particle_factory=lambda emitter, parent_sprite_list: Alien(
+                particle_factory=lambda emitter: Alien(
                     config=self.__current_wave.spawns[0],
                     # relative to emitter's center_xy
                     center_xy=arc.rand_on_line(
@@ -61,7 +61,7 @@ class Level(arc.Scene):
                     starship=self.starship,
                     alien_bullets=self.alien_bullets,
                     change_xy=arc.rand_vec_spread_deg(-90, 12, 1.0),
-                    parent_sprite_list=parent_sprite_list,
+                    parent_sprite_list=emitter._particles,
                 )  # type: ignore
             ),
             AlienSpawner(
@@ -70,7 +70,7 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
                 emit_controller=arc.EmitInterval(3.0),
-                particle_factory=lambda emitter, parent_sprite_list: Alien(
+                particle_factory=lambda emitter: Alien(
                     config=self.__current_wave.spawns[1],
                     # relative to emitter's center_xy
                     center_xy=arc.rand_on_line(
@@ -81,7 +81,7 @@ class Level(arc.Scene):
                     starship=self.starship,
                     alien_bullets=self.alien_bullets,
                     change_xy=arc.rand_vec_spread_deg(-90, 12, 0.6),
-                    parent_sprite_list=parent_sprite_list,
+                    parent_sprite_list=emitter._particles,
                     scale=2.0,
                     angle=arc.rand_angle_360_deg(),
                 )  # type: ignore
