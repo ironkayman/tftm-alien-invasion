@@ -11,6 +11,8 @@ DIR_IMAGES = DIR_RESOURCES / 'images'
 DIR_SAVES = Path().cwd() / 'configs/saves'
 DIR_DATA = Path().cwd() / 'data'
 DIR_EQUIPMENT = DIR_DATA / 'starship'
+DIR_ALIENS = DIR_DATA / 'aliens'
+DIR_LEVELS = DIR_DATA / 'levels'
 
 @dataclass(frozen=True)
 class CL_DISPLAY:

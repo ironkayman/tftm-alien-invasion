@@ -1,0 +1,16 @@
+name = "1"
+
+[[waves]]
+# alien types present of a level
+spawns = ['dummy_ufo', 'castle_wall_sontra']
+# randomly generate enemies but their total health
+# should not get bigger than that number
+total_enemy_health = 400
+# score/experince from killed aliens required to pass this wave
+pass_score = 30
+# interval in seconds before density_multplier increase
+interval = 30
+# how many enemies and their speed will increase at next interval
+density_multiplier = 1.7
+
+# enemy_size_restrictions

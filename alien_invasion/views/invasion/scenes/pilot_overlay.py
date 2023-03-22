@@ -2,10 +2,11 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+from ..sections import PlayerArea
 
 class PilotOverlay(arc.Scene):
     """Starship's pilot overlay UI components."""
-    def __init__(self, player_area: arc.Scene|arc.Section) -> None:
+    def __init__(self, player_area: PlayerArea) -> None:
         super().__init__()
         self.starship = player_area.starship
 
@@ -32,6 +33,15 @@ class PilotOverlay(arc.Scene):
             font_name="Courier New",
         )
 
+        if self.starship.state == 0:
+            arc.draw_text(
+                f"HP: {self.starship.hp}",
+                start_x=35,
+                start_y=CONSTANTS.DISPLAY.HEIGHT - 105,
+                color=arc.color.GRAY_BLUE,
+                font_size=12,
+                font_name="Courier New",
+            )
         # golden ridge overlay
         # arc.draw_rectangle_outline(
         #     CONSTANTS.CL_DISPLAY.WIDTH // 2,

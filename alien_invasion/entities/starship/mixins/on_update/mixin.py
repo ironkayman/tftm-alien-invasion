@@ -2,7 +2,6 @@ from .energy import on_update_energy_capacity
 from .movement import on_update_movement
 from .weapons import on_update_firing
 
-
 class OnUpdateMixin():
 
     def _on_update_energy_capacity(

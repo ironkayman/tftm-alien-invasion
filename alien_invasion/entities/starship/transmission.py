@@ -1,5 +1,7 @@
-from .types import TMovementArea
+"""Logic for considering window borders
+"""
 
+from .types import TMovementArea
 
 class Transmission:
     """Thransmission and surroundings reactive movement manager."""

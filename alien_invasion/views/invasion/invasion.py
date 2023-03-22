@@ -5,11 +5,14 @@ from alien_invasion.settings import KEYMAP
 from .sections import (
     PlayerArea,
 )
+from alien_invasion.utils.loaders.level import loader as load_levels
+
 from .scenes import (
     Background,
-    AlienArea,
+    Level,
     PilotOverlay,
 )
+
 
 class Invasion(arc.View):
     def __init__(self) -> None:
@@ -17,8 +20,6 @@ class Invasion(arc.View):
         super().__init__()
 
         self.background = Background()
-
-        self.alien_area = AlienArea()
 
         self.player_area = PlayerArea(
             left=0, bottom=0,
@@ -32,16 +33,25 @@ class Invasion(arc.View):
 
         self.pilot_overlay = PilotOverlay(self.player_area)
 
+        self.LEVELS = load_levels()
+        try:
+           self.level: Level = next(self.LEVELS)
+        except StopIteration:
+            return
+
         self.section_manager.add_section(self.player_area)
         self.window.set_mouse_visible(False)
 
     def setup(self) -> None:
         """Initialises entities"""
-        self.game_state = CONSTANTS.GAME_STATE.RUNNING
+        # move passing of bullet lists outside of starship
+        # for more transparency
+        self.level.setup(self.player_area.starship)
 
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
+        self.level.draw()
         self.player_area.draw()
         self.pilot_overlay.draw()
 
@@ -52,5 +62,6 @@ class Invasion(arc.View):
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
+        self.level.on_update(delta_time)
         self.player_area.on_update(delta_time)
         self.pilot_overlay.on_update(delta_time)
