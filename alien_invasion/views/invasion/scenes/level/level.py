@@ -24,8 +24,34 @@ class Level(arc.Scene):
     _current_wave: int = 0
 
     def __init__(self, config: dict) -> None:
+        """
+
+        Parameters
+        ----------
+        config : dict
+
+        Examples
+        --------
+        >>> config
+        {
+            'name': '1',
+            'waves': [
+                {
+                    'spawns': ['dummy_ufo', 'castle_wall_sontra'],
+                    'total_enemy_health': 400,
+                    'pass_score': 30,
+                    'interval': 30,
+                    'density_multiplier': 1.7
+                }
+            ]
+        }
+        """
         super().__init__()
-        self.waves = [Wave(w) for w in config['waves']]
+        self.waves = [
+            Wave(**wave_config)
+            for wave_config
+            in config['waves']
+        ]
         self.alien_was_hit_effect_particles = arc.SpriteList()
 
     def setup(self, starship: Starship) -> None:

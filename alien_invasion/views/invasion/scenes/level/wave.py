@@ -24,9 +24,7 @@ class Wave(BaseModel):
     pass_score: int
     interval: int
     density_multiplier: float
-
-    def __init__(self, config: dict) -> None:
-        super().__init__(**config)
+    total_enemy_health: int
 
     @validator('spawns', pre=True)
     def get_alien_configs(cls, val) -> list[AlienConfig]:

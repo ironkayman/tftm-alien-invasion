@@ -1,11 +1,17 @@
 """Object respresention processor for any `Alien` entity
 """
 
-from typing import Optional
+from typing import cast
 from pathlib import Path
 from enum import IntEnum, auto
 
-from pydantic import BaseModel, validator, Field
+from pydantic import (
+    BaseModel,
+    validator,
+    PrivateAttr,
+)
+
+from ..config.file_opener import reader
 
 from alien_invasion.entities.common.loadout import Loadout
 
@@ -113,18 +119,18 @@ class AlienState(BaseModel):
     hp: int
     death_damage_cap: bool
 
-    # overrides of prev state
-    bullet_damage: Optional[int]
-    bullet_speed: Optional[int]
-    recharge_timeout: Optional[int]
+    # overrides of prev state, optional
+    bullet_damage: int | None
+    bullet_speed: int | None
+    recharge_timeout: int | None
 
     # hidden
-    _state_name: str = Field(exclude=True)
-    _state_data: dict = Field(exclude=True)
-    _texture_path: Path = Field(exclude=True)
+    _state_name: str = PrivateAttr()
+    _state_data: dict = PrivateAttr()
+    _texture_path: Path = PrivateAttr()
 
     # created from given values loadout maybe always reload from pydantic keys
-    _loadout: Loadout = Field(exclude=True)
+    _loadout: Loadout = PrivateAttr()
 
     @validator('movesets', pre=True)
     def get_movesets(cls, val) -> set[AlienMoveset]:
@@ -141,37 +147,34 @@ class AlienState(BaseModel):
         Parameters
         ----------
         state_name : str
+            State's name.
         texture_path : Path
             Corresponding texture to a given state by its name att `state_name`.
         state_data : dict
             All data from `::state:state_name`.
+
+        Examples
+        --------
+        >>> state_name
+        'initial'
+        >>> state_data
+        {
+            'movesets': ['tracking'],
+            'speed': 90,
+            'hp': 20,
+            'death_damage_cap': False,
+            'bullet_damage': 8,
+            'bullet_speed': 800,
+            'recharge_timeout': 300
+        }
+        >>> texture_path
+        PosixPath('/home/kayman/git/mtt/tftm-alien-invasion/data/aliens/dummy_ufo/state.initial.png')
         """
         self._state_name = state_name
         self._state_data = state_data
         self._texture_path = texture_path
 
-        # creates loadout items from given values - def
-        # [loadout]
-        #     [primary]
-        #         bullet_damage = 8
-        #         energy_per_bullet = 0
-        #         speed = 800
-        #         recharge_timeout = 300
-        #     [armor]
-        #         armor/hp = 4
-        #     [thrusters]
-        #         velocity = 140
-        #         # energy_requirement = 0
-
-        super().__init__(
-            movesets=self._state_data['movesets'],
-            speed=self._state_data['speed'],
-            hp=self._state_data['hp'],
-            death_damage_cap=self._state_data['death_damage_cap'],
-            bullet_damage=self._state_data.get('bullet_damage'),
-            bullet_speed=self._state_data.get('bullet_speed'),
-            recharge_timeout=self._state_data.get('recharge_timeout'),
-        )
+        super().__init__(**self._state_data)
 
 
 class AlienConfig:
@@ -207,16 +210,13 @@ class AlienConfig:
         """
 
         self._resource_dir = resource_dir
-        # self._config = {}
 
         if (config_files := list(self._resource_dir.glob('*.toml'))) and \
             len(config_files) > 1:
             raise NotImplementedError('One config per folder/alien')
 
-        from ..config.file_opener import reader
         config, error = reader(config_files[0])
 
-        from typing import cast
 
         if error is not Ellipsis:
             raise NotImplementedError(error)
