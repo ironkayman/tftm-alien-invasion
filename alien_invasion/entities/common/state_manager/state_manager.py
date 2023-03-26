@@ -27,15 +27,17 @@ class StateManager:
     def __iter__(self):
         return self._states
 
+    class FinalStateReached(IndexError):
+        pass
+
     def __next__(self) -> tuple[State, IndexError|None]:
         err = None
-        # breakpoint()
         try:
             state_name, self._current_state = [*self._states[self._current_state_index].items()][0]
             self._current_state['index'] = self._current_state_index
             self._current_state['name'] = state_name
         except IndexError as e:
-            err = e
+            err = StateManager.FinalStateReached
         else:
             self._current_state_index += 1
         return (

@@ -18,7 +18,7 @@ from .types import TMovementArea
 from .mixins import OnUpdateMixin
 from .transmission import Transmission
 
-# from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+from ..common.state_manager import StateManager
 
 
 class Starship(arc.Sprite, OnUpdateMixin):
@@ -99,11 +99,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         from alien_invasion.settings import STARSHIP
         self.loadout = STARSHIP
 
-        from ..common.state_manager import StateManager
-
         self._timers = Starship.Timers()
-
-        # from alien_invasion.entities.common.state_manager import State
 
         self.states = StateManager([
             {'initial':
@@ -113,8 +109,8 @@ class Starship(arc.Sprite, OnUpdateMixin):
                     index=0,
                     data=dict(
                         hp=sum([item.armor for item in self.loadout.hull.armor]),
-                        movesets=['tracking'],
-                        speed=233,
+                        movesets=[],
+                        speed=self.loadout.thrusters.velocity,
                         death_damage_cap=True,
                     )
                 ),
@@ -124,23 +120,16 @@ class Starship(arc.Sprite, OnUpdateMixin):
                     name='deaths_door',
                     index=1,
                     data=dict(
-                        movesets=['tracking'],
-                        speed=233,
+                        movesets=[],
+                        speed=self.loadout.thrusters.velocity,
                         hp=1,
                         death_damage_cap=True,
                     )
                 )
             },
         ])
-        next(self.states)
-        # for state in self.states:
-        #     self.textures.append(arc.load_texture(
-        #         file_name=state['texture'],
-        #         can_cache=True,
-        #     ))
-        # set default first state texture
-        # self.texture = self.textures[self._current_state_index]
-        self._hp_curr = 100 #self.states[self._current_state_index]['hp']
+        self.state, _ = next(self.states)
+        self.apply_state()
 
         self.timeouts = Starship.Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
@@ -148,16 +137,12 @@ class Starship(arc.Sprite, OnUpdateMixin):
         )
 
         self.movement_borders = TMovementArea(*area_coords)
-        self.transmission = Transmission(self) # <- movement_borders
+        self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
-
 
         self.fired_shots: arc.SpriteList = fired_shots
 
-        self.SPEED = self.loadout.thrusters.velocity
-
-        self.reactivated_since_free_fall = False
-        self._timers.outage = 0
+        # self.reactivated_since_free_fall = False
 
         self.alien_shots = alien_shots
         self.set_hit_box(
@@ -170,6 +155,15 @@ class Starship(arc.Sprite, OnUpdateMixin):
                 (-5, 0),
             )
         )
+
+    def apply_state(self) -> None:
+        state = self.state
+        self.texture = arc.load_texture(
+            file_name=state.texture_path,
+            can_cache=True,
+        )
+        self._hp_curr = state.hp
+        self.SPEED = state.speed
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
@@ -205,31 +199,6 @@ class Starship(arc.Sprite, OnUpdateMixin):
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
 
-    @property
-    def state(self) -> int:
-        """Gets starship's current `state`
-
-        Its a wrapper around current texture.
-        Since textures are paired with state by Alien architecture
-        and multiplicity of textures is `arc.Sprite` requires a selection of one,
-        consider index of selected texture as a current state index.
-
-        Returns
-        -------
-        int
-            Current `State` index/texture index.
-        """
-        return self._current_state_index
-
-    @state.setter
-    def state(self, value: int) -> None:
-        """Set current texture index/state.
-
-        Since textures and states are almost the same
-        - see getter `.state`.
-        """
-        self._current_state_index = value
-        self.texture = self.textures[self._current_state_index]
 
     @property
     def hp(self) -> int:
@@ -240,20 +209,23 @@ class Starship(arc.Sprite, OnUpdateMixin):
     def hp(self, hp_new: int) -> None:
         """Setter and manager for alien's HP considering current `state`.
         """
-        self._hp_old = self._hp_curr
-        self._hp_curr = hp_new
 
-        if self._hp_curr <= 0:
-            if self.state < len(self.states) - 1:
-                self.state += 1
-                self._hp_curr = self.states[self.state]['hp']
-            else:
-                if (chance := random()) > 0.22:
-                    self._hp_curr = self.states[self.state]['hp']
-                else:
-                    self._can_reap = True
-                print('chance:', chance)
+        if self._hp_curr - hp_new > 0:
             self._hp_old = self._hp_curr
+            self._hp_curr = hp_new
+            return
+
+        self.state, error = next(self.states)
+        # death_damage_cap = self.state.death_damage_cap
+        if error is not StateManager.FinalStateReached:
+            if (chance := random()) > 0.22:
+                self._hp_old = self._hp_curr
+                self._hp_curr = self.state.hp
+            else:
+                self._can_reap = True
+        else:
+            self._hp_old = self._hp_curr
+            self.apply_state()
 
     def can_reap(self) -> bool:
         return self._can_reap
