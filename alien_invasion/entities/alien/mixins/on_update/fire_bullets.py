@@ -17,9 +17,7 @@ def on_update_fire_bullets(self, delta_time: float) -> None:
     self = cast(Alien, self)
 
     #  firing is active only in tracking moveset
-    if AlienMoveset.tracking not in self.config.states[
-        self.state
-    ].movesets:
+    if AlienMoveset.tracking not in self.state.movesets:
         return
 
     self._timers.primary += delta_time

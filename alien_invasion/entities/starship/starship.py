@@ -81,7 +81,6 @@ class Starship(arc.Sprite, OnUpdateMixin):
             self.outage = 0
 
 
-
     def __init__(self, fired_shots: arc.SpriteList, area_coords: list, alien_shots: arc.SpriteList,):
         """Creates Starship instance.
 
@@ -210,6 +209,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         """Setter and manager for alien's HP considering current `state`.
         """
 
+        breakpoint()
         if self._hp_curr - hp_new > 0:
             self._hp_old = self._hp_curr
             self._hp_curr = hp_new

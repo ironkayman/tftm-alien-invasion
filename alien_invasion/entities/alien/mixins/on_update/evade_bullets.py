@@ -20,7 +20,7 @@ def on_update_evade_bullets(self, delta_time) -> None:
     self._spacial_danger_ranges = self._starship.fired_shots
 
     # configure movement based on state's movesets
-    movesets = self.config.states[self.state].movesets
+    movesets = self.state.movesets
 
     cl = arc.get_closest_sprite(self, self._spacial_danger_ranges)
     if not cl:

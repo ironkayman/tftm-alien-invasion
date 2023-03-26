@@ -38,7 +38,7 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     self = cast(Alien, self)
 
     # configure movement based on state's movesets
-    movesets = self.config.states[self.state].movesets
+    movesets = self.state.movesets
     ship_x = self._starship.center_x
     relative_amount = get_alien_count_proportion_on_x_axis()
 
