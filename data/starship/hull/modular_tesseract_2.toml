@@ -2,9 +2,18 @@ display_name = "modular tesseract mk2"
 description = """
     Modular hull of derelict spaceship
     from Earth, repaired, restored and
-    imbued with resistant to narraphysic
-    baseline reality alterations
-    materials from MCD ltd.
+    imbued with a materials resistant
+    to narraphysic alterations by MCD ltd.
+
+    Behind the facade of plated sructure
+    and beams of metal a factual hull's
+    origin is to be found, hidden by MCD
+    - that of a damaged prototype of
+    an chamber made some time prior before
+    the Fractal Unravalling,
+    specifically to enclose, contain,
+    and drain Alchemists' Monolith,
+    an interface for a larger structure.
 """
 armor_mount_slots = 2
 secondary_weapon_mount_slots = 2
