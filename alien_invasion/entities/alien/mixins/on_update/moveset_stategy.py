@@ -63,3 +63,7 @@ def on_update_plot_movement(self, delta_time: float) -> None:
             self.change_x = self.SPEED * delta_time
         elif self.center_x < ship_x:
             self.change_x = -self.SPEED * delta_time
+
+    # if alien reaches ship's top, dont change alien's x-axis
+    if self.center_y < self._starship.top * 1.33:
+        self.change_x = 0

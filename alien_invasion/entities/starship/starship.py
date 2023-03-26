@@ -107,7 +107,9 @@ class Starship(arc.Sprite, OnUpdateMixin):
                     name='initial',
                     index=0,
                     data=dict(
-                        hp=sum([item.armor for item in self.loadout.hull.armor]),
+                        hp=sum([
+                            item.armor for item in self.loadout.hull.armor
+                        ]),
                         movesets=[],
                         speed=self.loadout.thrusters.velocity,
                         death_damage_cap=True,
@@ -209,8 +211,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         """Setter and manager for alien's HP considering current `state`.
         """
 
-        breakpoint()
-        if self._hp_curr - hp_new > 0:
+        if hp_new > 0:
             self._hp_old = self._hp_curr
             self._hp_curr = hp_new
             return
@@ -220,7 +221,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         if error is not StateManager.FinalStateReached:
             if (chance := random()) > 0.22:
                 self._hp_old = self._hp_curr
-                self._hp_curr = self.state.hp
+                self.apply_state()
             else:
                 self._can_reap = True
         else:

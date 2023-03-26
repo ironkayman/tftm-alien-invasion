@@ -2,6 +2,7 @@
 """
 
 import random
+from copy import deepcopy
 from dataclasses import dataclass
 
 import arcade as arc
@@ -23,21 +24,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
     Created from configuration objects `AlienConfig` and
     `Particle`-like properties during its
     factory creation inside an `arc.Emitter`.
-
-    Attributes
-    ----------
-    __hp_old: int
-        State's HP before hit, modified by `property` `.hp`.
-    __hp_curr: int
-        State's HP after recieveing bullet damage.
-
     """
-
-    _hp_curr: int
-    _hp_old: int
-    state: State
-    _can_reap: bool = False
-    SPEED: int
 
     @dataclass(slots=True, kw_only=True)
     class Timeouts:
@@ -98,25 +85,16 @@ class Alien(arc.Sprite, OnUpdateMixin):
     ):
         """Crearte instance of alien from given `config`
         """
+        # self._hp_curr: int
+        # self._hp_old: int
+        # self.state: State
+        self._can_reap: bool = False
+        # self.SPEED: int
+
         super().__init__()
         self._aliens = parent_sprite_list
 
         self._starship = starship
-        self.config = config
-        # self.hp_pools = [s.hp for s in config.states]
-
-        self.states = self.config.states
-        # for state in self.config.states:
-            # self.textures.append(arc.load_texture(
-            #     file_name=state.texture,
-            #     flipped_vertically=True,
-            #     can_cache=True,
-            #     hit_box_algorithm='Simple',
-            # ))
-        # set default first state texture
-        # self.texture = self.textures[self._current_state_index]
-        self.state, _ = next(self.states)
-        self.apply_state()
 
         # Particle properties
         self.center_x = center_xy[0]
@@ -129,6 +107,11 @@ class Alien(arc.Sprite, OnUpdateMixin):
         self.alpha = alpha
         self.mutation_callback = mutation_callback
 
+        self.config = config
+
+        self.states = deepcopy(self.config.states)
+        self.state, _ = next(self.states)
+        self.apply_state()
 
         # prepare monkeypatched spritelist to replace
         # emitter's service ._particles spritelist
@@ -190,7 +173,8 @@ class Alien(arc.Sprite, OnUpdateMixin):
     def hp(self, hp_new: int) -> None:
         """Setter and manager for alien's HP considering current `state`.
         """
-        if self._hp_curr - hp_new > 0:
+        self._restart_hit_effect_emitter()
+        if hp_new > 0:
             self._hp_old = self._hp_curr
             self._hp_curr = hp_new
             return
@@ -201,38 +185,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
             self._can_reap = True
         else:
             self._hp_old = self._hp_curr
-            self.apply_state()
-
-    # @property
-    # def state(self) -> int:
-    #     """Gets aliens's current `state`
-
-    #     Its a wrapper around current texture.
-    #     Since textures are paired with state by Alien architecture
-    #     and multiplicity of textures is `arc.Sprite` requires a selection of one,
-    #     consider index of selected texture as a current state index.
-
-    #     Returns
-    #     -------
-    #     int
-    #         Current `State` index/texture index.
-    #     """
-    #     return self._current_state_index
-
-    # @state.setter
-    # def state(self, value: int) -> None:
-    #     """Set current texture index/state.
-
-    #     Since textures and states are almost the same
-    #     - see getter `.state`.
-    #     """
-    #     self._current_state_index = value
-    #     self.texture = self.textures[self._current_state_index]
-
-    # @property
-    # def SPEED(self) -> int:
-    #     """Alien's Speed derived from current state's property"""
-    #     return self.config.states[self.state].speed
+        self.apply_state()
 
     def on_update(self, delta_time) -> None:
         """Particle's update method.
@@ -240,24 +193,18 @@ class Alien(arc.Sprite, OnUpdateMixin):
         Updates movement from allowed movesets by current `state`.
         """
 
-        def update_health() -> None:
+        def update_particles_on_hit() -> None:
             """Updates health `hp`
             """
-            if self._hp_old > self.__hp_curr:
-                self._restart_hit_effect_emitter()
-                self._hp_old = self.__hp_curr
             if self.__hit_emitter:
                 self.__hit_emitter.center_x = self.center_x
                 self.__hit_emitter.center_y = self.center_y
             self.__hit_emitter.update()
 
-        # update_health()
+        update_particles_on_hit()
         self._on_update_plot_movement(delta_time)
         self._on_update_evade_bullets(delta_time)
         self._on_update_fire_bullets(delta_time)
-        # if alien reaches ship's top, dont change alien's x-axis
-        if self.center_y < self._starship.top * 1.33:
-            self.change_x = 0
         super().update()
 
     def can_reap(self) -> bool:
@@ -290,6 +237,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         )
         self._hp_curr = state.hp
         self.SPEED = state.speed
+        self.change_y = self.SPEED * -0.01
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
