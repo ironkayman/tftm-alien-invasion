@@ -5,7 +5,7 @@ from random import random
 from typing import cast
 import math
 
-from alien_invasion.utils.loaders.alien.config import AlienMoveset
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
 def on_update_plot_movement(self, delta_time: float) -> None:

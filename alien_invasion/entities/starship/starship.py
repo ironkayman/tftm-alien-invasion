@@ -53,6 +53,34 @@ class Starship(arc.Sprite, OnUpdateMixin):
         secondaries: list[float]
         engine: int = 1
 
+    @dataclass(slots=True)
+    class Timers:
+        """Alien object timers increased by `delta_times` in `on_update` methods
+
+        Attributes
+        ----------
+        primary : float
+            Timer for primary weapon.
+        evade : float
+            Time elapsed during execution of last move during dodging.
+        outage : float
+            Time spent in outage mode before any interaction.
+        """
+
+        primary: float = 0.0
+        evade: float = 0.0
+        outage: float = 0.0
+
+        def reset_primary(self) -> None:
+            self.primary = 0
+
+        def reset_evade(self) -> None:
+            self.evade = 0
+
+        def reset_outage(self) -> None:
+            self.outage = 0
+
+
 
     def __init__(self, fired_shots: arc.SpriteList, area_coords: list, alien_shots: arc.SpriteList,):
         """Creates Starship instance.
@@ -71,24 +99,48 @@ class Starship(arc.Sprite, OnUpdateMixin):
         from alien_invasion.settings import STARSHIP
         self.loadout = STARSHIP
 
-        self.states = [
-            {
-                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.png',
-                'hp': sum([item.armor for item in self.loadout.hull.armor])
+        from ..common.state_manager import StateManager
+
+        self._timers = Starship.Timers()
+
+        # from alien_invasion.entities.common.state_manager import State
+
+        self.states = StateManager([
+            {'initial':
+                dict(
+                    texture_path=CONSTANTS.DIR_IMAGES / 'initial_starship.png',
+                    name='initial',
+                    index=0,
+                    data=dict(
+                        hp=sum([item.armor for item in self.loadout.hull.armor]),
+                        movesets=['tracking'],
+                        speed=233,
+                        death_damage_cap=True,
+                    )
+                ),
             },
-            {
-                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.danger.png',
-                'hp': 1
-            }
-        ]
-        for state in self.states:
-            self.textures.append(arc.load_texture(
-                file_name=state['texture'],
-                can_cache=True,
-            ))
+            {'deaths_door': dict(
+                    texture_path=CONSTANTS.DIR_IMAGES / 'initial_starship.danger.png',
+                    name='deaths_door',
+                    index=1,
+                    data=dict(
+                        movesets=['tracking'],
+                        speed=233,
+                        hp=1,
+                        death_damage_cap=True,
+                    )
+                )
+            },
+        ])
+        next(self.states)
+        # for state in self.states:
+        #     self.textures.append(arc.load_texture(
+        #         file_name=state['texture'],
+        #         can_cache=True,
+        #     ))
         # set default first state texture
-        self.texture = self.textures[self._current_state_index]
-        self._hp_curr = self.states[self._current_state_index]['hp']
+        # self.texture = self.textures[self._current_state_index]
+        self._hp_curr = 100 #self.states[self._current_state_index]['hp']
 
         self.timeouts = Starship.Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
@@ -105,7 +157,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         self.SPEED = self.loadout.thrusters.velocity
 
         self.reactivated_since_free_fall = False
-        self.free_fall_timer = 0
+        self._timers.outage = 0
 
         self.alien_shots = alien_shots
         self.set_hit_box(
@@ -130,7 +182,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         self._on_update_firing(delta_time, frame_energy_change)
         # update free-fall timer
         if self.free_falling:
-            self.free_fall_timer += delta_time
+            self._timers.outage += delta_time
 
         # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
         super().update()

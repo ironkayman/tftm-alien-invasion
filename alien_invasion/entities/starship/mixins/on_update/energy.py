@@ -1,6 +1,8 @@
 """
 """
 
+from typing import cast
+
 def on_update_energy_capacity(
     self,
     delta_time: float,
@@ -8,6 +10,9 @@ def on_update_energy_capacity(
 ):
     """Control engine energy flow and free fall mode.
     """
+    # workaround circular imports
+    from ...starship import Starship
+    self = cast(Starship, self)
 
     # restore energy
     if self.current_energy_capacity < self.loadout.engine.energy_cap:
@@ -44,7 +49,7 @@ def on_update_energy_capacity(
     # when at a timer more than 2sec passed of free fall
     self.free_falling = (
         (
-            0 < self.free_fall_timer < 1 # 1 sec
+            0 < self._timers.outage < 1 # 1 sec
             or self.transmission.low_energy
         ) or (
             self.free_falling and
@@ -57,7 +62,7 @@ def on_update_energy_capacity(
     # and dont forcibly disbale it during free-fall following updates
     # so the player may himself press again keys for moving/fireing
     # separately
-    if self.free_falling and self.free_fall_timer == 0:
+    if self.free_falling and self._timers.outage == 0:
         self.moving_left = False
         self.moving_right = False
         self.firing_primary = False

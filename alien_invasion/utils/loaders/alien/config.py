@@ -1,7 +1,7 @@
 """Object respresention processor for any `Alien` entity
 """
 
-from typing import cast
+from typing import cast, Generator
 from pathlib import Path
 from enum import IntEnum, auto
 
@@ -15,30 +15,8 @@ from ..config.file_opener import reader
 
 from alien_invasion.entities.common.loadout import Loadout
 
-
-class AlienSize(IntEnum):
-    """Allowed enemy sizes"""
-
-    small = auto()
-    medium = auto()
-    large = auto()
-    colossal = auto()
-    unimaginable = auto()
-
-
-class AlienType(IntEnum):
-    """Allowed enemy types"""
-
-    # Tier 1
-    corporeal = auto()
-    ancient = auto()
-    # Tier 2
-    possessed = auto()
-    undead = auto()
-    # Tier 3
-    narrativistic = auto()
-    metaphysic = auto()
-
+from alien_invasion.entities.common.state_manager import State
+from alien_invasion.entities.common.state_manager.state import AlienType, AlienSize
 
 class AlienInfo(BaseModel):
     """Structured representation of `info` block of alien's central config.
@@ -74,109 +52,6 @@ class AlienInfo(BaseModel):
         return set(map(lambda c: AlienType[c], val))
 
 
-class AlienMoveset(IntEnum):
-    """Allowed movesets for an arbitrary state.
-
-    Attributes
-    ----------
-    spiralling : int
-        Flies across screen (left<->right) in overlapping circles.
-    tracking : int
-        Vaguely follows starship's x-axis and when needed dodges bullets.
-    escaping : int
-        Opposite of `tracking`, tries never to cross x-axis of a starship.
-    """
-
-    spiralling = auto()
-    tracking = auto()
-    escaping = auto()
-
-
-class AlienState(BaseModel):
-    """Scheme for `Alien` states data strcture
-
-    Attributes
-    ----------
-    name: str
-        State name.
-    movesets: set[AlienMoveset]
-        Movesets available for this alien's state represented as Enums.
-    hp: int
-        HitPoints for this state.
-    death_damage_cap: bool
-        Does damage beyond hp = 0 is translated to damage to alen's nex state.
-        `True` - damage is capped whch means that next state does not
-        absorb this state's incoming damage.
-        `False` - remaining from hp = 0 damage is absorbed by
-        next alien's state if any present, dealng damage to its HP bar.
-    texture: Path
-        Path to a state's texure.
-    """
-
-    # required kwargs
-    movesets: set[AlienMoveset]
-    speed: int
-    hp: int
-    death_damage_cap: bool
-
-    # overrides of prev state, optional
-    bullet_damage: int | None
-    bullet_speed: int | None
-    recharge_timeout: int | None
-
-    # hidden
-    _state_name: str = PrivateAttr()
-    _state_data: dict = PrivateAttr()
-    _texture_path: Path = PrivateAttr()
-
-    # created from given values loadout maybe always reload from pydantic keys
-    _loadout: Loadout = PrivateAttr()
-
-    @validator('movesets', pre=True)
-    def get_movesets(cls, val) -> set[AlienMoveset]:
-        """Turns moveset string names to Enums"""
-        return set(map(lambda m: AlienMoveset[m], val))
-
-    def __init__(self,
-        state_name: str,
-        texture_path: Path,
-        state_data: dict,
-    ) -> None:
-        """Maps groups of entity's properties to a coherent data structure
-
-        Parameters
-        ----------
-        state_name : str
-            State's name.
-        texture_path : Path
-            Corresponding texture to a given state by its name att `state_name`.
-        state_data : dict
-            All data from `::state:state_name`.
-
-        Examples
-        --------
-        >>> state_name
-        'initial'
-        >>> state_data
-        {
-            'movesets': ['tracking'],
-            'speed': 90,
-            'hp': 20,
-            'death_damage_cap': False,
-            'bullet_damage': 8,
-            'bullet_speed': 800,
-            'recharge_timeout': 300
-        }
-        >>> texture_path
-        PosixPath('/home/kayman/git/mtt/tftm-alien-invasion/data/aliens/dummy_ufo/state.initial.png')
-        """
-        self._state_name = state_name
-        self._state_data = state_data
-        self._texture_path = texture_path
-
-        super().__init__(**self._state_data)
-
-
 class AlienConfig:
     """Configuration class for an alien.
 
@@ -188,12 +63,12 @@ class AlienConfig:
     ----------
     info: AlienInfo
         Inforamtion about specific `Alien`.
-    states: list[AlienState] = []
+    states: list[State] = []
         Listed alien's states.
     """
 
     info: AlienInfo
-    states: list[AlienState] = []
+    states: Generator[State, None, None] = []
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.
@@ -217,19 +92,24 @@ class AlienConfig:
 
         config, error = reader(config_files[0])
 
-
         if error is not Ellipsis:
             raise NotImplementedError(error)
         self.config = cast(dict, config)
 
+        from alien_invasion.entities.common.state_manager import StateManager
+
         self.info = AlienInfo(self.config['info'])
-        for state_name, state in self.config['state'].items():
+        states = []
+        for index, state in enumerate(self.config['state'].items()):
+            state_name, state = state
             texture_path = self.define_state_texture_path(state_name)
-            self.states.append(AlienState(
-                state_name=state_name,
-                state_data=state,
+            states.append({f'{state_name}': dict(
+                name=state_name,
+                index=index,
+                data=state,
                 texture_path=texture_path,
-            ))
+            )})
+        self.states = StateManager(states)
 
     def define_state_texture_path(self, state_name: str) -> Path:
         """Checks alien config for image-state pair.

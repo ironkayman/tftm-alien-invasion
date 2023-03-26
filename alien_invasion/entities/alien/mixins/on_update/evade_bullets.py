@@ -6,7 +6,7 @@ from random import random
 
 import arcade as arc
 
-from alien_invasion.utils.loaders.alien.config import AlienMoveset
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
 def on_update_evade_bullets(self, delta_time) -> None:

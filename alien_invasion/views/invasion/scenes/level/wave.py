@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, ValidationError
 
 from alien_invasion.utils.loaders.alien import load_alien_by_name
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -25,6 +25,15 @@ class Wave(BaseModel):
     interval: int
     density_multiplier: float
     total_enemy_health: int
+
+    # def __init__(self, **kwargs) -> None:
+    #     super().__init__(
+    #         spawns=kwargs['spawns'],
+    #         # pass_score=kwargs['pass_score'],
+    #         # interval=kwargs['interval'],
+    #         # density_multiplier=kwargs['density_multiplier'],
+    #         # total_enemy_health=kwargs['total_enemy_health'],
+    #     )
 
     @validator('spawns', pre=True)
     def get_alien_configs(cls, val) -> list[AlienConfig]:

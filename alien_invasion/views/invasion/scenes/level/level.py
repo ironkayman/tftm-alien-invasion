@@ -47,7 +47,7 @@ class Level(arc.Scene):
         }
         """
         super().__init__()
-        self.waves = [
+        self.waves=[
             Wave(**wave_config)
             for wave_config
             in config['waves']
