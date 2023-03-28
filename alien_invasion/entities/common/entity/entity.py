@@ -6,8 +6,8 @@ from dataclasses import dataclass
 
 import arcade as arc
 
-from ..common.state_manager import StateManager
-from ..common.state_manager.state import State
+from ..state_manager import StateManager
+from ..state_manager.state import State
 
 
 class Entity(arc.Sprite, ABC):
