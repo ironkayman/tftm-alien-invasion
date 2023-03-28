@@ -100,6 +100,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
         self._timers = Starship.Timers()
 
+        # Hard-coded states
         self.states = StateManager([
             {'initial':
                 dict(

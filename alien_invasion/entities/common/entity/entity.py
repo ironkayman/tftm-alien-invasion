@@ -33,7 +33,6 @@ class Entity(arc.Sprite, ABC):
         primary : float
             Primary weapon firing timeout.
         """
-
         pass
 
     @dataclass(slots=True)
@@ -88,12 +87,12 @@ class Entity(arc.Sprite, ABC):
         self.state, _ = next(self.states)
         self.apply_state()
 
-        self.__hit_effect_list = hit_effects
+        self.hit_effect_list = hit_effects
         self.fired_shots = origin_bullets
+        self.enemy_shots = enemy_bullets
 
-
-        self.timeouts = Alien.Timeouts()
-        self._timers = Alien.Timers()
+        self.timeouts = Entity.Timeouts()
+        self._timers = Entity.Timers()
 
 
     @property
@@ -105,7 +104,7 @@ class Entity(arc.Sprite, ABC):
     def hp(self, hp_new: int) -> None:
         """Setter and manager for alien's HP considering current `state`.
         """
-        self._restart_hit_effect_emitter()
+        # self._restart_hit_effect_emitter()
         if hp_new > 0:
             self._hp_old = self._hp_curr
             self._hp_curr = hp_new

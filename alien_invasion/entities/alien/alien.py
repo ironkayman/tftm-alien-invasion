@@ -7,8 +7,6 @@ from dataclasses import dataclass
 
 import arcade as arc
 
-from alien_invasion import CONSTANTS
-
 from .mixins import OnUpdateMixin
 
 from ..common.state_manager import StateManager
@@ -16,6 +14,7 @@ from ..common.state_manager.state import State
 from alien_invasion.entities import Starship
 
 from alien_invasion.utils.loaders.alien import AlienConfig
+
 
 class Alien(arc.Sprite, OnUpdateMixin):
     """Alien sprite class.
@@ -85,11 +84,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
     ):
         """Crearte instance of alien from given `config`
         """
-        # self._hp_curr: int
-        # self._hp_old: int
-        # self.state: State
         self._can_reap: bool = False
-        # self.SPEED: int
 
         super().__init__()
         self._aliens = parent_sprite_list
@@ -228,7 +223,9 @@ class Alien(arc.Sprite, OnUpdateMixin):
         return self._can_reap or self.top < 0
 
     def apply_state(self) -> None:
-        state = self.state
+        """Applies `self.state`'s changes to the entity
+        """
+        state: State = self.state  # type: ignore
         self.texture = arc.load_texture(
             file_name=state.texture_path,
             flipped_vertically=True,
