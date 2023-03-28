@@ -161,8 +161,6 @@ class Level(arc.Scene):
         process_collisions_starship_damage_bullets()
         process_collisions_aliens_starship_sprites()
 
-        if self.starship.can_reap():
-            pass
 
     def draw(self):
         """
