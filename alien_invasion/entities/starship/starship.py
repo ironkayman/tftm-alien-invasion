@@ -67,6 +67,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
             ship is allowed to move.
         """
         super().__init__()
+        self.xp = 0
 
         # workaround for cycling imports
         from alien_invasion.settings import STARSHIP

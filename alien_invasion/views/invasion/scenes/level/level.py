@@ -45,6 +45,7 @@ class Level(arc.Scene):
         # from an eternal Emitter wth time interval between spawns
         self.spawners = [
             AlienSpawner(
+                starship=self.starship,
                 center_xy=(
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
@@ -65,6 +66,7 @@ class Level(arc.Scene):
                 )  # type: ignore
             ),
             AlienSpawner(
+                starship=self.starship,
                 center_xy=(
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
