@@ -52,8 +52,8 @@ class Entity(arc.Sprite, ABC):
     def __init__(self,
         config,
         parent_sprite_list: arc.SpriteList,
-        origin_bullets: arc.SpriteList,
-        enemy_bullets: arc.SpriteList,
+        fired_shots: arc.SpriteList,
+        enemy_shots: arc.SpriteList,
         hit_effects: arc.SpriteList,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
@@ -93,8 +93,8 @@ class Entity(arc.Sprite, ABC):
         self.apply_state()
 
         self.hit_effect_list = hit_effects
-        self.fired_shots = origin_bullets
-        self.enemy_shots = enemy_bullets
+        self.fired_shots = fired_shots
+        self.enemy_shots = enemy_shots
 
 
     @property

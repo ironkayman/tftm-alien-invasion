@@ -87,7 +87,7 @@ class Starship(Entity, OnUpdateMixin):
     def __init__(self,
         fired_shots: arc.SpriteList,
         area_coords: list,
-        alien_shots: arc.SpriteList,
+        enemy_shots: arc.SpriteList,
         hit_effect_list: arc.SpriteList,
     ):
         """Creates Starship instance.
@@ -108,8 +108,8 @@ class Starship(Entity, OnUpdateMixin):
         super().__init__(
             config=AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG),
             parent_sprite_list=arc.SpriteList(),
-            origin_bullets=fired_shots,
-            enemy_bullets=alien_shots,
+            fired_shots=fired_shots,
+            enemy_shots=enemy_shots,
             hit_effects=hit_effect_list,
         )
 
@@ -123,9 +123,6 @@ class Starship(Entity, OnUpdateMixin):
         self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
-        self.fired_shots: arc.SpriteList = fired_shots
-
-        self.alien_shots = alien_shots
         self.set_hit_box(
             (
                 (-2, 5),

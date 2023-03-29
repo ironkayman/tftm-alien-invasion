@@ -62,7 +62,7 @@ class Level(arc.Scene):
 
         self.starship = starship
         self.__current_wave: Wave = self.waves[self._current_wave]
-        self.alien_bullets = starship.alien_shots
+        self.alien_bullets = starship.enemy_shots
 
         # for alien_config in self.__current_wave.spawns:
         #     AlienSpawner(alien_config)
