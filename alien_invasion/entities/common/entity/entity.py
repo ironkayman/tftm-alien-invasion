@@ -10,6 +10,27 @@ from ..state_manager import StateManager
 from ..state_manager.state import State
 
 
+@dataclass(slots=True, kw_only=True)
+class Timeouts(ABC):
+    """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+
+    Attributes
+    ----------
+    primary : float
+        Primary weapon firing timeout.
+    """
+    pass
+
+@dataclass(slots=True)
+class Timers(ABC):
+    """Alien object timers increased by `delta_times` in `on_update` methods
+
+    Attributes
+    ----------
+    """
+    pass
+
+
 class Entity(arc.Sprite, ABC):
     """Alien sprite class.
 
@@ -24,25 +45,9 @@ class Entity(arc.Sprite, ABC):
     state: State
     _can_reap: bool = False
 
-    @dataclass(slots=True, kw_only=True)
-    class Timeouts(ABC):
-        """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+    timeouts: Timeouts
+    _timers: Timers
 
-        Attributes
-        ----------
-        primary : float
-            Primary weapon firing timeout.
-        """
-        pass
-
-    @dataclass(slots=True)
-    class Timers(ABC):
-        """Alien object timers increased by `delta_times` in `on_update` methods
-
-        Attributes
-        ----------
-        """
-        pass
 
     def __init__(self,
         config,
@@ -90,9 +95,6 @@ class Entity(arc.Sprite, ABC):
         self.hit_effect_list = hit_effects
         self.fired_shots = origin_bullets
         self.enemy_shots = enemy_bullets
-
-        self.timeouts = Entity.Timeouts()
-        self._timers = Entity.Timers()
 
 
     @property

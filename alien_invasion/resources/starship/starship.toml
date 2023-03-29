@@ -1,0 +1,19 @@
+[info]
+    name = "Starship"
+    size = 'small'
+    type = ['corporeal']
+    xp = 10
+
+[state]
+
+[state.initial]
+    movesets = []
+    speed = 1
+    hp = 1
+    death_damage_cap = false
+
+[state.danger]
+    movesets = []
+    speed = 1
+    hp = 1
+    death_damage_cap = false

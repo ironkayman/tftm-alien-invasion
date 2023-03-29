@@ -4,7 +4,6 @@ from enum import IntEnum, auto
 from pydantic import (
     BaseModel,
     validator,
-    PrivateAttr,
 )
 
 from ..loadout import Loadout
@@ -90,8 +89,6 @@ class State(BaseModel):
     data: dict
     texture_path: Path
 
-    # created from given values loadout maybe always reload from pydantic keys
-    _loadout: Loadout = PrivateAttr()
 
     @validator('movesets', pre=True)
     def get_movesets(cls, val) -> set[AlienMoveset]:

@@ -33,7 +33,7 @@ class PilotOverlay(arc.Scene):
             font_name="Courier New",
         )
 
-        if self.starship.state.name != 'deaths_door':
+        if self.starship.state.index != 1:
             arc.draw_text(
                 f"HP: {self.starship.hp}",
                 start_x=35,
