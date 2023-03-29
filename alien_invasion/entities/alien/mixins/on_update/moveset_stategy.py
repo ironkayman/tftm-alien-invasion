@@ -37,6 +37,8 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     from ...alien import Alien
     self = cast(Alien, self)
 
+    if self._starship.can_reap(): return
+
     # configure movement based on state's movesets
     movesets = self.config.states[self.state].movesets
     ship_x = self._starship.center_x

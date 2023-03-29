@@ -53,11 +53,11 @@ class Invasion(arc.View):
     def on_draw(self) -> None:
         arc.start_render()
         self.background.draw()
+        self.level.draw()
+        self.player_area.draw()
         if self.level.starship.can_reap():
             self.game_over.draw()
             return
-        self.level.draw()
-        self.player_area.draw()
         self.pilot_overlay.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
@@ -67,9 +67,9 @@ class Invasion(arc.View):
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
+        self.level.on_update(delta_time)
+        self.player_area.on_update(delta_time)
         if self.level.starship.can_reap():
             self.game_over.on_update(delta_time)
             return
-        self.level.on_update(delta_time)
-        self.player_area.on_update(delta_time)
         self.pilot_overlay.on_update(delta_time)
