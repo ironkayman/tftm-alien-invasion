@@ -28,7 +28,7 @@ def on_update_evade_bullets(self, delta_time) -> None:
         cl = [0, 600] # 600px
     for b in self._spacial_danger_ranges:
         if (isect := set(range(round(self.left - self.width * 0.4), round(self.right + self.width * 0.4))).intersection(range(round(b.left), round(b.right)))):
-            self.change_x = self.SPEED * delta_time
+            self.change_x = self.speed * delta_time
             # if aggressive moveset present and dodge is active
             # stop dodging by chance not in favour of time past dodging
             if AlienMoveset.tracking in movesets and self.dodging:

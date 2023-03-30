@@ -156,7 +156,7 @@ class Starship(Entity, OnUpdateMixin):
             can_cache=True,
         )
         self._hp_curr = state.hp
-        self.SPEED = state.speed
+        self.speed = state.speed
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""

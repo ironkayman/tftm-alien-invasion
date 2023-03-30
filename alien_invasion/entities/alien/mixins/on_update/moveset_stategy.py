@@ -48,21 +48,21 @@ def on_update_plot_movement(self, delta_time: float) -> None:
                 self.change_x = 0
             elif self.center_x > ship_x:
                 self._timers.reset_track()
-                self.change_x = -self.SPEED * delta_time / relative_amount
+                self.change_x = -self.speed * delta_time / relative_amount
             elif self.center_x < ship_x:
                 self._timers.reset_track()
-                self.change_x = self.SPEED * delta_time * relative_amount
+                self.change_x = self.speed * delta_time * relative_amount
             self._timers.track += delta_time
         else:
             self._timers.dodge += delta_time
 
     elif AlienMoveset.escaping in movesets:
         if self.center_x == ship_x:
-            self.change_x = self.SPEED * delta_time
+            self.change_x = self.speed * delta_time
         elif self.center_x > ship_x:
-            self.change_x = self.SPEED * delta_time
+            self.change_x = self.speed * delta_time
         elif self.center_x < ship_x:
-            self.change_x = -self.SPEED * delta_time
+            self.change_x = -self.speed * delta_time
 
     # if alien reaches ship's top, dont change alien's x-axis
     if self.center_y < self._starship.top * 1.33:

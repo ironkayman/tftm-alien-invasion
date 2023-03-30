@@ -103,7 +103,7 @@ class Alien(Entity, OnUpdateMixin):
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=self.SPEED * self.scale**2 * 10,
+            primary=self.speed * self.scale**2 * 10,
         )
         self._timers = Timers()
 
@@ -198,8 +198,8 @@ class Alien(Entity, OnUpdateMixin):
             hit_box_algorithm='Simple',
         )
         self._hp_curr = state.hp
-        self.SPEED = state.speed
-        self.change_y = self.SPEED * -0.01
+        self.speed = state.speed
+        self.change_y = self.speed * -0.01
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
@@ -212,7 +212,7 @@ class Alien(Entity, OnUpdateMixin):
             flipped_vertically=True,
             scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale),
         )
-        bullet.change_y = -self.SPEED * delta_time * 4
+        bullet.change_y = -self.speed * delta_time * 4
 
         # Position the bullet
         bullet.center_x = self.center_x

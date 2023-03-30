@@ -70,7 +70,7 @@ class Entity(arc.Sprite, ABC):
         # self._hp_old: int
         # self.state: State
         self._can_reap: bool = False
-        # self.SPEED: int
+        # self.speed: int
 
         super().__init__()
         self._parent_sprite_list = parent_sprite_list
@@ -79,7 +79,7 @@ class Entity(arc.Sprite, ABC):
         self.center_x = center_xy[0]
         self.center_y = center_xy[1]
         self.change_x = change_xy[0]
-        # self.change_y = self.SPEED * -0.01
+        # self.change_y = self.speed * -0.01
         self.angle = angle
         self.scale = scale
         self.change_angle = change_angle
