@@ -67,6 +67,7 @@ class PlayerArea(arc.Section, arc.Scene):
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
 
+        if self.starship.can_reap(): return
         # player update func considers its movement states
         # which were potentially changed
         self.starship.on_update(delta_time)
@@ -74,8 +75,11 @@ class PlayerArea(arc.Section, arc.Scene):
 
     def draw(self) -> None:
         """Redraws its sprites"""
-        self.starship.draw()
         self.starship_bullets.draw()
+
+        if self.starship.can_reap(): return
+
+        self.starship.draw()
         self.starship.draw_hit_box(
             color=arc.color.BLUE_BELL,
             line_thickness=1.5,

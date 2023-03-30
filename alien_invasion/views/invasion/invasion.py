@@ -11,6 +11,7 @@ from .scenes import (
     Background,
     Level,
     PilotOverlay,
+    GameOver,
 )
 
 
@@ -19,6 +20,7 @@ class Invasion(arc.View):
         """Creates entity vars"""
         super().__init__()
 
+        self.game_over = GameOver()
         self.background = Background()
 
         self.player_area = PlayerArea(
@@ -53,6 +55,9 @@ class Invasion(arc.View):
         self.background.draw()
         self.level.draw()
         self.player_area.draw()
+        if self.level.starship.can_reap():
+            self.game_over.draw()
+            return
         self.pilot_overlay.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
@@ -64,4 +69,7 @@ class Invasion(arc.View):
         self.background.on_update(delta_time)
         self.level.on_update(delta_time)
         self.player_area.on_update(delta_time)
+        if self.level.starship.can_reap():
+            self.game_over.on_update(delta_time)
+            return
         self.pilot_overlay.on_update(delta_time)

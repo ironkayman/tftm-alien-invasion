@@ -71,6 +71,7 @@ class Level(arc.Scene):
         # from an eternal Emitter wth time interval between spawns
         self.spawners = [
             AlienSpawner(
+                starship=self.starship,
                 center_xy=(
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
@@ -91,6 +92,7 @@ class Level(arc.Scene):
                 )  # type: ignore
             ),
             AlienSpawner(
+                starship=self.starship,
                 center_xy=(
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
@@ -145,12 +147,13 @@ class Level(arc.Scene):
                 for c in collisions:
                     c.remove_from_sprite_lists()
 
-        def process_out_of_bounds_bullets():
+        def process_out_of_bounds_alien_bullets():
             # remove all out of window player bullets
             for bullet in self.alien_bullets:
                 if bullet.top < 0:
                     bullet.remove_from_sprite_lists()
 
+        def process_collisions_alien_bullets():
             # remove all out of window player bullets
             for bullet in self.starship.fired_shots:
                 if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
@@ -182,13 +185,14 @@ class Level(arc.Scene):
         self.alien_bullets.update()
 
         process_collisions_bullets_clearout()
-        process_collisions_aliens_damage_bullets()
-        process_out_of_bounds_bullets()
+        process_out_of_bounds_alien_bullets()
+
+        if self.starship.can_reap(): return
+        process_collisions_alien_bullets()
         process_collisions_starship_damage_bullets()
+        process_collisions_aliens_damage_bullets()
         process_collisions_aliens_starship_sprites()
 
-        if self.starship.can_reap():
-            pass
 
     def draw(self):
         """

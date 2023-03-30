@@ -37,6 +37,9 @@ def on_update_plot_movement(self, delta_time: float) -> None:
         # >0 - left more, <0 - right more
         return aliens_count_on_left / aliens_count_on_right
 
+
+    if self._starship.can_reap(): return
+
     # configure movement based on state's movesets
     movesets = self.state.movesets
     ship_x = self._starship.center_x

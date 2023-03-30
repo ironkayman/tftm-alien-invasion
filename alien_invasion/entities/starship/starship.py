@@ -83,6 +83,7 @@ class Starship(Entity, OnUpdateMixin):
     _current_state_index = 0
     _can_reap: bool = False
 
+    xp: int = 0
 
     def __init__(self,
         fired_shots: arc.SpriteList,
