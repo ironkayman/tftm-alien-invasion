@@ -73,7 +73,7 @@ class Entity(arc.Sprite, ABC):
         # self.SPEED: int
 
         super().__init__()
-        self._parent_list = parent_sprite_list
+        self._parent_sprite_list = parent_sprite_list
 
         # Particle properties
         self.center_x = center_xy[0]
@@ -96,6 +96,9 @@ class Entity(arc.Sprite, ABC):
         self.fired_shots = fired_shots
         self.enemy_shots = enemy_shots
 
+    def _restart_hit_effect_emitter(self) -> None:
+        """Method for restarting emitter animation"""
+        raise NotImplementedError
 
     @property
     def hp(self) -> int:
@@ -106,7 +109,7 @@ class Entity(arc.Sprite, ABC):
     def hp(self, hp_new: int) -> None:
         """Setter and manager for alien's HP considering current `state`.
         """
-        # self._restart_hit_effect_emitter()
+        self._restart_hit_effect_emitter()
         if hp_new > 0:
             self._hp_old = self._hp_curr
             self._hp_curr = hp_new

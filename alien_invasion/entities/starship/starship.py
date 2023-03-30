@@ -134,6 +134,9 @@ class Starship(Entity, OnUpdateMixin):
             )
         )
 
+    def _restart_hit_effect_emitter(self) -> None:
+        """Stub for being-hit animation"""
+        return
 
     def apply_state(self) -> None:
         state = self.state

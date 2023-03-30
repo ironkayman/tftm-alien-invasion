@@ -15,8 +15,53 @@ from alien_invasion.entities import Starship
 
 from alien_invasion.utils.loaders.alien import AlienConfig
 
+from ..common.entity import Entity
 
-class Alien(arc.Sprite, OnUpdateMixin):
+
+
+@dataclass(slots=True, kw_only=True)
+class Timeouts:
+    """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+
+    Attributes
+    ----------
+    primary : float
+        Primary weapon firing timeout.
+    """
+
+    primary: float
+
+
+@dataclass(slots=True)
+class Timers:
+    """Alien object timers increased by `delta_times` in `on_update` methods
+
+    Attributes
+    ----------
+    primary : float
+        Timer for primary weapon.
+    dodge : float
+        Time elapsed during execution of last move during dodging.
+    track : float
+        Timer couting the time passed after
+        last movement change in during tracking moveset.
+    """
+
+    primary: float = 0.0
+    dodge: float = 0.0
+    track: float = 0.0
+
+    def reset_primary(self) -> None:
+        self.primary = 0
+
+    def reset_dodge(self) -> None:
+        self.dodge = 0
+
+    def reset_track(self) -> None:
+        self.track = 0
+
+
+class Alien(Entity, OnUpdateMixin):
     """Alien sprite class.
 
     Manages HP, states, emits hit-effects (from `hit_effect_list`).
@@ -25,48 +70,6 @@ class Alien(arc.Sprite, OnUpdateMixin):
     factory creation inside an `arc.Emitter`.
     """
 
-    @dataclass(slots=True, kw_only=True)
-    class Timeouts:
-        """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
-
-        Attributes
-        ----------
-        primary : float
-            Primary weapon firing timeout.
-        """
-
-        primary: float
-
-
-    @dataclass(slots=True)
-    class Timers:
-        """Alien object timers increased by `delta_times` in `on_update` methods
-
-        Attributes
-        ----------
-        primary : float
-            Timer for primary weapon.
-        dodge : float
-            Time elapsed during execution of last move during dodging.
-        track : float
-            Timer couting the time passed after
-            last movement change in during tracking moveset.
-        """
-
-        primary: float = 0.0
-        dodge: float = 0.0
-        track: float = 0.0
-
-        def reset_primary(self) -> None:
-            self.primary = 0
-
-        def reset_dodge(self) -> None:
-            self.dodge = 0
-
-        def reset_track(self) -> None:
-            self.track = 0
-
-
     def __init__(self,
         config: AlienConfig,
         hit_effect_list: arc.SpriteList,
@@ -74,54 +77,35 @@ class Alien(arc.Sprite, OnUpdateMixin):
         alien_bullets: arc.SpriteList,
         parent_sprite_list: arc.SpriteList,
         # Particle-oriented properties
-        change_xy: arc.Vector = (0.0, 0.0),
-        center_xy: arc.Point = (0.0, 0.0),
-        angle: float = 0.0,
-        change_angle: float = 0.0,
-        scale: float = 1.0,
-        alpha: int = 255,
-        mutation_callback=None,
+        **particle_kwargs
     ):
         """Crearte instance of alien from given `config`
         """
-        self._can_reap: bool = False
+        # self._can_reap: bool = False
 
-        super().__init__()
-        self._aliens = parent_sprite_list
+        # super().__init__()
+        # self._aliens = parent_sprite_list
 
         self._starship = starship
 
-        # Particle properties
-        self.center_x = center_xy[0]
-        self.center_y = center_xy[1]
-        self.change_x = change_xy[0]
-        # self.change_y = self.SPEED * -0.01
-        self.angle = angle
-        self.scale = scale
-        self.change_angle = change_angle
-        self.alpha = alpha
-        self.mutation_callback = mutation_callback
+        super().__init__(
+            config=config,
+            parent_sprite_list=parent_sprite_list,
+            fired_shots=alien_bullets,
+            enemy_shots=[],
+            hit_effects=hit_effect_list,
+            **particle_kwargs,
+        )
 
-        self.config = config
-
-        self.states = deepcopy(self.config.states)
-        self.state, _ = next(self.states)
-        self.apply_state()
-
-        # prepare monkeypatched spritelist to replace
-        # emitter's service ._particles spritelist
-        self.__hit_effect_list = hit_effect_list
         # create hit-particles emitter
         self.__configure_emitter()
         self._spacial_danger_ranges: arc.SpriteList = self._starship.fired_shots
         self.dodging = False
 
-        self.fired_shots = alien_bullets
-
-        self.timeouts = Alien.Timeouts(
+        self.timeouts = Timeouts(
             primary=self.SPEED * self.scale**2 * 10,
         )
-        self._timers = Alien.Timers()
+        self._timers = Timers()
 
 
     def __configure_emitter(self):
@@ -140,7 +124,7 @@ class Alien(arc.Sprite, OnUpdateMixin):
         )
         # replace internal spritelist,
         # with enabled spacial haching
-        self.__hit_emitter._particles = self.__hit_effect_list
+        self.__hit_emitter._particles = self.hit_effect_list
 
     def _restart_hit_effect_emitter(self) -> arc.Emitter:
         """Recreate particle burst
@@ -159,28 +143,9 @@ class Alien(arc.Sprite, OnUpdateMixin):
             self.__hit_emitter.rate_factory = arc.EmitBurst(3)
         return self.__hit_emitter
 
-    @property
-    def hp(self) -> int:
-        """Getter for HP"""
-        return self._hp_curr
-
-    @hp.setter
-    def hp(self, hp_new: int) -> None:
-        """Setter and manager for alien's HP considering current `state`.
-        """
-        self._restart_hit_effect_emitter()
-        if hp_new > 0:
-            self._hp_old = self._hp_curr
-            self._hp_curr = hp_new
-            return
-
-        self.state, error = next(self.states)
-        # death_damage_cap = self.state.death_damage_cap
-        if error is StateManager.FinalStateReached:
-            self._can_reap = True
-        else:
-            self._hp_old = self._hp_curr
-        self.apply_state()
+    def handle_final_state(self) -> None:
+        """When alien reaches it's final state - simply remove it"""
+        self._can_reap = True
 
     def on_update(self, delta_time) -> None:
         """Particle's update method.

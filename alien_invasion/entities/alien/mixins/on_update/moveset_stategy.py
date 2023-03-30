@@ -12,6 +12,10 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     """Based on current moveset and ship's posirion calculate its movement
     """
 
+    # workaround circular imports
+    from ...alien import Alien
+    self = cast(Alien, self)
+
     def get_alien_count_proportion_on_x_axis() -> float:
         """Get proportianal float value of aliens.
 
@@ -24,18 +28,14 @@ def on_update_plot_movement(self, delta_time: float) -> None:
         """
         aliens_count_on_right = len(tuple(filter(
             lambda a: a.center_x > self.center_x,
-            self._aliens
+            self._parent_sprite_list
         ))) or 1
         aliens_count_on_left = len(tuple(filter(
             lambda a: a.center_x < self.center_x,
-            self._aliens
+            self._parent_sprite_list
         ))) or 1
         # >0 - left more, <0 - right more
         return aliens_count_on_left / aliens_count_on_right
-
-    # workaround circular imports
-    from ...alien import Alien
-    self = cast(Alien, self)
 
     # configure movement based on state's movesets
     movesets = self.state.movesets
