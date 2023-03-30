@@ -6,6 +6,8 @@
 
 > Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
 
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
 ## Introduction
 ```
 This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift
@@ -46,8 +48,7 @@ Default controls (confirured at [configs/config.json](configs/config.json)`::cur
 
 ## Credits
 
-Images present are licenced by [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).
+Images present are licenced by [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0):
 
-Readme preview:
 - [1042x1432 Proportions And Measurements](http://getdrawings.com/get-drawing#hand-anatomy-drawing-37.jpg) - edited: cropped, removed fill
 - [945x650 Anatomy Of Hands By Richterbach](http://getdrawings.com/get-drawing#hand-anatomy-drawing-52.jpg) - edited: cropped, removed fill
