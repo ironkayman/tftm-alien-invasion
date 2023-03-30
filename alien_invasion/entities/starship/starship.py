@@ -18,16 +18,52 @@ from .types import TMovementArea
 from .mixins import OnUpdateMixin
 from .transmission import Transmission
 
-from alien_invasion.utils.loaders.config.starship import StarshipLoadout
+from ..common.state_manager import StateManager
+
+from ..common.entity import Entity
+from alien_invasion.utils.loaders.alien.config import AlienConfig
+
+@dataclass(slots=True, kw_only=True)
+class Timeouts:
+    primary: float
+    secondaries: list[float]
+    engine: int = 1
+
+@dataclass(slots=True)
+class Timers:
+    """Alien object timers increased by `delta_times` in `on_update` methods
+
+    Attributes
+    ----------
+    primary : float
+        Timer for primary weapon.
+    evade : float
+        Time elapsed during execution of last move during dodging.
+    outage : float
+        Time spent in outage mode before any interaction.
+    """
+
+    primary: float = 0.0
+    evade: float = 0.0
+    outage: float = 0.0
+
+    def reset_primary(self) -> None:
+        self.primary = 0
+
+    def reset_evade(self) -> None:
+        self.evade = 0
+
+    def reset_outage(self) -> None:
+        self.outage = 0
 
 
-class Starship(arc.Sprite, OnUpdateMixin):
+class Starship(Entity, OnUpdateMixin):
     """ViewModel Starship entity.
     
     Input is passed through parent Section object
     in shich keybindings are being translated to movement states
     of the ship.
-    
+
     Its is ViewModel since more logic can be accumulated inside
     designated controlled by targeted input entity/object
     possibly removing such business-logic from main Controller
@@ -41,21 +77,20 @@ class Starship(arc.Sprite, OnUpdateMixin):
 
     firing_primary = False
 
-    loadout: StarshipLoadout
 
     _hp_curr: int
     _hp_old: int
     _current_state_index = 0
     _can_reap: bool = False
 
-    @dataclass(slots=True, kw_only=True)
-    class Timeouts:
-        primary: float
-        secondaries: list[float]
-        engine: int = 1
+    xp: int = 0
 
-
-    def __init__(self, fired_shots: arc.SpriteList, area_coords: list, alien_shots: arc.SpriteList,):
+    def __init__(self,
+        fired_shots: arc.SpriteList,
+        area_coords: list,
+        enemy_shots: arc.SpriteList,
+        hit_effect_list: arc.SpriteList,
+    ):
         """Creates Starship instance.
 
         Parameters
@@ -66,50 +101,29 @@ class Starship(arc.Sprite, OnUpdateMixin):
             Description of an area at which
             ship is allowed to move.
         """
-        super().__init__()
-        self.xp = 0
 
         # workaround for cycling imports
         from alien_invasion.settings import STARSHIP
         self.loadout = STARSHIP
 
-        self.states = [
-            {
-                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.png',
-                'hp': sum([item.armor for item in self.loadout.hull.armor])
-            },
-            {
-                'texture': CONSTANTS.DIR_IMAGES / 'initial_starship.danger.png',
-                'hp': 1
-            }
-        ]
-        for state in self.states:
-            self.textures.append(arc.load_texture(
-                file_name=state['texture'],
-                can_cache=True,
-            ))
-        # set default first state texture
-        self.texture = self.textures[self._current_state_index]
-        self._hp_curr = self.states[self._current_state_index]['hp']
+        super().__init__(
+            config=AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG),
+            parent_sprite_list=arc.SpriteList(),
+            fired_shots=fired_shots,
+            enemy_shots=enemy_shots,
+            hit_effects=hit_effect_list,
+        )
 
-        self.timeouts = Starship.Timeouts(
+        self.timeouts = Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
             secondaries=[tm.recharge_timeout for tm in self.loadout.weaponry.secondaries],
         )
+        self._timers = Timers()
 
         self.movement_borders = TMovementArea(*area_coords)
-        self.transmission = Transmission(self) # <- movement_borders
+        self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
-
-        self.fired_shots: arc.SpriteList = fired_shots
-
-        self.SPEED = self.loadout.thrusters.velocity
-
-        self.reactivated_since_free_fall = False
-        self.free_fall_timer = 0
-
-        self.alien_shots = alien_shots
         self.set_hit_box(
             (
                 (-2, 5),
@@ -120,6 +134,30 @@ class Starship(arc.Sprite, OnUpdateMixin):
                 (-5, 0),
             )
         )
+
+    def _restart_hit_effect_emitter(self) -> None:
+        """Stub for being-hit animation"""
+        return
+
+    def apply_state(self) -> None:
+        state = self.state
+
+        if state.name == 'initial':
+            state.hp = sum([
+                item.armor for item in self.loadout.hull.armor
+            ])
+            state.speed = self.loadout.thrusters.velocity
+
+        else:
+            state.hp = 1
+            state.speed = self.loadout.thrusters.velocity
+
+        self.texture = arc.load_texture(
+            file_name=state.texture_path,
+            can_cache=True,
+        )
+        self._hp_curr = state.hp
+        self.speed = state.speed
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
@@ -132,7 +170,7 @@ class Starship(arc.Sprite, OnUpdateMixin):
         self._on_update_firing(delta_time, frame_energy_change)
         # update free-fall timer
         if self.free_falling:
-            self.free_fall_timer += delta_time
+            self._timers.outage += delta_time
 
         # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
         super().update()
@@ -155,55 +193,12 @@ class Starship(arc.Sprite, OnUpdateMixin):
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
 
-    @property
-    def state(self) -> int:
-        """Gets starship's current `state`
-
-        Its a wrapper around current texture.
-        Since textures are paired with state by Alien architecture
-        and multiplicity of textures is `arc.Sprite` requires a selection of one,
-        consider index of selected texture as a current state index.
-
-        Returns
-        -------
-        int
-            Current `State` index/texture index.
-        """
-        return self._current_state_index
-
-    @state.setter
-    def state(self, value: int) -> None:
-        """Set current texture index/state.
-
-        Since textures and states are almost the same
-        - see getter `.state`.
-        """
-        self._current_state_index = value
-        self.texture = self.textures[self._current_state_index]
-
-    @property
-    def hp(self) -> int:
-        """Getter for HP"""
-        return self._hp_curr
-
-    @hp.setter
-    def hp(self, hp_new: int) -> None:
-        """Setter and manager for alien's HP considering current `state`.
-        """
-        self._hp_old = self._hp_curr
-        self._hp_curr = hp_new
-
-        if self._hp_curr <= 0:
-            if self.state < len(self.states) - 1:
-                self.state += 1
-                self._hp_curr = self.states[self.state]['hp']
-            else:
-                if (chance := random()) > 0.22:
-                    self._hp_curr = self.states[self.state]['hp']
-                else:
-                    self._can_reap = True
-                print('chance:', chance)
+    def handle_final_state(self) -> None:
+        if (chance := random()) > 0.22:
             self._hp_old = self._hp_curr
+            self.apply_state()
+        else:
+            self._can_reap = True
 
     def can_reap(self) -> bool:
         return self._can_reap

@@ -32,7 +32,6 @@ class PilotOverlay(arc.Scene):
             font_size=12,
             font_name="Courier New",
         )
-
         arc.draw_text(
             f"XP: {self.starship.xp}",
             start_x=35,
@@ -42,7 +41,7 @@ class PilotOverlay(arc.Scene):
             font_name="Courier New",
         )
 
-        if self.starship.state == 0:
+        if self.starship.state.index != 1:
             arc.draw_text(
                 f"HP: {self.starship.hp}",
                 start_x=35,

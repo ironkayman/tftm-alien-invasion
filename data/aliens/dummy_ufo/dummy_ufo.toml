@@ -7,6 +7,22 @@
     type = ['corporeal']
     xp = 10
 
+    # stage 1 ? - plain props for alien
+
+    # # stage 2 - items generated from props, and are not cross checked
+    # [loadout]
+    #     [primary]
+    #         bullet_damage = 8
+    #         energy_per_bullet = 0
+    #         speed = 800
+    #         recharge_timeout = 300
+    #     [armor]
+    #         armor/hp = 4
+    #     [thrusters]
+    #         velocity = 140
+    #         # energy_requirement = 0
+
+
 [state]
 
 [state.initial]
@@ -16,6 +32,10 @@
     speed = 90
     hp = 20
     death_damage_cap = false
+
+    bullet_damage = 8
+    bullet_speed = 800
+    recharge_timeout = 300
 
 [state.shattered]
     movesets = ['escaping']

@@ -5,7 +5,7 @@ from typing import cast
 
 import arcade as arc
 
-from alien_invasion.utils.loaders.alien.config import AlienMoveset
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
 def on_update_fire_bullets(self, delta_time: float) -> None:
@@ -17,15 +17,13 @@ def on_update_fire_bullets(self, delta_time: float) -> None:
     self = cast(Alien, self)
 
     #  firing is active only in tracking moveset
-    if AlienMoveset.tracking not in self.config.states[
-        self.state
-    ].movesets:
+    if AlienMoveset.tracking not in self.state.movesets:
         return
 
     self._timers.primary += delta_time
 
     if (
-        self._timers.primary > self.timeouts.primary / 1000 / self.SPEED * 100
+        self._timers.primary > self.timeouts.primary / 1000 / self.speed * 100
     ):
         self._fire(delta_time)
         self._timers.reset_primary()

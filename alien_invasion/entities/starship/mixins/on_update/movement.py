@@ -30,19 +30,19 @@ def on_update_movement(self, delta_time: float):
 
         # basic L/R movement
         if self.moving_left and not self.transmission.throttle:
-            self.change_x = -self.SPEED * delta_time
+            self.change_x = -self.speed * delta_time
         if self.moving_right and not self.transmission.throttle:
-            self.change_x = self.SPEED * delta_time
+            self.change_x = self.speed * delta_time
 
         # slow down while approching to left border
         if self.moving_left and self.transmission.throttle and self.transmission.border_reached_left:
-            self.change_x = -self.SPEED // 3 * delta_time
+            self.change_x = -self.speed // 3 * delta_time
             # stop inside a wall
             if self.left < self.movement_borders.left - self.width * 0.3:
                 self.stop()
         # slow down while approching to right border
         elif self.moving_right and self.transmission.throttle and self.transmission.border_reached_right:
-            self.change_x = self.SPEED // 3 * delta_time
+            self.change_x = self.speed // 3 * delta_time
             # stop inside a wall
             if self.right > self.movement_borders.right + self.width * 0.3:
                 self.stop()
@@ -60,7 +60,7 @@ def on_update_movement(self, delta_time: float):
     # last movement at low energy was LEFT
     # -> free fall LEFT
     if self.last_direction == LastDirection.LEFT:
-        self.change_x = -self.SPEED // 3 * delta_time
+        self.change_x = -self.speed // 3 * delta_time
         # stop inside a wall if deep inside it
         if self.left < self.movement_borders.left - self.width * 0.3:
             self.stop()
@@ -70,7 +70,7 @@ def on_update_movement(self, delta_time: float):
     # last movement at low energy was RIGHT
     # -> free fall RIGHT
     elif self.last_direction == LastDirection.RIGHT:
-        self.change_x = self.SPEED // 3 * delta_time
+        self.change_x = self.speed // 3 * delta_time
         # stop inside a wall if deep inside it
         if self.right > self.movement_borders.right + self.width * 0.3:
             self.stop()

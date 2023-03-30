@@ -1,37 +1,22 @@
 """Object respresention processor for any `Alien` entity
 """
 
+from typing import cast, Generator
 from pathlib import Path
 from enum import IntEnum, auto
 
-from pydantic import BaseModel, validator
+from pydantic import (
+    BaseModel,
+    validator,
+    PrivateAttr,
+)
 
-from .entity_dir import AlientResources
+from ..config.file_opener import reader
 
+from alien_invasion.entities.common.loadout import Loadout
 
-class AlienSize(IntEnum):
-    """Allowed enemy sizes"""
-
-    small = auto()
-    medium = auto()
-    large = auto()
-    colossal = auto()
-    unimaginable = auto()
-
-
-class AlienType(IntEnum):
-    """Allowed enemy types"""
-
-    # Tier 1
-    corporeal = auto()
-    ancient = auto()
-    # Tier 2
-    possessed = auto()
-    undead = auto()
-    # Tier 3
-    narrativistic = auto()
-    metaphysic = auto()
-
+from alien_invasion.entities.common.state_manager import State
+from alien_invasion.entities.common.state_manager.state import AlienType, AlienSize
 
 class AlienInfo(BaseModel):
     """Structured representation of `info` block of alien's central config.
@@ -67,95 +52,6 @@ class AlienInfo(BaseModel):
         return set(map(lambda c: AlienType[c], val))
 
 
-class AlienMoveset(IntEnum):
-    """Allowed movesets for an arbitrary state.
-
-    Attributes
-    ----------
-    spiralling : int
-        Flies across screen (left<->right) in overlapping circles.
-    tracking : int
-        Vaguely follows starship's x-axis and when needed dodges bullets.
-    escaping : int
-        Opposite of `tracking`, tries never to cross x-axis of a starship.
-    """
-
-    spiralling = auto()
-    tracking = auto()
-    escaping = auto()
-
-
-class AlienState(BaseModel):
-    """Scheme for `Alien` states data strcture
-
-    Attributes
-    ----------
-    name: str
-        State name.
-    movesets: set[AlienMoveset]
-        Movesets available for this alien's state represented as Enums.
-    hp: int
-        HitPoints for this state.
-    death_damage_cap: bool
-        Does damage beyond hp = 0 is translated to damage to alen's nex state.
-        `True` - damage is capped whch means that next state does not
-        absorb this state's incoming damage.
-        `False` - remaining from hp = 0 damage is absorbed by
-        next alien's state if any present, dealng damage to its HP bar.
-    texture: Path
-        Path to a state's texure.
-    """
-
-    name: str
-    movesets: set[AlienMoveset]
-    speed: int
-    hp: int
-    death_damage_cap: bool
-    texture: Path
-
-    @validator('movesets', pre=True)
-    def get_movesets(cls, val) -> set[AlienMoveset]:
-        """Turns moveset string names to Enums"""
-        return set(map(lambda m: AlienMoveset[m], val))
-
-    def __init__(self,
-        core_props_container: tuple[str, dict],
-        texture_props_container: tuple[str, Path]
-    ) -> None:
-        """Maps groups of entity's properties to a coherent data structure
-
-        Parameters
-        ----------
-        core_props_container: tuple[str, dict]
-            Tupled pair of specific state name
-            and it's internal properties.
-
-            NOTE: Naming conventions:
-                One would consider `core_` preperties
-                as primary information, not the states.
-        texture_props_container: tuple[str, Path]
-            Tuple of alien's state [0] and
-            its designated `Path` to a texture.
-        """
-        state_name = core_props_container[0]
-        core_props = core_props_container[1]
-
-        texture_name = texture_props_container[0]
-        texture_props = texture_props_container[1]
-
-        if state_name != texture_name:
-            raise NotImplementedError()
-
-        super().__init__(
-            name=state_name,
-            movesets=core_props['movesets'],
-            speed=core_props['speed'],
-            hp=core_props['hp'],
-            death_damage_cap=core_props['death_damage_cap'],
-            texture=texture_props
-        )
-
-
 class AlienConfig:
     """Configuration class for an alien.
 
@@ -167,10 +63,12 @@ class AlienConfig:
     ----------
     info: AlienInfo
         Inforamtion about specific `Alien`.
-    states: list[AlienState] = []
+    states: list[State] = []
         Listed alien's states.
     """
 
+    info: AlienInfo
+    states: Generator[State, None, None] = []
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.
@@ -186,21 +84,60 @@ class AlienConfig:
             - If error during reading to dict of a config was found
         """
 
-        self.info: AlienInfo
-        self.states: list[AlienState] = []
-
         self._resource_dir = resource_dir
-        print('resource_dir', resource_dir)
-        self._config = {}
-        self._resources = AlientResources(self._resource_dir, self._config)
-        self.info = AlienInfo(self._resources.config['info'])
-        structures_resources = zip(
-            self._resources.config['state'].items(),
-            self._resources.texture_paths.items()
-        )
-        # ((('initial', {'movesets': ['spiralling', 'escaping'], 'hp': 200, 'death_damage_cap': False}), ('initial', PosixPath('/home/kayman/git/mtt/tftm-alien-invasion/data/aliens/dummy_ufo/state.initial.png'))),)
-        for resource_pair in structures_resources:
-            self.states.append(AlienState(
-                resource_pair[0],
-                resource_pair[1]
-            ))
+
+        if (config_files := list(self._resource_dir.glob('*.toml'))) and \
+            len(config_files) > 1:
+            raise NotImplementedError('One config per folder/alien')
+
+        config, error = reader(config_files[0])
+
+        if error is not Ellipsis:
+            raise NotImplementedError(error)
+        self.config = cast(dict, config)
+
+        from alien_invasion.entities.common.state_manager import StateManager
+
+        self.info = AlienInfo(self.config['info'])
+        states = []
+        for index, state in enumerate(self.config['state'].items()):
+            state_name, state = state
+            texture_path = self.define_state_texture_path(state_name)
+            states.append({f'{state_name}': dict(
+                name=state_name,
+                index=index,
+                data=state,
+                texture_path=texture_path,
+            )})
+        self.states = StateManager(states)
+
+    def define_state_texture_path(self, state_name: str) -> Path:
+        """Checks alien config for image-state pair.
+
+        This means that for avery enemy state there's a
+        required texture as a png file with state's name.
+        If image is successfully found, save its `pathlib.Path`
+        to states' `image_path` key to be loaded later at *runtime*.
+
+        Paramters
+        ---------
+        state_name: str
+            Name of existing `Alien` state defined at central config file.
+
+        Returns
+        -------
+        Path
+            `pathlib.Path` object to state's texture.
+
+        Raises
+        ------
+        FileNotFoundError
+            If no state-texture was found for any
+            of described at alien config's states.
+        """
+        # texture foir a state file naming pattern
+        file_name = f'state.{state_name}.png'
+        image_path = self._resource_dir / file_name
+        if not image_path.exists():
+            raise FileNotFoundError('alien state texture', file_name, 'not found')
+        return image_path
