@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "alien_invasion"
+name = "alien-invasion"
 version = "0.1.1"
-description = "Demo of alien invasion game"
-authors = ["Your Name <you@example.com>"]
+description = "Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3."
+authors = ["Kostya Orlik <kostya.orlik@outlook.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
