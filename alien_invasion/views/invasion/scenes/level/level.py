@@ -62,9 +62,9 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                emit_controller=arc.EmitInterval(1.6),
+                emit_controller=arc.EmitInterval(self.__current_wave.spawns[0].spawner.spawn_interval),
                 particle_factory=lambda emitter: Alien(
-                    config=self.__current_wave.spawns[0],
+                    config=self.__current_wave.spawns[0].config,
                     # relative to emitter's center_xy
                     center_xy=arc.rand_on_line(
                         (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
@@ -73,8 +73,10 @@ class Level(arc.Scene):
                     hit_effect_list=self.alien_was_hit_effect_particles,
                     starship=self.starship,
                     alien_bullets=self.alien_bullets,
-                    change_xy=arc.rand_vec_spread_deg(-90, 12, 1.0),
+                    change_xy=arc.rand_vec_spread_deg(-90, 12, self.__current_wave.spawns[0].spawner.approach_velocity / 60),
                     parent_sprite_list=emitter._particles,
+                    scale=self.__current_wave.spawns[0].spawner.scale,
+                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[0].spawner.spawn_random_rotation else 0
                 )  # type: ignore
             ),
             AlienSpawner(
@@ -83,9 +85,9 @@ class Level(arc.Scene):
                     CONSTANTS.DISPLAY.WIDTH // 2,
                     CONSTANTS.DISPLAY.HEIGHT - 20
                 ),
-                emit_controller=arc.EmitInterval(3.0),
+                emit_controller=arc.EmitInterval(self.__current_wave.spawns[1].spawner.spawn_interval),
                 particle_factory=lambda emitter: Alien(
-                    config=self.__current_wave.spawns[1],
+                    config=self.__current_wave.spawns[1].config,
                     # relative to emitter's center_xy
                     center_xy=arc.rand_on_line(
                         (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
@@ -94,10 +96,10 @@ class Level(arc.Scene):
                     hit_effect_list=self.alien_was_hit_effect_particles,
                     starship=self.starship,
                     alien_bullets=self.alien_bullets,
-                    change_xy=arc.rand_vec_spread_deg(-90, 12, 0.6),
+                    change_xy=arc.rand_vec_spread_deg(-90, 12, self.__current_wave.spawns[1].spawner.approach_velocity / 60),
                     parent_sprite_list=emitter._particles,
-                    scale=2.0,
-                    angle=arc.rand_angle_360_deg(),
+                    scale=self.__current_wave.spawns[1].spawner.scale,
+                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[1].spawner.spawn_random_rotation else 0,
                 )  # type: ignore
             ),
         ]

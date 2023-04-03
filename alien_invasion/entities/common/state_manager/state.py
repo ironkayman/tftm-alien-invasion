@@ -47,6 +47,8 @@ class AlienMoveset(IntEnum):
         try moving away from their paths.
     firing : bool
         Alien can fire bullets.
+    persuing : bool
+        Do not approach the starship at y-axis, keep distance.
     """
 
     spiralling = auto()
@@ -54,6 +56,7 @@ class AlienMoveset(IntEnum):
     escaping = auto()
     dodging = auto()
     firing = auto()
+    persuing = auto()
 
 
 class State(BaseModel):

@@ -1,7 +1,35 @@
-from pydantic import BaseModel, validator, ValidationError
+from dataclasses import dataclass
+from pydantic import BaseModel, validator
 
 from alien_invasion.utils.loaders.alien import load_alien_by_name
 from alien_invasion.utils.loaders.alien import AlienConfig
+
+
+class AlienSpawnerStats(BaseModel):
+    """
+    approach_velocity : float
+    spawn_interval : float
+    spawn_random_rotation : bool
+    scale : float
+    """
+
+    approach_velocity: float
+    spawn_interval: float
+    spawn_random_rotation: bool
+    scale: float
+
+
+@dataclass(kw_only=True)
+class AlienWaveWrapper:
+    config: AlienConfig
+    spawner: AlienSpawnerStats
+
+    def __init__(self,
+        config: AlienConfig,
+        spawner: AlienSpawnerStats,
+    ) -> None:
+        self.config = config
+        self.spawner = spawner
 
 
 class Wave(BaseModel):
@@ -20,14 +48,17 @@ class Wave(BaseModel):
         will increase at next interval.
     """
 
-    spawns: list[AlienConfig]
+    spawns: list[AlienWaveWrapper]
     pass_score: int
     interval: int
     density_multiplier: float
     total_enemy_health: int
 
+    def __init__(self, **data) -> None:
+        super().__init__(**data)
+
     @validator('spawns', pre=True)
-    def get_alien_configs(cls, configs_dict: dict) -> list[AlienConfig]:
+    def get_alien_configs(cls, configs_dict: dict) -> list[AlienWaveWrapper]:
         """
         Example
         -------
@@ -45,12 +76,15 @@ class Wave(BaseModel):
             }
         }
         """
-        alien_configs = []
+        configs = []
         for pair in configs_dict.items():
             alien_config = load_alien_by_name(pair[0])
-            alien_config.spawner = pair[1]
-            alien_configs.append(alien_config)
-        return alien_configs
+            alien_spawner_stats = AlienSpawnerStats(**pair[1])
+            configs.append(AlienWaveWrapper(
+                config=alien_config,
+                spawner=alien_spawner_stats
+            ))
+        return configs
 
     class Config:
         arbitrary_types_allowed = True

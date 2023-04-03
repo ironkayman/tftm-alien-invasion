@@ -53,12 +53,6 @@ class AlienInfo(BaseModel):
         return set(map(lambda c: AlienType[c], val))
 
 
-class AlienSpawner:
-    approach_velocity: float
-    spawn_interval: float
-    spawn_random_rotation: bool
-
-
 class AlienConfig:
     """Configuration class for an alien.
 
@@ -68,15 +62,14 @@ class AlienConfig:
 
     Attributes
     ----------
-    info: AlienInfo
+    info : AlienInfo
         Inforamtion about specific `Alien`.
-    states: list[State] = []
+    states : list[State] = []
         Listed alien's states.
     """
 
     info: AlienInfo
     states: Generator[State, None, None] = []
-    spawner: AlienSpawner
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.

@@ -45,6 +45,9 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     ship_x = self._starship.center_x
     relative_amount = get_alien_count_proportion_on_x_axis()
 
+    if AlienMoveset.persuing in movesets:
+        self.change_y = 0
+
     if AlienMoveset.tracking in movesets:
         if not self.dodging:
             if math.fabs(self.center_x - ship_x) < self._starship.width / self._starship.width * random():

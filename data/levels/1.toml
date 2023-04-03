@@ -25,8 +25,10 @@ description = """
         spawn_interval = 1.6
         # does spawn in random 360 angle?
         spawn_random_rotation = false
+        scale = 1.0
 
     [waves.spawns.castle_wall_sontra]
         approach_velocity = 36.0
         spawn_interval = 3.0
         spawn_random_rotation = true
+        scale = 2.0
