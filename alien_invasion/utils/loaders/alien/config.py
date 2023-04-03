@@ -51,6 +51,10 @@ class AlienInfo(BaseModel):
         """Alien's Type naming - Str -> IntEnum mapping"""
         return set(map(lambda c: AlienType[c], val))
 
+class AlienSpawner:
+    approach_velocity: float
+    spawn_interval: float
+    spawn_random_rotation: bool
 
 class AlienConfig:
     """Configuration class for an alien.
@@ -69,6 +73,7 @@ class AlienConfig:
 
     info: AlienInfo
     states: Generator[State, None, None] = []
+    spawner: AlienSpawner
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.

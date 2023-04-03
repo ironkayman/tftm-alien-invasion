@@ -30,5 +30,3 @@ description = """
         approach_velocity = 36.0
         spawn_interval = 3.0
         spawn_random_rotation = true
-
-[[waves]]

@@ -20,16 +20,37 @@ class Wave(BaseModel):
         will increase at next interval.
     """
 
-    spawns: dict[str, dict]
+    spawns: list[AlienConfig]
     pass_score: int
     interval: int
     density_multiplier: float
     total_enemy_health: int
 
     @validator('spawns', pre=True)
-    def get_alien_configs(cls, val) -> list[AlienConfig]:
-        breakpoint()
-        return [load_alien_by_name(alien_name) for alien_name in val]
+    def get_alien_configs(cls, configs_dict: dict) -> list[AlienConfig]:
+        """
+        Example
+        -------
+        >>> configs_dict
+        {
+            'dummy_ufo': {
+                'approach_velocity': 60.0,
+                'spawn_interval': 1.6,
+                'spawn_random_rotation': False
+            },
+            'castle_wall_sontra': {
+                'approach_velocity': 36.0,
+                'spawn_interval': 3.0,
+                'spawn_random_rotation': True
+            }
+        }
+        """
+        alien_configs = []
+        for pair in configs_dict.items():
+            alien_config = load_alien_by_name(pair[0])
+            alien_config.spawner = pair[1]
+            alien_configs.append(alien_config)
+        return alien_configs
 
     class Config:
         arbitrary_types_allowed = True
