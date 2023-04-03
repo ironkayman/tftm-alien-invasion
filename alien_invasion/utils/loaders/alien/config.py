@@ -18,6 +18,7 @@ from alien_invasion.entities.common.loadout import Loadout
 from alien_invasion.entities.common.state_manager import State
 from alien_invasion.entities.common.state_manager.state import AlienType, AlienSize
 
+
 class AlienInfo(BaseModel):
     """Structured representation of `info` block of alien's central config.
 
@@ -51,10 +52,12 @@ class AlienInfo(BaseModel):
         """Alien's Type naming - Str -> IntEnum mapping"""
         return set(map(lambda c: AlienType[c], val))
 
+
 class AlienSpawner:
     approach_velocity: float
     spawn_interval: float
     spawn_random_rotation: bool
+
 
 class AlienConfig:
     """Configuration class for an alien.

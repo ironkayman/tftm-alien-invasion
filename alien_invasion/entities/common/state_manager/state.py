@@ -42,11 +42,18 @@ class AlienMoveset(IntEnum):
         Vaguely follows starship's x-axis and when needed dodges bullets.
     escaping : int
         Opposite of `tracking`, tries never to cross x-axis of a starship.
+    dodging : int
+        If enemy bullets detected on same as entity x-axis,
+        try moving away from their paths.
+    firing : bool
+        Alien can fire bullets.
     """
 
     spiralling = auto()
     tracking = auto()
     escaping = auto()
+    dodging = auto()
+    firing = auto()
 
 
 class State(BaseModel):

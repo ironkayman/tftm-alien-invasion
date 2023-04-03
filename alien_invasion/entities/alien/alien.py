@@ -9,8 +9,7 @@ import arcade as arc
 
 from .mixins import OnUpdateMixin
 
-from ..common.state_manager import StateManager
-from ..common.state_manager.state import State
+from ..common.state_manager.state import State, AlienMoveset
 from alien_invasion.entities import Starship
 
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -162,9 +161,15 @@ class Alien(Entity, OnUpdateMixin):
             self.__hit_emitter.update()
 
         update_particles_on_hit()
+
         self._on_update_plot_movement(delta_time)
-        self._on_update_evade_bullets(delta_time)
-        self._on_update_fire_bullets(delta_time)
+
+        if AlienMoveset.dodging in self.state.movesets:
+            self._on_update_evade_bullets(delta_time)
+
+        if AlienMoveset.firing in self.state.movesets:
+            self._on_update_fire_bullets(delta_time)
+
         super().update()
 
     def can_reap(self) -> bool:

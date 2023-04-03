@@ -28,7 +28,7 @@
 [state.initial]
     # looks inside resources/sprites, searched after state name
     # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
-    movesets = ['tracking']
+    movesets = ['tracking', 'dodging', 'firing']
     speed = 90
     hp = 20
     death_damage_cap = false
@@ -38,7 +38,7 @@
     recharge_timeout = 300
 
 [state.shattered]
-    movesets = ['escaping']
+    movesets = ['escaping', 'dodging']
     speed = 30
     hp = 2
     death_damage_cap = false
