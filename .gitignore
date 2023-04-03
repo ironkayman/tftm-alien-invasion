@@ -1,4 +1,7 @@
+# python
 **/__pycache__
 __pycache__
-*.psd
-**/*.psd
+
+# kdevelop
+*.kdev4
+.kdev4/

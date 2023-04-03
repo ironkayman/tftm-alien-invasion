@@ -20,23 +20,15 @@ class Wave(BaseModel):
         will increase at next interval.
     """
 
-    spawns: list[AlienConfig]
+    spawns: dict[str, dict]
     pass_score: int
     interval: int
     density_multiplier: float
     total_enemy_health: int
 
-    # def __init__(self, **kwargs) -> None:
-    #     super().__init__(
-    #         spawns=kwargs['spawns'],
-    #         # pass_score=kwargs['pass_score'],
-    #         # interval=kwargs['interval'],
-    #         # density_multiplier=kwargs['density_multiplier'],
-    #         # total_enemy_health=kwargs['total_enemy_health'],
-    #     )
-
     @validator('spawns', pre=True)
     def get_alien_configs(cls, val) -> list[AlienConfig]:
+        breakpoint()
         return [load_alien_by_name(alien_name) for alien_name in val]
 
     class Config:

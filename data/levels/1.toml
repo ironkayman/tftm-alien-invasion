@@ -1,16 +1,34 @@
-name = "1"
+display_name = "1"
+description = """
+    a
+"""
 
 [[waves]]
-# alien types present of a level
-spawns = ['dummy_ufo', 'castle_wall_sontra']
-# randomly generate enemies but their total health
-# should not get bigger than that number
-total_enemy_health = 400
-# score/experince from killed aliens required to pass this wave
-pass_score = 30
-# interval in seconds before density_multplier increase
-interval = 30
-# how many enemies and their speed will increase at next interval
-density_multiplier = 1.7
 
-# enemy_size_restrictions
+    # randomly generate enemies but their total health
+    # should not get bigger than that number
+    total_enemy_health = 400
+    # score/experince from killed aliens required to pass this wave
+    pass_score = 30
+    # interval in seconds before density_multplier increase
+    interval = 30
+    # how many enemies and their speed will increase at next interval
+    density_multiplier = 1.7
+
+    [waves.spawns]
+
+    # aliens present on a level
+    [waves.spawns.dummy_ufo]
+        # pixels per second
+        approach_velocity = 60.0
+        # every [n] seconds spawns
+        spawn_interval = 1.6
+        # does spawn in random 360 angle?
+        spawn_random_rotation = false
+
+    [waves.spawns.castle_wall_sontra]
+        approach_velocity = 36.0
+        spawn_interval = 3.0
+        spawn_random_rotation = true
+
+[[waves]]

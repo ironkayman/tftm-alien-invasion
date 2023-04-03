@@ -29,24 +29,10 @@ class Level(arc.Scene):
         Parameters
         ----------
         config : dict
-
-        Examples
-        --------
-        >>> config
-        {
-            'name': '1',
-            'waves': [
-                {
-                    'spawns': ['dummy_ufo', 'castle_wall_sontra'],
-                    'total_enemy_health': 400,
-                    'pass_score': 30,
-                    'interval': 30,
-                    'density_multiplier': 1.7
-                }
-            ]
-        }
         """
         super().__init__()
+        self.display_name = config['display_name']
+        self.description = config['description']
         self.waves=[
             Wave(**wave_config)
             for wave_config
