@@ -1,8 +1,6 @@
 """Loadable entites of level structure.
 """
 
-from itertools import chain
-
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -111,7 +109,7 @@ class Level(arc.Scene):
             # changes in being-hit animation
             for bullet in self.starship.fired_shots:
                 collisions = arc.check_for_collision_with_lists(
-                    bullet, [self.spawners[0]._particles, self.spawners[1]._particles]
+                    bullet, [sp._particles for sp in self.spawners]
                 )
                 if not collisions: continue
                 bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
@@ -151,10 +149,7 @@ class Level(arc.Scene):
             # process collisions between starship and aliens
             if (collisions := arc.check_for_collision_with_lists(
                 self.starship,
-                [
-                    self.spawners[0]._particles,
-                    self.spawners[1]._particles,
-                ]
+                [sp._particles for sp in self.spawners]
             )):
                 for c in collisions:
                     c.remove_from_sprite_lists()
