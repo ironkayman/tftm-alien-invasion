@@ -19,17 +19,11 @@ class AlienSpawnerStats(BaseModel):
     scale: float
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True)
 class AlienWaveWrapper:
+
     config: AlienConfig
     spawner: AlienSpawnerStats
-
-    def __init__(self,
-        config: AlienConfig,
-        spawner: AlienSpawnerStats,
-    ) -> None:
-        self.config = config
-        self.spawner = spawner
 
 
 class Wave(BaseModel):
@@ -54,9 +48,6 @@ class Wave(BaseModel):
     density_multiplier: float
     total_enemy_health: int
 
-    def __init__(self, **data) -> None:
-        super().__init__(**data)
-
     @validator('spawns', pre=True)
     def get_alien_configs(cls, configs_dict: dict) -> list[AlienWaveWrapper]:
         """
@@ -79,7 +70,7 @@ class Wave(BaseModel):
         configs = []
         for pair in configs_dict.items():
             alien_config = load_alien_by_name(pair[0])
-            alien_spawner_stats = AlienSpawnerStats(**pair[1])
+            alien_spawner_stats = AlienSpawnerStats.parse_obj(pair[1])
             configs.append(AlienWaveWrapper(
                 config=alien_config,
                 spawner=alien_spawner_stats

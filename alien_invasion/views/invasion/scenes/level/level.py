@@ -13,6 +13,7 @@ from alien_invasion.entities import Alien
 
 from .spawner import AlienSpawner
 
+
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s.
 
@@ -42,6 +43,33 @@ class Level(arc.Scene):
         ]
         self.alien_was_hit_effect_particles = arc.SpriteList()
 
+    def alien_constructor(self, alien_config) -> AlienSpawner:
+        particle_factory = lambda emitter: Alien(
+            config=alien_config.config,
+            # relative to emitter's center_xy
+            center_xy=arc.rand_on_line(
+                (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
+                (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+            ),
+            hit_effect_list=self.alien_was_hit_effect_particles,
+            starship=self.starship,
+            alien_bullets=self.alien_bullets,
+            change_xy=arc.rand_vec_spread_deg(-90, 12, alien_config.spawner.approach_velocity / 60),
+            parent_sprite_list=emitter._particles,
+            scale=alien_config.spawner.scale,
+            angle=arc.rand_angle_360_deg() if alien_config.spawner.spawn_random_rotation else 0
+        )
+        return AlienSpawner(
+            starship=self.starship,
+            center_xy=(
+                CONSTANTS.DISPLAY.WIDTH // 2,
+                CONSTANTS.DISPLAY.HEIGHT - 20
+            ),
+            emit_controller=arc.EmitInterval(alien_config.spawner.spawn_interval),
+            particle_factory=particle_factory,
+        )
+
+
     def setup(self, starship: Starship) -> None:
         """Starts the level.
 
@@ -52,94 +80,26 @@ class Level(arc.Scene):
         self.__current_wave: Wave = self.waves[self._current_wave]
         self.alien_bullets = starship.enemy_shots
 
-        # for alien_config in self.__current_wave.spawns:
-        #     AlienSpawner(alien_config)
-
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
-        # spawns = sorted(
-        #     self.__current_wave.spawns,
-        #     key=lambda c: c.config.info.size.value,
-        #     reverse=True
-        # )
+
+        # sort by size, this will affect draw order, so
+        # less sized aliens may be placed under larger once
+        self.__current_wave.spawns.sort(
+            key=lambda c: c.config.info.size.value,
+            reverse=True
+        )
         self.spawners = []
-        # for wrapped_config in spawns:
-        #     self.spawners.append(AlienSpawner(
-        #         starship=self.starship,
-        #         center_xy=(
-        #             CONSTANTS.DISPLAY.WIDTH // 2,
-        #             CONSTANTS.DISPLAY.HEIGHT - 20
-        #         ),
-        #         emit_controller=arc.EmitInterval(wrapped_config.spawner.spawn_interval),
-        #         particle_factory=lambda emitter: Alien(
-        #             config=wrapped_config.config,
-        #             # relative to emitter's center_xy
-        #             center_xy=arc.rand_on_line(
-        #                 (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
-        #                 (CONSTANTS.DISPLAY.WIDTH // 2, 0)
-        #             ),
-        #             hit_effect_list=self.alien_was_hit_effect_particles,
-        #             starship=self.starship,
-        #             alien_bullets=self.alien_bullets,
-        #             change_xy=arc.rand_vec_spread_deg(-90, 12, wrapped_config.spawner.approach_velocity / 60),
-        #             parent_sprite_list=emitter._particles,
-        #             scale=wrapped_config.spawner.scale,
-        #             angle=arc.rand_angle_360_deg() if wrapped_config.spawner.spawn_random_rotation else 0
-        #         )  # type: ignore
-        #     ))
-        self.spawners.append(
-            AlienSpawner(
-                starship=self.starship,
-                center_xy=(
-                    CONSTANTS.DISPLAY.WIDTH // 2,
-                    CONSTANTS.DISPLAY.HEIGHT - 20
-                ),
-                emit_controller=arc.EmitInterval(self.__current_wave.spawns[0].spawner.spawn_interval),
-                particle_factory=lambda emitter: Alien(
-                    config=self.__current_wave.spawns[0].config,
-                    # relative to emitter's center_xy
-                    center_xy=arc.rand_on_line(
-                        (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
-                        (CONSTANTS.DISPLAY.WIDTH // 2, 0)
-                    ),
-                    hit_effect_list=self.alien_was_hit_effect_particles,
-                    starship=self.starship,
-                    alien_bullets=self.alien_bullets,
-                    change_xy=arc.rand_vec_spread_deg(-90, 12, self.__current_wave.spawns[0].spawner.approach_velocity / 60),
-                    parent_sprite_list=emitter._particles,
-                    scale=self.__current_wave.spawns[0].spawner.scale,
-                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[0].spawner.spawn_random_rotation else 0
-                )  # type: ignore
-            )
+        spawn_pairs = zip(
+            [self.alien_constructor] * len(self.__current_wave.spawns),
+            self.__current_wave.spawns
         )
-        self.spawners.append(
-            AlienSpawner(
-                starship=self.starship,
-                center_xy=(
-                    CONSTANTS.DISPLAY.WIDTH // 2,
-                    CONSTANTS.DISPLAY.HEIGHT - 20
-                ),
-                emit_controller=arc.EmitInterval(self.__current_wave.spawns[1].spawner.spawn_interval),
-                particle_factory=lambda emitter: Alien(
-                    config=self.__current_wave.spawns[1].config,
-                    # relative to emitter's center_xy
-                    center_xy=arc.rand_on_line(
-                        (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
-                        (CONSTANTS.DISPLAY.WIDTH // 2, 0)
-                    ),
-                    hit_effect_list=self.alien_was_hit_effect_particles,
-                    starship=self.starship,
-                    alien_bullets=self.alien_bullets,
-                    change_xy=arc.rand_vec_spread_deg(-90, 12, self.__current_wave.spawns[1].spawner.approach_velocity / 60),
-                    parent_sprite_list=emitter._particles,
-                    scale=self.__current_wave.spawns[1].spawner.scale,
-                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[1].spawner.spawn_random_rotation else 0
-                )  # type: ignore
-            )
-        )
-        # dont add sprite list to scene since spawner counts it
-        # but cant track it so we create only a pointer namespace
-        # self.aliens = self.spawners[0]._particles, self.spawners[1]._particles
+        # workound to prevent pointer of config-spawners
+        # to update through external variable passed to func
+        # under for/while cycle across multiple iterations
+        # of AlienSpawner object creation (one per alien)
+        for spawn_pair in spawn_pairs:
+            self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
@@ -213,6 +173,8 @@ class Level(arc.Scene):
         process_collisions_starship_damage_bullets()
         process_collisions_aliens_damage_bullets()
         process_collisions_aliens_starship_sprites()
+
+        self.alien_was_hit_effect_particles.update()
 
 
     def draw(self):
