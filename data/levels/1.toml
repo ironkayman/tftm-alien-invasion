@@ -22,13 +22,13 @@ description = """
         # pixels per second
         approach_velocity = 60.0
         # every [n] seconds spawns
-        spawn_interval = 1.6
+        spawn_interval = 4.5
         # does spawn in random 360 angle?
         spawn_random_rotation = false
         scale = 1.0
 
     [waves.spawns.castle_wall_sontra]
-        approach_velocity = 36.0
-        spawn_interval = 3.0
+        approach_velocity = 22.0
+        spawn_interval = 10.0
         spawn_random_rotation = true
         scale = 2.0
