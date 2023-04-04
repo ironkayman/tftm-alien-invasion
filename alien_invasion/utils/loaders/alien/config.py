@@ -35,7 +35,7 @@ class AlienInfo(BaseModel):
     """
 
     name: str
-    size: str
+    size: AlienSize
     xp: int
     type: set[AlienType]
 
@@ -45,7 +45,7 @@ class AlienInfo(BaseModel):
     @validator('size', pre=True)
     def get_alien_size_enum(cls, val: str) -> AlienSize:
         """Alien's Size naming - Str -> IntEnum mapping"""
-        return AlienSize[val]
+        return tuple(filter(lambda s: s.name == val, list(AlienSize)))[0]
 
     @validator('type', pre=True)
     def get_alien_type_enum(cls, val: list) -> set[AlienType]:

@@ -1,6 +1,8 @@
 """Loadable entites of level structure.
 """
 
+from itertools import chain
+
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -55,7 +57,37 @@ class Level(arc.Scene):
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
-        self.spawners = [
+        # spawns = sorted(
+        #     self.__current_wave.spawns,
+        #     key=lambda c: c.config.info.size.value,
+        #     reverse=True
+        # )
+        self.spawners = []
+        # for wrapped_config in spawns:
+        #     self.spawners.append(AlienSpawner(
+        #         starship=self.starship,
+        #         center_xy=(
+        #             CONSTANTS.DISPLAY.WIDTH // 2,
+        #             CONSTANTS.DISPLAY.HEIGHT - 20
+        #         ),
+        #         emit_controller=arc.EmitInterval(wrapped_config.spawner.spawn_interval),
+        #         particle_factory=lambda emitter: Alien(
+        #             config=wrapped_config.config,
+        #             # relative to emitter's center_xy
+        #             center_xy=arc.rand_on_line(
+        #                 (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
+        #                 (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+        #             ),
+        #             hit_effect_list=self.alien_was_hit_effect_particles,
+        #             starship=self.starship,
+        #             alien_bullets=self.alien_bullets,
+        #             change_xy=arc.rand_vec_spread_deg(-90, 12, wrapped_config.spawner.approach_velocity / 60),
+        #             parent_sprite_list=emitter._particles,
+        #             scale=wrapped_config.spawner.scale,
+        #             angle=arc.rand_angle_360_deg() if wrapped_config.spawner.spawn_random_rotation else 0
+        #         )  # type: ignore
+        #     ))
+        self.spawners.append(
             AlienSpawner(
                 starship=self.starship,
                 center_xy=(
@@ -78,7 +110,9 @@ class Level(arc.Scene):
                     scale=self.__current_wave.spawns[0].spawner.scale,
                     angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[0].spawner.spawn_random_rotation else 0
                 )  # type: ignore
-            ),
+            )
+        )
+        self.spawners.append(
             AlienSpawner(
                 starship=self.starship,
                 center_xy=(
@@ -99,10 +133,10 @@ class Level(arc.Scene):
                     change_xy=arc.rand_vec_spread_deg(-90, 12, self.__current_wave.spawns[1].spawner.approach_velocity / 60),
                     parent_sprite_list=emitter._particles,
                     scale=self.__current_wave.spawns[1].spawner.scale,
-                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[1].spawner.spawn_random_rotation else 0,
+                    angle=arc.rand_angle_360_deg() if self.__current_wave.spawns[1].spawner.spawn_random_rotation else 0
                 )  # type: ignore
-            ),
-        ]
+            )
+        )
         # dont add sprite list to scene since spawner counts it
         # but cant track it so we create only a pointer namespace
         # self.aliens = self.spawners[0]._particles, self.spawners[1]._particles
@@ -166,10 +200,9 @@ class Level(arc.Scene):
                     c.remove_from_sprite_lists()
                     self.starship.hp -= round(self.starship.hp * 0.2)
 
-
         # update alien emitter/spawner
-        self.spawners[0].on_update(delta_time)
-        self.spawners[1].on_update(delta_time)
+        for spawn in self.spawners:
+            spawn.on_update(delta_time)
         self.alien_bullets.update()
 
         process_collisions_bullets_clearout()
@@ -186,8 +219,8 @@ class Level(arc.Scene):
         """
         Render background section.
         """
-        self.spawners[0].draw()
-        self.spawners[1].draw()
+        for spawn in self.spawners:
+            spawn.draw()
         # Externally (outside of particles and emitter) draw hit effect sprites
         self.alien_was_hit_effect_particles.draw()
         self.alien_bullets.draw()
