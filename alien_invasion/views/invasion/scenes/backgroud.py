@@ -9,7 +9,7 @@ from alien_invasion import CONSTANTS
 
 class BackgroundImage(arc.Sprite):
     """Background image wrapper
-    
+
     Used fot wrappig [copyrighted content]
     Observatory taken images due to their size.
 
@@ -23,7 +23,7 @@ class BackgroundImage(arc.Sprite):
 
     def __init__(self, texture, scale: float|int) -> None:
         """Initialise preset center_* values by `scale`.
-        
+
         Default position is bottom-left of the screen (0,0)
         """
         scale=3 # ->
@@ -135,6 +135,13 @@ class Background(arc.Scene):
             self.backgrounds[1].bottom = self.backgrounds[0].top
 
         create_background_rolling_image_layer()
+
+        self.title_sprite = BackgroundImage(texture=arc.load_texture(CONSTANTS.DIR_IMAGES / 'ekh.png'), scale=0.2),
+        self.title_sprite[0].center_x = 410
+        self.title_sprite[0].center_y = 480
+        self.title_sprite[0].scale = 0.78
+        self.title_sprite[0].alpha = 170
+
         self.emitter_stardust_secondary = create_layer_stardust_secondary()
         self.emitter_stardust_primary = create_layer_stardust_primary()
         self.emitter_microcomet = create_layer_microcomets()
@@ -171,6 +178,7 @@ class Background(arc.Scene):
         self.backgrounds.draw(pixelated=BackgroundImage.pixelated)
         # render emitted particles
         [layer.draw() for layer in (
+            self.title_sprite[0],
             self.emitter_stardust_secondary,
             self.emitter_stardust_primary,
             self.emitter_microcomet,)]
