@@ -34,11 +34,11 @@
     hp = 80
     death_damage_cap = false
 
-[state.aggrevated]
-    movesets = ['tracking', 'firing']
-    speed = 200
-    hp = 90
-    death_damage_cap = false
+# [state.aggrevated]
+#     movesets = ['tracking', 'firing']
+#     speed = 200
+#     hp = 90
+#     death_damage_cap = false
 
 [state.inanimate]
     movesets = []
