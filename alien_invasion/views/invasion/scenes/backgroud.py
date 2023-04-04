@@ -140,7 +140,7 @@ class Background(arc.Scene):
         self.title_sprite[0].center_x = 410
         self.title_sprite[0].center_y = 480
         self.title_sprite[0].scale = 0.78
-        self.title_sprite[0].alpha = 170
+        self.title_sprite[0].alpha = 210
 
         self.emitter_stardust_secondary = create_layer_stardust_secondary()
         self.emitter_stardust_primary = create_layer_stardust_primary()
