@@ -152,8 +152,8 @@ class Level(arc.Scene):
                 [sp._particles for sp in self.spawners]
             )):
                 for c in collisions:
-                    c.remove_from_sprite_lists()
-                    self.starship.hp -= round(self.starship.hp * 0.2)
+                    # c.remove_from_sprite_lists()
+                    self.starship.hp -= round(self.starship.max_hp * 0.15)
 
         # update alien emitter/spawner
         for spawn in self.spawners:

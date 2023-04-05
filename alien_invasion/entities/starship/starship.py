@@ -83,6 +83,8 @@ class Starship(Entity, OnUpdateMixin):
     _current_state_index = 0
     _can_reap: bool = False
 
+    max_hp: int
+
     xp: int = 0
 
     def __init__(self,
@@ -144,6 +146,9 @@ class Starship(Entity, OnUpdateMixin):
 
         if state.name == 'initial':
             state.hp = sum([
+                item.armor for item in self.loadout.hull.armor
+            ])
+            self.max_hp = sum([
                 item.armor for item in self.loadout.hull.armor
             ])
             state.speed = self.loadout.thrusters.velocity
