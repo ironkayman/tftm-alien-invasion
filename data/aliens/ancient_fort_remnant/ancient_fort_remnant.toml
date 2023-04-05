@@ -1,0 +1,35 @@
+[info]
+    name = "Ancient Fort Remnant"
+    size = 'small'
+    # available damage types and states are governed by given types below
+    type = ['narrativistic', 'corporeal', 'ancient', 'undead']
+    xp = 60
+
+# [drops]
+# # percentage
+# tectonic_grave_fragment = 30
+# ancient_castle_bricks = 80
+
+[state]
+
+[state.initial]
+    movesets = ['tracking', 'dodging', 'firing']
+    speed = 70
+    hp = 12
+    death_damage_cap = false
+
+    bullet_damage = 8
+    bullet_speed = 800
+    recharge_timeout = 300
+
+[state.damaged]
+    movesets = ['tracking', 'dodging', 'firing']
+    speed = 80
+    hp = 12
+    death_damage_cap = false
+
+[state.bleeding]
+    movesets = ['tracking', 'dodging', 'firing']
+    speed = 140
+    hp = 12
+    death_damage_cap = false

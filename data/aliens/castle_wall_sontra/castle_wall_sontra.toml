@@ -29,13 +29,13 @@
     death_damage_cap = false
 
 [state.revealed]
-    movesets = ['tracking', 'firing', 'persuing']
+    movesets = ['tracking', 'firing']
     speed = 60
     hp = 80
     death_damage_cap = false
 
 # [state.aggrevated]
-#     movesets = ['tracking', 'firing']
+#     movesets = ['tracking', 'firing', 'persuing']
 #     speed = 200
 #     hp = 90
 #     death_damage_cap = false

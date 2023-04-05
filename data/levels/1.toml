@@ -28,7 +28,13 @@ description = """
         scale = 1.0
 
     [waves.spawns.castle_wall_sontra]
-        approach_velocity = 22.0
+        approach_velocity = 45.0
         spawn_interval = 10.0
         spawn_random_rotation = true
+        scale = 2.4
+
+    [waves.spawns.ancient_fort_remnant]
+        approach_velocity = 50.0
+        spawn_interval = 8.0
+        spawn_random_rotation = false
         scale = 2.0
