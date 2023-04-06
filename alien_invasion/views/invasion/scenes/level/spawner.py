@@ -21,14 +21,9 @@ class AlienSpawner(arc.Emitter):
         **emitter_kwargs,
     ) -> None:
         super().__init__(**emitter_kwargs)
-        # makes it possible to pass parent sprite list
-        # self.particle_factory = partial(
-        #     self.particle_factory,
-        #     parent_sprite_list=self._particles
-        # )
         self.starship = starship
 
-    def on_update(self, delta_time):
+    def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update
         """
         # update emitter

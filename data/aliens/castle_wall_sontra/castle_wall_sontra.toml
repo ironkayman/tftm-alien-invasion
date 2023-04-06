@@ -5,7 +5,7 @@
     size = 'large'
     # available damage types and states are governed by given types below
     type = ['narrativistic', 'corporeal', 'ancient', 'possessed', 'undead']
-    xp = 800
+    xp = 40
 
 # [drops]
 # # percentage

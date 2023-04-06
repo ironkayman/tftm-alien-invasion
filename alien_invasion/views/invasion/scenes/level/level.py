@@ -80,7 +80,11 @@ class Level(arc.Scene):
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
+        self.initialise_wave()
 
+    def initialise_wave(self) -> None:
+        """Initialises a `Wave` object to spawn aliens from
+        """
         # sort by size, this will affect draw order, so
         # less sized aliens may be placed under larger once
         self.__current_wave.spawns.sort(
@@ -99,10 +103,24 @@ class Level(arc.Scene):
         for spawn_pair in spawn_pairs:
             self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
+    def check_wave_requirements(self) -> None:
+        """Checks if required XP gained to proceed to a next Wave
+        """
+        if self.__current_wave.pass_score <= self.starship.xp:
+            self._current_wave += 1
+            if self._current_wave > len(self.waves) - 1:
+                # TODO call level complete
+                return
+            print('Reached Wave:', self._current_wave)
+            self.__current_wave: Wave = self.waves[self._current_wave]
+            self.initialise_wave()
+
     def on_update(self, delta_time: float = 1 / 60) -> None:
         """Compute background layer changes."""
 
-        def process_collisions_aliens_damage_bullets():
+        def process_collisions_aliens_damage_bullets() -> None:
+            """Check if starship's bullets hit aliens and damage them
+            """
             collisions = []
             # detects cullet collisions
             # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
@@ -118,7 +136,9 @@ class Level(arc.Scene):
                 for alien in collisions:
                     alien.hp -= bullet_damage
 
-        def process_collisions_bullets_clearout():
+        def process_collisions_bullets_clearout() -> None:
+            """Check if starship's bullets collide with aliens' bulles and remove them
+            """
             # ship's bullets can clear out aliens' bullets
             for bullet in self.starship.fired_shots:
                 collisions = arc.check_for_collision_with_list(
@@ -127,32 +147,41 @@ class Level(arc.Scene):
                 for c in collisions:
                     c.remove_from_sprite_lists()
 
-        def process_out_of_bounds_alien_bullets():
+        def process_out_of_bounds_alien_bullets() -> None:
+            """If alien bullets reach bottom of the viewport remove them
+            """
             # remove all out of window player bullets
             for bullet in self.alien_bullets:
                 if bullet.top < 0:
                     bullet.remove_from_sprite_lists()
 
-        def process_collisions_alien_bullets():
+        def process_collisions_alien_bullets() -> None:
+            """Remove starship's bullets which reched top of the viewport
+            """
             # remove all out of window player bullets
             for bullet in self.starship.fired_shots:
                 if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
                     bullet.remove_from_sprite_lists()
 
-        def process_collisions_starship_damage_bullets():
-            collisions = arc.check_for_collision_with_list(self.starship, self.alien_bullets)
+        def process_collisions_starship_damage_bullets() -> None:
+            """Damage starship if alien bullets hit it
+            """
+            collisions = arc.check_for_collision_with_list(
+                self.starship, self.alien_bullets
+            )
             for collision in collisions:
                 self.starship.hp -= 9
                 collision.remove_from_sprite_lists()
 
-        def process_collisions_aliens_starship_sprites():
+        def process_collisions_aliens_starship_sprites() -> None:
+            """Damage starship if it collides with aliens
+            """
             # process collisions between starship and aliens
             if (collisions := arc.check_for_collision_with_lists(
                 self.starship,
                 [sp._particles for sp in self.spawners]
             )):
                 for c in collisions:
-                    # c.remove_from_sprite_lists()
                     self.starship.hp -= round(self.starship.max_hp * 0.01)
 
         # update alien emitter/spawner
@@ -170,6 +199,8 @@ class Level(arc.Scene):
         process_collisions_aliens_starship_sprites()
 
         self.alien_was_hit_effect_particles.update()
+
+        self.check_wave_requirements()
 
 
     def draw(self):
