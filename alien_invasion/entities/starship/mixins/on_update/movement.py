@@ -18,7 +18,7 @@ def on_update_movement(self, delta_time: float):
 
     # standart movement behavior
     if not self.free_falling:
-        self.free_fall_timer = 0
+        self._timers.outage = 0
         # last movement direction for cahnge of outage
         # this caises to free fall in that direction
         if self.moving_left:
