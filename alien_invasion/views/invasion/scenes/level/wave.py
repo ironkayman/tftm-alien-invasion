@@ -46,7 +46,6 @@ class Wave(BaseModel):
     pass_score: int
     interval: int
     density_multiplier: float
-    total_enemy_health: int
 
     _timer: float = PrivateAttr(default=0.0)
 

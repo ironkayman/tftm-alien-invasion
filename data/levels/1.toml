@@ -5,9 +5,6 @@ description = """
 
 [[waves]]
 
-    # randomly generate enemies but their total health
-    # should not get bigger than that number
-    total_enemy_health = 400
     # score/experince from killed aliens required to pass this wave
     pass_score = 660
     # interval in seconds before density_multplier increase
@@ -41,9 +38,6 @@ description = """
 
 [[waves]]
 
-    # randomly generate enemies but their total health
-    # should not get bigger than that number
-    total_enemy_health = 400
     # score/experince from killed aliens required to pass this wave
     pass_score = 5500
     # interval in seconds before density_multplier increase
