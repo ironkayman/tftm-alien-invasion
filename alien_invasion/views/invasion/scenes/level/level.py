@@ -45,6 +45,7 @@ class Level(arc.Scene):
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(
             config=alien_config.config,
+            approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
             # relative to emitter's center_xy
             center_xy=arc.rand_on_line(
                 (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
@@ -53,7 +54,7 @@ class Level(arc.Scene):
             hit_effect_list=self.alien_was_hit_effect_particles,
             starship=self.starship,
             alien_bullets=self.alien_bullets,
-            change_xy=arc.rand_vec_spread_deg(-90, 12, alien_config.spawner.approach_velocity / 60),
+            change_xy=arc.rand_vec_spread_deg(-90, 12, alien_config.spawner.approach_velocity_multiplier * 10),
             parent_sprite_list=emitter._particles,
             scale=alien_config.spawner.scale,
             angle=arc.rand_angle_360_deg() if alien_config.spawner.spawn_random_rotation else 0
@@ -198,13 +199,17 @@ class Level(arc.Scene):
                 self.__current_wave._timer = 0
                 for spawner in self.spawners:
                     spawner.rate_factory = arc.EmitInterval(
-                        spawner.rate_factory._emit_interval /
-                        self.__current_wave.density_multiplier
+                        round(
+                            spawner.rate_factory._emit_interval /
+                            self.__current_wave.density_multiplier,
+                            2
+                        )
                     )
                     print('amplification:',
                         spawner.rate_factory._emit_interval,
                         '->',
-                        spawner.rate_factory._emit_interval / self.__current_wave.density_multiplier
+                        round(spawner.rate_factory._emit_interval /
+                        self.__current_wave.density_multiplier, 2)
                     )
 
 

@@ -7,13 +7,13 @@ from alien_invasion.utils.loaders.alien import AlienConfig
 
 class AlienSpawnerStats(BaseModel):
     """
-    approach_velocity : float
+    approach_velocity_multiplier : float
     spawn_interval : float
     spawn_random_rotation : bool
     scale : float
     """
 
-    approach_velocity: float
+    approach_velocity_multiplier: float
     spawn_interval: float
     spawn_random_rotation: bool
     scale: float
@@ -58,12 +58,12 @@ class Wave(BaseModel):
         >>> configs_dict
         {
             'dummy_ufo': {
-                'approach_velocity': 60.0,
+                'approach_velocity_multiplier': 1.6,
                 'spawn_interval': 1.6,
                 'spawn_random_rotation': False
             },
             'castle_wall_sontra': {
-                'approach_velocity': 36.0,
+                'approach_velocity_multiplier': 1.36,
                 'spawn_interval': 3.0,
                 'spawn_random_rotation': True
             }

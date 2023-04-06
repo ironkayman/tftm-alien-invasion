@@ -71,6 +71,7 @@ class Alien(Entity, OnUpdateMixin):
 
     def __init__(self,
         config: AlienConfig,
+        approach_velocity_multiplier: float,
         hit_effect_list: arc.SpriteList,
         starship: Starship,
         alien_bullets: arc.SpriteList,
@@ -86,6 +87,7 @@ class Alien(Entity, OnUpdateMixin):
         # self._aliens = parent_sprite_list
 
         self._starship = starship
+        self._approach_velocity_multiplier = approach_velocity_multiplier
 
         super().__init__(
             config=config,
@@ -204,7 +206,7 @@ class Alien(Entity, OnUpdateMixin):
         )
         self._hp_curr = state.hp
         self.speed = state.speed
-        self.change_y = self.speed * -0.01
+        self.change_y = self.speed * -0.01 * self._approach_velocity_multiplier
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
