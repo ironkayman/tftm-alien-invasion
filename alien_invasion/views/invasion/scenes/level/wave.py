@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, PrivateAttr
 
 from alien_invasion.utils.loaders.alien import load_alien_by_name
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -47,6 +47,8 @@ class Wave(BaseModel):
     interval: int
     density_multiplier: float
     total_enemy_health: int
+
+    _timer: float = PrivateAttr(default=0.0)
 
     @validator('spawns', pre=True)
     def get_alien_configs(cls, configs_dict: dict) -> list[AlienWaveWrapper]:

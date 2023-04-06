@@ -22,7 +22,7 @@ class Level(arc.Scene):
     """
 
     waves: list[Wave]
-    _current_wave: int = 0
+    _current_wave_index: int = 0
 
     def __init__(self, config: dict) -> None:
         """
@@ -34,10 +34,11 @@ class Level(arc.Scene):
         super().__init__()
         self.display_name = config['display_name']
         self.description = config['description']
+        self._config = config
         self.waves=[
             Wave(**wave_config)
             for wave_config
-            in config['waves']
+            in self._config['waves']
         ]
         self.alien_was_hit_effect_particles = arc.SpriteList()
 
@@ -75,7 +76,7 @@ class Level(arc.Scene):
         """
 
         self.starship = starship
-        self.__current_wave: Wave = self.waves[self._current_wave]
+        self.__current_wave: Wave = self.waves[self._current_wave_index]
         self.alien_bullets = starship.enemy_shots
 
         # Alens are spawned as particle-like objects
@@ -103,16 +104,16 @@ class Level(arc.Scene):
         for spawn_pair in spawn_pairs:
             self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
-    def check_wave_requirements(self) -> None:
+    def check_wave_completion_requirements(self) -> None:
         """Checks if required XP gained to proceed to a next Wave
         """
         if self.__current_wave.pass_score <= self.starship.xp:
-            self._current_wave += 1
-            if self._current_wave > len(self.waves) - 1:
+            self._current_wave_index += 1
+            if self._current_wave_index > len(self.waves) - 1:
                 # TODO call level complete
                 return
-            print('Reached Wave:', self._current_wave)
-            self.__current_wave: Wave = self.waves[self._current_wave]
+            print('Reached Wave:', self._current_wave_index)
+            self.__current_wave: Wave = self.waves[self._current_wave_index]
             self.initialise_wave()
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
@@ -184,6 +185,31 @@ class Level(arc.Scene):
                 for c in collisions:
                     self.starship.hp -= round(self.starship.max_hp * 0.01)
 
+        def process_wave_amplification() -> None:
+            """Amplifies alien spawning density
+
+            Each wave has an `interval` (timer) in which its will once
+            increase wpawn density by deviding spawners' `EmitInterval`
+            or `.taye_factory` value by the wave's `density_multiplier`.
+            """
+            self.__current_wave._timer += delta_time
+            if self.__current_wave._timer >= self.__current_wave.interval:
+                # reset timer
+                self.__current_wave._timer = 0
+                for spawner in self.spawners:
+                    spawner.rate_factory = arc.EmitInterval(
+                        spawner.rate_factory._emit_interval /
+                        self.__current_wave.density_multiplier
+                    )
+                    print('amplification:',
+                        spawner.rate_factory._emit_interval,
+                        '->',
+                        spawner.rate_factory._emit_interval / self.__current_wave.density_multiplier
+                    )
+
+
+        process_wave_amplification()
+
         # update alien emitter/spawner
         for spawn in self.spawners:
             spawn.on_update(delta_time)
@@ -200,7 +226,7 @@ class Level(arc.Scene):
 
         self.alien_was_hit_effect_particles.update()
 
-        self.check_wave_requirements()
+        self.check_wave_completion_requirements()
 
 
     def draw(self):
