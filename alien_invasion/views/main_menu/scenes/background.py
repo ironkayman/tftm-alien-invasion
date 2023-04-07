@@ -98,20 +98,49 @@ class Background(arc.Scene):
         # draw under specific progression conditions
         #
         # golden frame
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
-        #     (237, 207, 80),
-        #     1,
-        # )
-        # golden column
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     50,
-        #     220,
-        #     (237, 207, 80),
-        #     1,
-        # )
+        arc.draw_rectangle_outline(
+            CONSTANTS.CL_DISPLAY.WIDTH // 2,
+            CONSTANTS.CL_DISPLAY.HEIGHT // 2,
+            CONSTANTS.CL_DISPLAY.WIDTH - 20,
+            CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+            (237, 207, 80),
+            1,
+        )
+
+        # golden columns
+        # top wide
+        arc.draw_rectangle_outline(
+            CONSTANTS.CL_DISPLAY.WIDTH // 2,
+            CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+            320,
+            120,
+            (237, 207, 80),
+            1,
+        )
+        # top long
+        arc.draw_rectangle_outline(
+            CONSTANTS.CL_DISPLAY.WIDTH // 2,
+            CONSTANTS.CL_DISPLAY.HEIGHT * 6/7,
+            120,
+            220,
+            (237, 207, 80),
+            1,
+        )
+        arc.draw_rectangle_outline(
+            CONSTANTS.CL_DISPLAY.WIDTH // 2,
+            CONSTANTS.CL_DISPLAY.HEIGHT * 5/6,
+            80,
+            260,
+            (237, 207, 80),
+            1,
+        )
+        # bottom
+        arc.draw_rectangle_outline(
+            CONSTANTS.CL_DISPLAY.WIDTH // 2,
+            CONSTANTS.CL_DISPLAY.HEIGHT // 7,
+            100,
+            220,
+            (237, 207, 80),
+            1,
+        )
+
