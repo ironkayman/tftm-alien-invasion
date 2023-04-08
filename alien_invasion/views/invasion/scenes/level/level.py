@@ -1,6 +1,8 @@
 """Loadable entites of level structure.
 """
 
+from pathlib import Path
+
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -25,8 +27,9 @@ class Level(arc.Scene):
     _current_wave_index: int = 0
     _wave_timer: float = 0.0
     is_finished: bool = False
+    title_image_path: Path
 
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: dict, title_image: Path) -> None:
         """
 
         Parameters
@@ -43,6 +46,7 @@ class Level(arc.Scene):
             in self._config['waves']
         ]
         self.alien_was_hit_effect_particles = arc.SpriteList()
+        self.title_image_path = title_image
 
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(

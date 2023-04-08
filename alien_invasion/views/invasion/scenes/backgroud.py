@@ -2,6 +2,8 @@
 Module for background management.
 """
 
+from pathlib import Path
+
 import arcade as arc
 
 from alien_invasion import CONSTANTS
@@ -43,7 +45,7 @@ class BackgroundImage(arc.Sprite):
 class Background(arc.Scene):
     """Background logic."""
 
-    def __init__(self) -> None:
+    def __init__(self, level_title_image_path: Path) -> None:
         """
         Initialise background images/particle layers.
         """
@@ -136,9 +138,9 @@ class Background(arc.Scene):
 
         create_background_rolling_image_layer()
 
-        self.title_sprite = BackgroundImage(texture=arc.load_texture(CONSTANTS.DIR_IMAGES / 'ekh.png'), scale=0.2),
-        self.title_sprite[0].center_x = 410
-        self.title_sprite[0].center_y = 480
+        self.title_sprite = BackgroundImage(texture=arc.load_texture(level_title_image_path), scale=0.2),
+        self.title_sprite[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
+        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 4/5
         self.title_sprite[0].scale = 0.78
         self.title_sprite[0].alpha = 210
 

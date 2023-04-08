@@ -23,7 +23,6 @@ class Invasion(arc.View):
         self.completion_callback_view = completion_callback_view
 
         self.game_over = GameOver()
-        self.background = Background()
 
         self.player_area = PlayerArea(
             left=0, bottom=0,
@@ -42,6 +41,7 @@ class Invasion(arc.View):
            self.level: Level = next(self.LEVELS)
         except StopIteration:
             return
+        self.background = Background(self.level.title_image_path)
 
         self.section_manager.add_section(self.player_area)
         self.window.set_mouse_visible(False)
