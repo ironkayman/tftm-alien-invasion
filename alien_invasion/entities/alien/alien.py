@@ -5,6 +5,8 @@ import random
 from copy import deepcopy
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
 import arcade as arc
 
 from .mixins import OnUpdateMixin
@@ -60,6 +62,10 @@ class Timers:
         self.track = 0
 
 
+class Overrides(BaseModel):
+    should_persue: bool
+
+
 class Alien(Entity, OnUpdateMixin):
     """Alien sprite class.
 
@@ -71,6 +77,7 @@ class Alien(Entity, OnUpdateMixin):
 
     def __init__(self,
         config: AlienConfig,
+        overrides: dict,
         approach_velocity_multiplier: float,
         hit_effect_list: arc.SpriteList,
         starship: Starship,
@@ -88,6 +95,8 @@ class Alien(Entity, OnUpdateMixin):
 
         self._starship = starship
         self._approach_velocity_multiplier = approach_velocity_multiplier
+
+        self._overrides = Overrides.parse_obj(overrides)
 
         super().__init__(
             config=config,

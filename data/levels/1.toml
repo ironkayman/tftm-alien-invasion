@@ -39,7 +39,7 @@ description = """
 [[waves]]
 
     # score/experince from killed aliens required to pass this wave
-    pass_score = 5500
+    pass_score = 3500
     # interval in seconds before density_multplier increase
     interval = 10
     # how many enemies and their speed will increase at next interval
@@ -56,6 +56,7 @@ description = """
         # does spawn in random 360 angle?
         spawn_random_rotation = false
         scale = 1.0
+        should_persue = true
 
     [waves.spawns.castle_wall_sontra]
         approach_velocity_multiplier = 1.6
@@ -67,4 +68,22 @@ description = """
         approach_velocity_multiplier = 1.75
         spawn_interval = 2.5
         spawn_random_rotation = false
+        scale = 2.0
+        should_persue = true
+
+[[waves]]
+
+    # score/experince from killed aliens required to pass this wave
+    pass_score = 500
+    # interval in seconds before density_multplier increase
+    interval = 10
+    # how many enemies and their speed will increase at next interval
+    density_multiplier = 1.1
+
+    [waves.spawns]
+
+    [waves.spawns.castle_wall_sontra]
+        approach_velocity_multiplier = 3.6
+        spawn_interval = 1.0
+        spawn_random_rotation = true
         scale = 2.0

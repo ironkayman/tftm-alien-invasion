@@ -45,6 +45,9 @@ class Level(arc.Scene):
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(
             config=alien_config.config,
+            overrides=dict(
+                should_persue=alien_config.spawner.should_persue,
+            ),
             approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
             # relative to emitter's center_xy
             center_xy=arc.rand_on_line(

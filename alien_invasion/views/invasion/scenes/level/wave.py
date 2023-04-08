@@ -17,6 +17,7 @@ class AlienSpawnerStats(BaseModel):
     spawn_interval: float
     spawn_random_rotation: bool
     scale: float
+    should_persue: bool|None = False
 
 
 @dataclass(kw_only=True, frozen=True)

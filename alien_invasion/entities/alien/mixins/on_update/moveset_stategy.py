@@ -5,6 +5,7 @@ from random import random
 from typing import cast
 import math
 
+from alien_invasion import CONSTANTS
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
@@ -45,7 +46,14 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     ship_x = self._starship.center_x
     relative_amount = get_alien_count_proportion_on_x_axis()
 
-    if AlienMoveset.persuing in movesets:
+    # when theresa persuing moveset, stop right above center of the veiwport
+    if (
+        (
+            AlienMoveset.persuing in movesets or self._overrides.should_persue
+        ) and (
+            self.bottom < CONSTANTS.DISPLAY.HEIGHT * 0.6
+        )
+    ):
         self.change_y = 0
 
     if AlienMoveset.tracking in movesets:
