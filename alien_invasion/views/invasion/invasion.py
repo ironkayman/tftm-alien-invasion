@@ -20,6 +20,8 @@ class Invasion(arc.View):
         """Creates entity vars"""
         super().__init__()
 
+        self.on_pause = False
+
         self.completion_callback_view = completion_callback_view
 
         self.game_over = GameOver()
@@ -31,7 +33,10 @@ class Invasion(arc.View):
             name="player_area",
             key_left=KEYMAP['player_starship_movement_left'],
             key_right=KEYMAP['player_starship_movement_right'],
-            key_fire_primary=KEYMAP['player_starship_fire_primary'],
+            key_fire_primary=KEYMAP['confirm'],
+            key_fire_secondary=KEYMAP['fire_secondary'],
+            key_on_pause=KEYMAP['pause'],
+            parent_view=self,
         )
 
         self.pilot_overlay = PilotOverlay(self.player_area)
@@ -60,12 +65,18 @@ class Invasion(arc.View):
             return
         self.pilot_overlay.draw()
 
-    def on_key_press(self, symbol: int, modifiers: int) -> None:
-        if symbol == KEYMAP['quit']:
-            print('exiting ...')
-            arc.exit()
+    # def on_key_press(self, symbol: int, modifiers: int) -> None:
+    #     if symbol == KEYMAP['pause']:
+    #         self.on_pause = not self.on_pause
+    #         # print('exiting ...')
+    #         # arc.exit()
 
-    def on_update(self, delta_time: float):
+    def on_update(self, delta_time: float) -> None:
+        """
+        """
+
+        if self.on_pause: return
+
         self.background.on_update(delta_time)
         self.level.on_update(delta_time)
         self.player_area.on_update(delta_time)

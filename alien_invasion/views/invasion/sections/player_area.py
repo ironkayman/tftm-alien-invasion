@@ -25,6 +25,9 @@ class PlayerArea(arc.Section, arc.Scene):
         key_left: int,
         key_right: int,
         key_fire_primary: int,
+        key_fire_secondary: int,
+        key_on_pause: int,
+        parent_view: arc.View,
         **kwargs
     ) -> None:
         """Area of a view in which ship is placed"""
@@ -35,11 +38,15 @@ class PlayerArea(arc.Section, arc.Scene):
                 key_left,
                 key_right,
                 key_fire_primary,
-                arc.key.B,
+                key_fire_secondary,
+                key_on_pause,
             },
             **kwargs
         )
         arc.Scene.__init__(self)
+
+        self._parent_view = parent_view
+        self.on_pause = self._parent_view.on_pause
 
         # keys assigned to move the paddle
         self.key_left: int = key_left
@@ -48,6 +55,9 @@ class PlayerArea(arc.Section, arc.Scene):
         # other key on arrowpad wont be registered
         # also up, left wont register righ, right up  wond register left
         self.key_fire_primary: int = key_fire_primary
+        self.key_fire_secondary: int = key_fire_secondary
+
+        self.key_on_pause = key_on_pause
 
         self.starship_bullets = arc.SpriteList()
         self.alien_bullets = arc.SpriteList()
@@ -66,6 +76,8 @@ class PlayerArea(arc.Section, arc.Scene):
 
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
+
+        if self.on_pause: return
 
         if self.starship.can_reap(): return
         # player update func considers its movement states
@@ -88,6 +100,9 @@ class PlayerArea(arc.Section, arc.Scene):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key press events."""
         # set the paddle direction and movement speed
+        if symbol == self.key_on_pause:
+            self.on_pause = not self.on_pause
+            self._parent_view.on_pause = self.on_pause
 
         if symbol == self.key_left:
             self.starship.moving_left = True

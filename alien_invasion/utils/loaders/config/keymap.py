@@ -18,16 +18,13 @@ def load_keymap_from_config(config: dict) -> dict:
     keymap_arcade = {}
 
     keys = [
-        'start',
-        'pause',
-        'quit',
-        'player_starship_movement_left',
-        'player_starship_movement_right',
-        'player_starship_fire_primary'
+        "pause",
+        "back",
+        "player_starship_movement_left",
+        "player_starship_movement_right",
+        "confirm",
+        "fire_secondary"
     ]
-    if not config['keymap_override']:
-        for key in keys:
-            keymap_arcade[key] = getattr(arc.key, keymap_config[key].upper())
-    else:
-        raise NotImplementedError
+    for key in keys:
+        keymap_arcade[key] = getattr(arc.key, keymap_config[key].upper())
     return keymap_arcade

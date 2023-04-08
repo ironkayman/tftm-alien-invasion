@@ -1,11 +1,11 @@
 {
     "current_keymap": {
-        "start": "enter",
-        "pause": "q",
-        "quit": "q",
+        "pause": "space",
+        "back": "x",
         "player_starship_movement_left": "left",
         "player_starship_movement_right": "right",
-        "player_starship_fire_primary": "c"
+        "confirm": "c",
+        "fire_secondary": "x"
     },
     "keymap_override": null,
     "gamestats": {},
