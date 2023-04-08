@@ -25,7 +25,7 @@ class Invasion(arc.View):
 
         self.player_area = PlayerArea(
             left=0, bottom=0,
-            width=self.window.width,
+            width=CONSTANTS.DISPLAY.WIDTH,
             height=64,
             name="player_area",
             key_left=KEYMAP['player_starship_movement_left'],

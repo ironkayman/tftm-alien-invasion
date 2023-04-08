@@ -2,6 +2,9 @@ from pathlib import Path
 from dataclasses import dataclass
 from enum import IntEnum, auto
 
+import arcade as arc
+
+
 WINDOW_TITLE = "Tales From the Maelstorm: Alien Invasion"
 
 PROJECT_SOURCE = Path().cwd() / "alien_invasion"
@@ -15,14 +18,18 @@ DIR_ALIENS = DIR_DATA / 'aliens'
 DIR_LEVELS = DIR_DATA / 'levels'
 DIR_STARSHIP_CONFIG = DIR_RESOURCES / 'starship'
 
+_HEIGHT = arc.get_display_size()[1]
+
 @dataclass(frozen=True)
 class CL_DISPLAY:
     """Static setting for app on-screen dimensions."""
-    WIDTH = 800
-    HEIGHT = 600
+
+    SCALE_RELATION = (_HEIGHT - 100) / 600
+    WIDTH = (_HEIGHT - 100) * 4/3
+    HEIGHT = _HEIGHT - 100
+
 
 DISPLAY = CL_DISPLAY()
-
 
 @dataclass(frozen=True)
 class GAME_STATE(IntEnum):
