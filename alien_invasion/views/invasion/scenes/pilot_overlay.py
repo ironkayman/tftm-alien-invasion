@@ -23,42 +23,40 @@ class PilotOverlay(arc.Scene):
 
         arc.draw_text(
             (
-                f"Reactor: {self.starship.current_energy_capacity:.1f}/"
-                f"{self.starship.loadout.engine.energy_cap}"
+                f"{100*(self.starship.current_energy_capacity/self.starship.loadout.engine.energy_cap):.0f}%"
             ),
-            start_x=35,
-            start_y=CONSTANTS.DISPLAY.HEIGHT - 70,
-            color=arc.color.GRAY_BLUE,
+            start_x=self.starship.center_x - 60,
+            start_y=self.starship.top + 12,
+            color=arc.color.AERO_BLUE if not self.starship.free_falling else arc.color.MAYA_BLUE,
             font_size=12,
             font_name="Courier New",
         )
-        arc.draw_text(
-            f"XP: {self.starship.xp}",
-            start_x=35,
-            start_y=CONSTANTS.DISPLAY.HEIGHT - 105,
-            color=arc.color.GRAY_BLUE,
-            font_size=12,
-            font_name="Courier New",
-        )
-
         if self.starship.state.index != 1:
             arc.draw_text(
-                f"HP: {self.starship.hp}",
-                start_x=35,
-                start_y=CONSTANTS.DISPLAY.HEIGHT - 140,
-                color=arc.color.GRAY_BLUE,
+                f"{100*(self.starship.hp/self.starship.max_hp):.0f}%",
+                start_x=self.starship.center_x + 20,
+                start_y=self.starship.top + 12,
+                color=arc.color.TEA_GREEN,
                 font_size=12,
                 font_name="Courier New",
             )
-        # golden ridge overlay
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
-        #     (237, 207, 80),
-        #     1,
-        # )
+        else:
+            arc.draw_text(
+                f"Ω {22}%",
+                start_x=self.starship.center_x + 20,
+                start_y=self.starship.top + 12,
+                color=arc.color.RED_DEVIL,
+                font_size=12,
+                font_name="Courier New",
+            )
+        arc.draw_text(
+            f"{self.starship.xp}",
+            start_x=self.starship.center_x + 35,
+            start_y=self.starship.center_y - 5,
+            color=arc.color.PURPLE_HEART,
+            font_size=12,
+            font_name="Courier New",
+        )
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         pass
