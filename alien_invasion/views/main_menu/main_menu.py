@@ -1,9 +1,6 @@
 import arcade as arc
 import arcade.gui
 
-from alien_invasion import CONSTANTS
-
-
 from .sections import Interface
 from .scenes import Background
 
