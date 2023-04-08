@@ -73,17 +73,15 @@ description = """
 
 [[waves]]
 
-    # score/experince from killed aliens required to pass this wave
-    pass_score = 500
-    # interval in seconds before density_multplier increase
+    # time oriented wave
+    pass_time = 40
     interval = 10
-    # how many enemies and their speed will increase at next interval
     density_multiplier = 1.1
 
     [waves.spawns]
 
     [waves.spawns.castle_wall_sontra]
         approach_velocity_multiplier = 3.6
-        spawn_interval = 1.0
+        spawn_interval = 1.6
         spawn_random_rotation = true
         scale = 2.0

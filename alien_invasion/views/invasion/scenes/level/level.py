@@ -23,6 +23,7 @@ class Level(arc.Scene):
 
     waves: list[Wave]
     _current_wave_index: int = 0
+    _wave_timer: float = 0.0
 
     def __init__(self, config: dict) -> None:
         """
@@ -92,14 +93,15 @@ class Level(arc.Scene):
         """
         # sort by size, this will affect draw order, so
         # less sized aliens may be placed under larger once
-        self.__current_wave.spawns.sort(
+        wave = self.__current_wave
+        wave.spawns.sort(
             key=lambda c: c.config.info.size.value,
             reverse=True
         )
         self.spawners = []
         spawn_pairs = zip(
-            [self.alien_constructor] * len(self.__current_wave.spawns),
-            self.__current_wave.spawns
+            [self.alien_constructor] * len(wave.spawns),
+            wave.spawns
         )
         # workound to prevent pointer of config-spawners
         # to update through external variable passed to func
@@ -111,7 +113,11 @@ class Level(arc.Scene):
     def check_wave_completion_requirements(self) -> None:
         """Checks if required XP gained to proceed to a next Wave
         """
-        if self.__current_wave.pass_score <= self.starship.xp:
+        if all((
+            self.__current_wave.pass_score <= self.starship.xp,
+            self._wave_timer > self.__current_wave.pass_time,
+        )):
+            self._wave_timer = 0.0
             self._current_wave_index += 1
             if self._current_wave_index > len(self.waves) - 1:
                 # TODO call level complete
@@ -216,6 +222,7 @@ class Level(arc.Scene):
                     )
 
 
+        self._wave_timer += delta_time
         process_wave_amplification()
 
         # update alien emitter/spawner

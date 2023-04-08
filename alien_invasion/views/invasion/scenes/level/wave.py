@@ -44,7 +44,8 @@ class Wave(BaseModel):
     """
 
     spawns: list[AlienWaveWrapper]
-    pass_score: int
+    pass_score: int|None = 0
+    pass_time: int|None = 0
     interval: int
     density_multiplier: float
 
