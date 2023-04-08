@@ -1,1 +1,1 @@
-from .human_interface import HumanInterface
+from .interface import Interface

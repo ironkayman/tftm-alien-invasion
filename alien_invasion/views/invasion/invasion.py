@@ -16,9 +16,11 @@ from .scenes import (
 
 
 class Invasion(arc.View):
-    def __init__(self) -> None:
+    def __init__(self, completion_callback_view: arc.View) -> None:
         """Creates entity vars"""
         super().__init__()
+
+        self.completion_callback_view = completion_callback_view
 
         self.game_over = GameOver()
         self.background = Background()
@@ -73,3 +75,6 @@ class Invasion(arc.View):
             self.game_over.on_update(delta_time)
             return
         self.pilot_overlay.on_update(delta_time)
+
+        if self.level.is_finished:
+            self.window.show_view(self.completion_callback_view)

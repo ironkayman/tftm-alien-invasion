@@ -24,6 +24,7 @@ class Level(arc.Scene):
     waves: list[Wave]
     _current_wave_index: int = 0
     _wave_timer: float = 0.0
+    is_finished: bool = False
 
     def __init__(self, config: dict) -> None:
         """
@@ -118,11 +119,11 @@ class Level(arc.Scene):
             self._wave_timer > self.__current_wave.pass_time,
         )):
             self._wave_timer = 0.0
-            self._current_wave_index += 1
-            if self._current_wave_index > len(self.waves) - 1:
-                # TODO call level complete
+            if self._current_wave_index == len(self.waves) - 1:
+                self.is_finished = True
                 return
-            print('Reached Wave:', self._current_wave_index)
+            self._current_wave_index += 1
+            print('Reached Wave:', self._current_wave_index + 1)
             self.__current_wave: Wave = self.waves[self._current_wave_index]
             self.initialise_wave()
 

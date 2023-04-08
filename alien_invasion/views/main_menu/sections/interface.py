@@ -12,8 +12,10 @@ from alien_invasion.views import Invasion
 
 class EnumButton(IntEnum):
     """Custom Button IDs (.bid) for custom button widgets."""
-    START = auto()
+    SELECT_MISSION = auto()
     QUIT = auto()
+    LAUNCH_MISSION = auto()
+    BACK = auto()
 
 
 class CallbackButton(arc.gui.UIFlatButton, ABC):
@@ -31,12 +33,16 @@ class QuitButton(CallbackButton):
     bid = EnumButton.QUIT
 
 
-class StartButton(CallbackButton):
+class SelectMissionButton(CallbackButton):
     """Start gameplay loop."""
-    bid = EnumButton.START
+    bid = EnumButton.SELECT_MISSION
+
+class LaunchMissionButton(CallbackButton):
+    """Start gameplay loop."""
+    bid = EnumButton.LAUNCH_MISSION
 
 
-class HumanInterface(arc.Section, arc.Scene):
+class Interface(arc.Section, arc.Scene):
     """Logic and interface for main menu buttons"""
 
     def __init__(
@@ -64,7 +70,7 @@ class HumanInterface(arc.Section, arc.Scene):
         # Create a vertical BoxGroup to align buttons
         self.menu = arc.gui.UIBoxLayout()
 
-        start_button = StartButton(text="Start Game", width=200,
+        start_button = LaunchMissionButton(text="Start Game", width=200,
             click_callback=self.__deploy_view_invasion)
         self.menu.add(start_button.with_space_around(bottom=20))
 
@@ -83,7 +89,7 @@ class HumanInterface(arc.Section, arc.Scene):
 
     def __deploy_view_invasion(self) -> None:
         """Callback funct for starting Invasion view."""
-        invasion_view = Invasion()
+        invasion_view = Invasion(self.view)
         invasion_view.setup()
         self.window.show_view(invasion_view)
 

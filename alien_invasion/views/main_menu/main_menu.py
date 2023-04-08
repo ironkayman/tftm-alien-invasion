@@ -4,7 +4,7 @@ import arcade.gui
 from alien_invasion import CONSTANTS
 
 
-from .sections import HumanInterface
+from .sections import Interface
 from .scenes import Background
 
 
@@ -15,9 +15,10 @@ class MainMenu(arc.View):
         super().__init__()
 
         self.background = Background()
+        # print('factor', arc.get_scaling_factor())
 
         # isolate UI
-        self.human_interface = HumanInterface(
+        self.human_interface = Interface(
             left=0, bottom=0,
             width=self.window.width,
             height=self.window.height,
