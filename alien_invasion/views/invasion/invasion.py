@@ -37,10 +37,8 @@ class Invasion(arc.View):
         self.pilot_overlay = PilotOverlay(self.player_area)
 
         self.LEVELS = load_levels()
-        try:
-           self.level: Level = next(self.LEVELS)
-        except StopIteration:
-            return
+        self.level: Level = self.LEVELS[0]
+
         self.background = Background(self.level.title_image_path)
 
         self.section_manager.add_section(self.player_area)
