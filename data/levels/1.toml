@@ -59,7 +59,7 @@ description = """
 
     [waves.spawns.castle_wall_sontra]
         approach_velocity_multiplier = 1.6
-        spawn_interval = 8.0
+        spawn_interval = 38.0
         spawn_random_rotation = true
         scale = 2.4
 
