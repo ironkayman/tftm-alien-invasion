@@ -26,7 +26,6 @@ class BackgroundImage(arc.Sprite):
 
         Default position is bottom-left of the screen (0,0)
         """
-        scale=3 # ->
         center_x = 0
         center_y = 0
         # scale=1.5, ->
@@ -34,7 +33,7 @@ class BackgroundImage(arc.Sprite):
         # center_y = CONSTANTS.DISPLAY.HEIGHT // 2,
         super().__init__(
             texture=texture,
-            scale=scale,
+            scale=scale * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=center_x,
             center_y=center_y,
         )
@@ -66,7 +65,7 @@ class Background(arc.Scene):
                         (0.0, 0.0),
                         (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
-                    scale=0.1,
+                    scale=0.1 * CONSTANTS.DISPLAY.SCALE_RELATION,
                     alpha=40
                 )
             )
@@ -120,9 +119,11 @@ class Background(arc.Scene):
                 CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
             )
             sprites: list[arc.Sprite] = [
-                BackgroundImage(texture=bg_pair[0], scale=1.2),
-                BackgroundImage(texture=bg_pair[1], scale=1.2),
+                BackgroundImage(texture=bg_pair[0], scale=1.0),
+                BackgroundImage(texture=bg_pair[1], scale=1.0),
             ]
+            sprites[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
+            sprites[1].center_x = CONSTANTS.DISPLAY.WIDTH // 2
 
             self.backgrounds.extend(sprites)
             self.backgrounds.alpha = 80
@@ -136,10 +137,15 @@ class Background(arc.Scene):
 
         create_background_rolling_image_layer()
 
-        self.title_sprite = BackgroundImage(texture=arc.load_texture(CONSTANTS.DIR_IMAGES / 'ekh.png'), scale=0.2),
-        self.title_sprite[0].center_x = 410
-        self.title_sprite[0].center_y = 480
-        self.title_sprite[0].scale = 0.78
+        self.title_sprite = BackgroundImage(
+            texture=arc.load_texture(
+                CONSTANTS.DIR_IMAGES / 'ekh.png'
+            ),
+            scale=0.78
+        ),
+        self.title_sprite[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
+        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 8/10
+        # self.title_sprite[0].scale = 0.78 * CONSTANTS.DISPLAY.SCALE_RELATION
         self.title_sprite[0].alpha = 210
 
         self.emitter_stardust_secondary = create_layer_stardust_secondary()

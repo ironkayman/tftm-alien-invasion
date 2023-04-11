@@ -188,7 +188,7 @@ class Starship(Entity, OnUpdateMixin):
         """
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png")
+        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png", scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION)
         bullet.change_y = self.loadout.weaponry.primary.speed * delta_time
 
         # Position the bullet

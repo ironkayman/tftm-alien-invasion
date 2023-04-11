@@ -9,6 +9,8 @@ from pydantic import BaseModel
 
 import arcade as arc
 
+from alien_invasion import CONSTANTS
+
 from .mixins import OnUpdateMixin
 
 from ..common.state_manager.state import State, AlienMoveset
@@ -128,7 +130,7 @@ class Alien(Entity, OnUpdateMixin):
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
                 change_xy=arc.rand_vec_spread_deg(90, 20, 0.4),
                 lifetime=random.uniform(0.4, 1.4),
-                scale=0.3,
+                scale=0.3 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 alpha=200
             ),
         )
@@ -226,7 +228,7 @@ class Alien(Entity, OnUpdateMixin):
         bullet = arc.Sprite(
             ":resources:images/space_shooter/laserRed01.png",
             flipped_vertically=True,
-            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale),
+            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale) * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         bullet.change_y = -self.speed * delta_time * 4
 
