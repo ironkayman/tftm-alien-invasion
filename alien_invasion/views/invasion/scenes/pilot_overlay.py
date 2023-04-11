@@ -9,7 +9,7 @@ class PilotOverlay(arc.Scene):
 
     def __init__(self, player_area: PlayerArea) -> None:
         super().__init__()
-        self.starship = player_area.starship
+        # self.starship = player_area.starship
 
         # Render FPS formated with 2 decimal places
         self.fps = arc.Text(
@@ -42,8 +42,8 @@ class PilotOverlay(arc.Scene):
         return super().update()
 
     def draw(self) -> None:
-        # super().draw()
-        self.fps.draw()
+        super().draw()
+        # self.fps.draw()
         # self.reactor.draw()
 
         # if self.starship.state.index != 1:
