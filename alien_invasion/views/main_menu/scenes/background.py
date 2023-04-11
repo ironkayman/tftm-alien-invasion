@@ -77,6 +77,15 @@ class Background(arc.Scene):
         self.last_update_time = 0
         self.float_interval = 1.4
 
+        # foreground
+        self.foreground_castle_ruins = arc.Sprite(
+            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_foreground.png'),
+            scale=1.2,
+            center_x=CONSTANTS.DISPLAY.WIDTH // 3.3,
+            center_y=20,
+            angle=-20,
+        )
+
     def on_update(self, dt: float = 1 / 60) -> None:
         """Compute background layer changes."""
         # calculate inner astaroids elevation
@@ -144,3 +153,5 @@ class Background(arc.Scene):
             1,
         )
 
+        # render foreground over all golden arcs
+        self.foreground_castle_ruins.draw(pixelated=False)
