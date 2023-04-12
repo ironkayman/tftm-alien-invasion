@@ -117,7 +117,7 @@ class Alien(Entity, OnUpdateMixin):
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=self.speed * self.scale**2 / 2,
+            primary=700 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         self._timers = Timers()
 
