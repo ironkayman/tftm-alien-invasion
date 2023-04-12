@@ -6,6 +6,8 @@ from dataclasses import dataclass
 
 import arcade as arc
 
+from alien_invasion import CONSTANTS
+
 from ..state_manager import StateManager
 from ..state_manager.state import State
 
@@ -60,7 +62,7 @@ class Entity(arc.Sprite, ABC):
         center_xy: arc.Point = (0.0, 0.0),
         angle: float = 0.0,
         change_angle: float = 0.0,
-        scale: float = 1.0,
+        scale: float = 1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
         alpha: int = 255,
         mutation_callback=None,
     ):

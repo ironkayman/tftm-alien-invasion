@@ -70,7 +70,7 @@ class PlayerArea(arc.Section, arc.Scene):
             enemy_shots=self.alien_bullets,
             hit_effect_list=self.hit_effect_list,
         )
-        self.starship.center_x = self.window.width / 2
+        self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
         self.starship.center_y = self.starship.height
 
 

@@ -25,7 +25,7 @@ class Background(arc.Scene):
         # unanimated background
         self.backfall = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/entry_ns.png'),
-            scale=0.36,
+            scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 30,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
@@ -40,7 +40,7 @@ class Background(arc.Scene):
         # structure at screen center behind buttons
         self.cental_node = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_crack.png'),
-            scale=0.36,
+            scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
@@ -53,7 +53,7 @@ class Background(arc.Scene):
         # inner asteroids, should periodically float up-and-down
         self.asteroids_float = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
-            scale=0.38,
+            scale=0.38 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 40,
         )
@@ -62,7 +62,7 @@ class Background(arc.Scene):
         # outter asteroid circle, spins slowly
         self.asteroids_spin = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
-            scale=0.58,
+            scale=0.58 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 40,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 60,
             angle=-30,
@@ -80,9 +80,9 @@ class Background(arc.Scene):
         # foreground
         self.foreground_castle_ruins = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_foreground.png'),
-            scale=1.2,
+            scale=1.2 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 3.3,
-            center_y=20,
+            center_y=20 * CONSTANTS.DISPLAY.SCALE_RELATION,
             angle=-20,
         )
 
@@ -108,49 +108,49 @@ class Background(arc.Scene):
         #
         # golden frame
         arc.draw_rectangle_outline(
-            CONSTANTS.CL_DISPLAY.WIDTH // 2,
-            CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-            CONSTANTS.CL_DISPLAY.WIDTH - 20,
-            CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT // 2,
+            CONSTANTS.DISPLAY.WIDTH - 20,
+            CONSTANTS.DISPLAY.HEIGHT - 20,
             (237, 207, 80),
-            1,
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
 
         # golden columns
         # top wide
         arc.draw_rectangle_outline(
-            CONSTANTS.CL_DISPLAY.WIDTH // 2,
-            CONSTANTS.CL_DISPLAY.HEIGHT - 20,
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT - 20,
             320,
-            120,
+            160,
             (237, 207, 80),
-            1,
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         # top long
         arc.draw_rectangle_outline(
-            CONSTANTS.CL_DISPLAY.WIDTH // 2,
-            CONSTANTS.CL_DISPLAY.HEIGHT * 6/7,
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT * 6/7,
             120,
-            220,
-            (237, 207, 80),
-            1,
-        )
-        arc.draw_rectangle_outline(
-            CONSTANTS.CL_DISPLAY.WIDTH // 2,
-            CONSTANTS.CL_DISPLAY.HEIGHT * 5/6,
-            80,
             260,
             (237, 207, 80),
-            1,
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT * 5/6,
+            80,
+            300,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         # bottom
         arc.draw_rectangle_outline(
-            CONSTANTS.CL_DISPLAY.WIDTH // 2,
-            CONSTANTS.CL_DISPLAY.HEIGHT // 7,
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT // 7,
             100,
-            220,
+            240,
             (237, 207, 80),
-            1,
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
 
         # render foreground over all golden arcs

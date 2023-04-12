@@ -28,7 +28,6 @@ class BackgroundImage(arc.Sprite):
 
         Default position is bottom-left of the screen (0,0)
         """
-        scale=3 # ->
         center_x = 0
         center_y = 0
         # scale=1.5, ->
@@ -36,7 +35,7 @@ class BackgroundImage(arc.Sprite):
         # center_y = CONSTANTS.DISPLAY.HEIGHT // 2,
         super().__init__(
             texture=texture,
-            scale=scale,
+            scale=scale * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=center_x,
             center_y=center_y,
         )
@@ -62,13 +61,13 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.75),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
-                    change_xy=(0.0, -16.0),
+                    change_xy=(0.0, -16.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=5,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
                         (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
-                    scale=0.1,
+                    scale=0.1 * CONSTANTS.DISPLAY.SCALE_RELATION,
                     alpha=40
                 )
             )
@@ -84,7 +83,7 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.9),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -1.5),
+                    change_xy=(0.0, -1.5 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=180,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -106,7 +105,7 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.6),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -1.0),
+                    change_xy=(0.0, -1.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=240,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -122,15 +121,17 @@ class Background(arc.Scene):
                 CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
             )
             sprites: list[arc.Sprite] = [
-                BackgroundImage(texture=bg_pair[0], scale=1.2),
-                BackgroundImage(texture=bg_pair[1], scale=1.2),
+                BackgroundImage(texture=bg_pair[0], scale=1.0),
+                BackgroundImage(texture=bg_pair[1], scale=1.0),
             ]
+            sprites[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
+            sprites[1].center_x = CONSTANTS.DISPLAY.WIDTH // 2
 
             self.backgrounds.extend(sprites)
             self.backgrounds.alpha = 80
 
             # velocity
-            self.backgrounds[0].change_y = -0.6
+            self.backgrounds[0].change_y = -0.6 * CONSTANTS.DISPLAY.SCALE_RELATION
             self.backgrounds[1].change_y = self.backgrounds[0].change_y
 
             # position 1 above 0 for the first update_l1 iteration loop
@@ -138,10 +139,12 @@ class Background(arc.Scene):
 
         create_background_rolling_image_layer()
 
-        self.title_sprite = BackgroundImage(texture=arc.load_texture(level_title_image_path), scale=0.2),
+        self.title_sprite = BackgroundImage(
+            texture=arc.load_texture(level_title_image_path),
+            scale=0.78
+        ),
         self.title_sprite[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
-        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 4/5
-        self.title_sprite[0].scale = 0.78
+        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 8/10
         self.title_sprite[0].alpha = 210
 
         self.emitter_stardust_secondary = create_layer_stardust_secondary()

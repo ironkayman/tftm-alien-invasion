@@ -6,6 +6,8 @@ from random import random
 
 import arcade as arc
 
+from alien_invasion import CONSTANTS
+
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
