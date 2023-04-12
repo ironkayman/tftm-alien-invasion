@@ -2,6 +2,7 @@
 """
 
 from typing import cast
+from itertools import filterfalse
 from functools import partial
 
 
@@ -38,7 +39,7 @@ class AlienSpawner(arc.Emitter):
         # notice
         self._particles.on_update(delta_time)
         aliens_to_reap: list[Alien] = [p for p in self._particles if cast(Particle, p).can_reap()]
-        for dead_alien in aliens_to_reap:
+        for dead_alien in filterfalse(lambda a: a.top < 0, aliens_to_reap):
             self.starship.xp += dead_alien.config.info.xp
             dead_alien.kill()
 
