@@ -35,7 +35,8 @@ def on_update_firing(
         self._timers.primary > timeout_corrected / 1000
         and not self.transmission.low_energy
     ):
-        self._fire_primary(delta_time)
         self.current_energy_capacity -= self.loadout.weaponry.primary.energy_per_bullet
         self._timers.reset_primary()
         frame_energy_change -= self.loadout.weaponry.primary.energy_per_bullet
+
+        self._fire_primary(delta_time)

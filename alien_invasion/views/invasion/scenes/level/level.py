@@ -58,7 +58,7 @@ class Level(arc.Scene):
             hit_effect_list=self.alien_was_hit_effect_particles,
             starship=self.starship,
             alien_bullets=self.alien_bullets,
-            change_xy=arc.rand_vec_spread_deg(-90, 12, 1),
+            change_xy=arc.rand_vec_spread_deg(-90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION),
             parent_sprite_list=emitter._particles,
             scale=alien_config.spawner.scale,
             angle=arc.rand_angle_360_deg() if alien_config.spawner.spawn_random_rotation else 0

@@ -59,7 +59,7 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.75),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/pinball/pool_cue_ball.png",
-                    change_xy=(0.0, -16.0),
+                    change_xy=(0.0, -16.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=5,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -81,7 +81,7 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.9),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -1.5),
+                    change_xy=(0.0, -1.5 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=180,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -103,7 +103,7 @@ class Background(arc.Scene):
                 emit_controller=arc.EmitInterval(0.6),
                 particle_factory=lambda emitter: arc.LifetimeParticle(
                     filename_or_texture=":resources:images/tiles/dirtCenter.png",
-                    change_xy=(0.0, -1.0),
+                    change_xy=(0.0, -1.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=240,
                     center_xy=arc.rand_on_line(
                         (0.0, 0.0),
@@ -129,7 +129,7 @@ class Background(arc.Scene):
             self.backgrounds.alpha = 80
 
             # velocity
-            self.backgrounds[0].change_y = -0.6
+            self.backgrounds[0].change_y = -0.6 * CONSTANTS.DISPLAY.SCALE_RELATION
             self.backgrounds[1].change_y = self.backgrounds[0].change_y
 
             # position 1 above 0 for the first update_l1 iteration loop

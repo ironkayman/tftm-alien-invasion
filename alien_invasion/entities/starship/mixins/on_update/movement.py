@@ -1,6 +1,8 @@
 """On_update extension for movement logic
 """
 
+from alien_invasion import CONSTANTS
+
 from ...constants import LastDirection
 
 def on_update_movement(self, delta_time: float):

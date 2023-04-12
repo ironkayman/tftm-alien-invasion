@@ -55,13 +55,13 @@ class Timers:
     track: float = 0.0
 
     def reset_primary(self) -> None:
-        self.primary = 0
+        self.primary = 0.0
 
     def reset_dodge(self) -> None:
-        self.dodge = 0
+        self.dodge = 0.0
 
     def reset_track(self) -> None:
-        self.track = 0
+        self.track = 0.0
 
 
 class Overrides(BaseModel):
@@ -100,6 +100,8 @@ class Alien(Entity, OnUpdateMixin):
 
         self._overrides = Overrides.parse_obj(overrides)
 
+        particle_kwargs['scale'] *= CONSTANTS.DISPLAY.SCALE_RELATION
+
         super().__init__(
             config=config,
             parent_sprite_list=parent_sprite_list,
@@ -115,7 +117,7 @@ class Alien(Entity, OnUpdateMixin):
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=self.speed * self.scale**2 * 10,
+            primary=self.speed * self.scale**2 / 2,
         )
         self._timers = Timers()
 
@@ -128,7 +130,7 @@ class Alien(Entity, OnUpdateMixin):
             emit_controller=arc.EmitBurst(0), # no particle given at spawn
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
-                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4),
+                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4 * CONSTANTS.DISPLAY.SCALE_RELATION),
                 lifetime=random.uniform(0.4, 1.4),
                 scale=0.3 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 alpha=200
@@ -216,7 +218,7 @@ class Alien(Entity, OnUpdateMixin):
             hit_box_algorithm='Simple',
         )
         self._hp_curr = state.hp
-        self.speed = state.speed
+        self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
         self.change_y = self.speed * -0.01 * self._approach_velocity_multiplier
 
     def _fire(self, delta_time: float) -> None:
@@ -230,7 +232,7 @@ class Alien(Entity, OnUpdateMixin):
             flipped_vertically=True,
             scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale) * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
-        bullet.change_y = -self.speed * delta_time * 4
+        bullet.change_y = -1 * self.speed * 4 * delta_time
 
         # Position the bullet
         bullet.center_x = self.center_x

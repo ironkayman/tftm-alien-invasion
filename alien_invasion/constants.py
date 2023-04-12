@@ -18,15 +18,15 @@ DIR_ALIENS = DIR_DATA / 'aliens'
 DIR_LEVELS = DIR_DATA / 'levels'
 DIR_STARSHIP_CONFIG = DIR_RESOURCES / 'starship'
 
-_HEIGHT = arc.get_display_size()[1]
+_HEIGHT = arc.get_display_size()[1] * 8/9
 
 @dataclass(frozen=True)
 class CL_DISPLAY:
     """Static setting for app on-screen dimensions."""
 
-    SCALE_RELATION = (_HEIGHT - 100) / 600
-    WIDTH = (_HEIGHT - 100) * 4/3
-    HEIGHT = _HEIGHT - 100
+    SCALE_RELATION = (_HEIGHT) / 600
+    WIDTH = int((_HEIGHT) * 4/3)
+    HEIGHT = int(_HEIGHT)
 
 
 DISPLAY = CL_DISPLAY()
