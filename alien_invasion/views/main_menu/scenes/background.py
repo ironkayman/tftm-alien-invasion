@@ -121,8 +121,8 @@ class Background(arc.Scene):
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
             CONSTANTS.DISPLAY.HEIGHT - 20,
-            320,
-            160,
+            320 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            160 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
             1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
@@ -130,16 +130,16 @@ class Background(arc.Scene):
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
             CONSTANTS.DISPLAY.HEIGHT * 6/7,
-            120,
-            260,
+            120 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            260 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
             1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
             CONSTANTS.DISPLAY.HEIGHT * 5/6,
-            80,
-            300,
+            80 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            300 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
             1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
@@ -147,8 +147,8 @@ class Background(arc.Scene):
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
             CONSTANTS.DISPLAY.HEIGHT // 7,
-            100,
-            240,
+            100 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            240 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
             1 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )

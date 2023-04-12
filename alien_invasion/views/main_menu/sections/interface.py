@@ -5,6 +5,8 @@ import arcade as arc
 # why simple import?
 import arcade.gui
 
+from alien_invasion import CONSTANTS
+
 from alien_invasion.constants import DISPLAY
 from alien_invasion.settings import KEYMAP
 from alien_invasion.views import Invasion
@@ -70,11 +72,19 @@ class Interface(arc.Section, arc.Scene):
         # Create a vertical BoxGroup to align buttons
         self.menu = arc.gui.UIBoxLayout()
 
-        start_button = LaunchMissionButton(text="Start Game", width=200,
+        start_button = LaunchMissionButton(
+            text="Start Game",
+            width=200 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            height=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
             click_callback=self.__deploy_view_invasion)
-        self.menu.add(start_button.with_space_around(bottom=20))
+        self.menu.add(start_button.with_space_around(
+            bottom=20 * CONSTANTS.DISPLAY.SCALE_RELATION
+        ))
 
-        quit_button = QuitButton(text="Quit", width=200,
+        quit_button = QuitButton(
+            text="Quit",
+            width=200 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            height=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
             click_callback=self.__deploy_exit)
         self.menu.add(quit_button)
 
