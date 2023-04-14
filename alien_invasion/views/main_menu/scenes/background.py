@@ -92,6 +92,8 @@ class Background(arc.Scene):
         self.last_update_time += dt
         if self.last_update_time > self.float_interval:
             self.asteroids_float.center_y += randrange(-6, 6)
+            self.foreground_castle_ruins.center_x += randrange(-1, 1)
+            self.foreground_castle_ruins.center_y += randrange(-1, 1)
             self.last_update_time = 0
 
         # spin outer asteroids
