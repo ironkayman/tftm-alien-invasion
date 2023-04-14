@@ -80,8 +80,8 @@ class Background(arc.Scene):
         # foreground
         self.foreground_castle_ruins = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_foreground.png'),
-            scale=0.8 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            center_x=CONSTANTS.DISPLAY.WIDTH // 6,
+            scale=0.9 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            center_x=CONSTANTS.DISPLAY.WIDTH // 4.2,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 14,
             angle=-20,
         )
