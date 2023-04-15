@@ -32,9 +32,9 @@ description = """
 
     [waves.spawns.imperfect_copy]
         approach_velocity_multiplier = 1.1
-        spawn_interval = 18.0
+        spawn_interval = 24.0
         spawn_random_rotation = false
-        scale = 1.2
+        scale = 1.1
 
     [waves.spawns.ancient_fort_remnant]
         approach_velocity_multiplier = 1.0

@@ -11,7 +11,7 @@
     # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
     movesets = ['tracking', 'dodging', 'firing', 'persuing']
     speed = 120
-    hp = 20
+    hp = 40
     death_damage_cap = false
 
     bullet_damage = 8
@@ -21,5 +21,5 @@
 [state.shattered]
     movesets = ['tracking', 'dodging', 'firing', 'persuing']
     speed = 220
-    hp = 32
+    hp = 52
     death_damage_cap = false
