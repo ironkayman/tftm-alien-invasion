@@ -15,7 +15,7 @@ description = """
     [waves.spawns]
 
     # aliens present on a level
-    [waves.spawns.dummy_ufo]
+    [waves.spawns.hollow_copy]
         # pixels per second
         approach_velocity_multiplier = 1.0
         # every [n] seconds spawns
@@ -48,7 +48,7 @@ description = """
     [waves.spawns]
 
     # aliens present on a level
-    [waves.spawns.dummy_ufo]
+    [waves.spawns.hollow_copy]
         # pixels per second
         approach_velocity_multiplier = 1.6
         # every [n] seconds spawns
