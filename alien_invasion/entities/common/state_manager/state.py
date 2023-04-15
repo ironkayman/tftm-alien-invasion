@@ -49,6 +49,8 @@ class AlienMoveset(IntEnum):
         Alien can fire bullets.
     persuing : bool
         Do not approach the starship at y-axis, keep distance.
+    bordered : bool
+        Dont cross viewport vertical boundries.
     """
 
     spiralling = auto()
@@ -57,6 +59,7 @@ class AlienMoveset(IntEnum):
     dodging = auto()
     firing = auto()
     persuing = auto()
+    bordered = auto()
 
 
 class State(BaseModel):

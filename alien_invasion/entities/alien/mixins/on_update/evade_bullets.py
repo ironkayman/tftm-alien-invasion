@@ -24,6 +24,8 @@ def on_update_evade_bullets(self, delta_time) -> None:
     # configure movement based on state's movesets
     movesets = self.state.movesets
 
+    is_bordered = AlienMoveset.bordered in movesets
+
     cl = arc.get_closest_sprite(self, self._spacial_danger_ranges)
     if not cl:
         # set default
@@ -49,3 +51,11 @@ def on_update_evade_bullets(self, delta_time) -> None:
     if self.dodging and self._timers.dodge > cl[1] / 800:
         self._timers.reset_dodge()
         self.dodging = False
+
+    # stop movement when reaching borders with Bordered moveset property
+    if is_bordered:
+        if (
+            self.center_x <= 0 or
+            self.center_x >= CONSTANTS.DISPLAY.WIDTH
+        ):
+            self.change_x *= -1

@@ -56,6 +56,8 @@ def on_update_plot_movement(self, delta_time: float) -> None:
     ):
         self.change_y = 0
 
+    is_bordered = AlienMoveset.bordered in movesets
+
     if AlienMoveset.tracking in movesets:
         if not self.dodging:
             if math.fabs(self.center_x - ship_x) < self._starship.width / self._starship.width * random():
@@ -69,6 +71,14 @@ def on_update_plot_movement(self, delta_time: float) -> None:
             self._timers.track += delta_time
         else:
             self._timers.dodge += delta_time
+
+        # stop movement when reaching borders with Bordered moveset property
+        if is_bordered:
+            if (
+                self.center_x <= 0 or
+                self.center_x >= CONSTANTS.DISPLAY.WIDTH
+            ):
+                self.change_x *= -1
 
     elif AlienMoveset.escaping in movesets:
         if self.center_x == ship_x:
