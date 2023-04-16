@@ -171,7 +171,7 @@ class Level(arc.Scene):
                 if bullet.top < 0:
                     bullet.remove_from_sprite_lists()
 
-        def process_collisions_alien_bullets() -> None:
+        def process_bounds_starship_bullets() -> None:
             """Remove starship's bullets which reched top of the viewport
             """
             # remove all out of window player bullets
@@ -239,7 +239,7 @@ class Level(arc.Scene):
         process_out_of_bounds_alien_bullets()
 
         if self.starship.can_reap(): return
-        process_collisions_alien_bullets()
+        process_bounds_starship_bullets()
         process_collisions_starship_damage_bullets()
         process_collisions_aliens_damage_bullets()
         process_collisions_aliens_starship_sprites()
