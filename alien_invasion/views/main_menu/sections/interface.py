@@ -54,12 +54,10 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         #     self.hovered = self.rect.collide_with_point(event.x, event.y)
 
         if self.hovered and isinstance(event, UIKeyPressEvent) and event.symbol == KEYMAP['confirm']:
-            print(1)
             self.pressed = True
             return EVENT_HANDLED
 
         if self.pressed and self.hovered and isinstance(event, UIKeyReleaseEvent) and event.symbol == KEYMAP['confirm']:
-            print(2)
             self.pressed = False
             # Dispatch new on_click event, source is this widget itself
             self.dispatch_event("on_event", UIKeyPressEvent(self, KEYMAP['confirm'], 0))  # type: ignore
@@ -67,7 +65,6 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
             return EVENT_HANDLED
 
         if self.hovered and isinstance(event, UIKeyPressEvent) and event.symbol == KEYMAP['confirm']:
-            print(3)
             return self.dispatch_event("on_click", event)
 
         if super().on_event(event):

@@ -1,6 +1,6 @@
 {
     "current_keymap": {
-        "pause": "z",
+        "pause": "escape",
         "back": "x",
         "player_starship_movement_left": "left",
         "player_starship_movement_right": "right",
