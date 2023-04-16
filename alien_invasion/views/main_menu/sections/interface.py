@@ -117,8 +117,8 @@ class Interface(arc.Section, arc.Scene):
 
         start_button = LaunchMissionButton(
             text="Start Game",
-            width=200 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            height=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
             click_callback=self.__deploy_view_invasion)
         self.menu.add(start_button.with_space_around(
             bottom=20 * CONSTANTS.DISPLAY.SCALE_RELATION
@@ -126,8 +126,8 @@ class Interface(arc.Section, arc.Scene):
 
         quit_button = QuitButton(
             text="Quit",
-            width=200 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            height=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
             click_callback=self.__deploy_exit)
         self.menu.add(quit_button)
 
@@ -135,6 +135,7 @@ class Interface(arc.Section, arc.Scene):
         self.manager.add(arc.gui.UIAnchorWidget(
             anchor_x="center_x",
             anchor_y="center_y",
+            align_y=-20 * CONSTANTS.DISPLAY.SCALE_RELATION,
             child=self.menu,
         ))
 
