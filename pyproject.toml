@@ -10,6 +10,8 @@ arcade = "^2.6.15"
 toml = "^0.10.2"
 pydantic = "^1.10.2"
 pyogg = "^0.6.14a1"
+nuitka = "^1.5.6"
+ordered-set = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
 

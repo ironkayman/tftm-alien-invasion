@@ -52,6 +52,22 @@ Default controls are configured in [configs/config.json](configs/config.json) at
     </div>
 </p>
 
+## Build from source
+
+### Linux
+
+Install dependencies:
+
+- patchelf
+
+Command:
+
+```sh
+poetry run python -m nuitka ./run.py  --standalone  --include-data-dir=/home/kayman/git/mtt/tftm-alien-invasion/alien_invasion/resources=. --include-data-dir=/home/kayman/git/mtt/tftm-alien-invasion/data=.
+```
+
+Resulting build will be placed to `./run.dist/run.bin`.
+
 ## Credits
 
 ### Music
