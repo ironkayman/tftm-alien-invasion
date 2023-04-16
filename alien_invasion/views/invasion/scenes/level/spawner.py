@@ -39,9 +39,10 @@ class AlienSpawner(arc.Emitter):
         # notice
         self._particles.on_update(delta_time)
         aliens_to_reap: list[Alien] = [p for p in self._particles if cast(Particle, p).can_reap()]
-        for dead_alien in filterfalse(lambda a: a.top < 0, aliens_to_reap):
-            self.starship.xp += dead_alien.config.info.xp
-            dead_alien.kill()
+        for alien in aliens_to_reap:
+            if not (alien.top <= 0):
+                self.starship.xp += alien.config.info.xp
+            alien.kill()
 
     # def _emit(self):
     #     """Emit one particle, its initial position and velocity are relative to the position and angle of the emitter"""
