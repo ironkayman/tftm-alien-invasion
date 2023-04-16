@@ -42,7 +42,7 @@ class Invasion(arc.View):
         self.pilot_overlay = PilotOverlay(self.player_area)
 
         self.LEVELS = load_levels()
-        self.level: Level = self.LEVELS[0]
+        self.level: Level = self.LEVELS[1]
 
         self.background = Background(self.level.title_image_path)
 
@@ -64,12 +64,6 @@ class Invasion(arc.View):
             self.game_over.draw()
             return
         self.pilot_overlay.draw()
-
-    # def on_key_press(self, symbol: int, modifiers: int) -> None:
-    #     if symbol == KEYMAP['pause']:
-    #         self.on_pause = not self.on_pause
-    #         # print('exiting ...')
-    #         # arc.exit()
 
     def on_update(self, delta_time: float) -> None:
         """

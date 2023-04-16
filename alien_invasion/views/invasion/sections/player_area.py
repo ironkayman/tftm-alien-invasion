@@ -110,9 +110,10 @@ class PlayerArea(arc.Section, arc.Scene):
             self.starship.moving_right = True
         elif symbol == self.key_fire_primary:
             self.starship.firing_primary = True
-        elif symbol  == self.key_fire_secondary:
-            if self.on_pause:
-                arc.exit()
+
+        elif symbol == self.key_fire_secondary:
+            if self.on_pause or self.starship.can_reap():
+                self.window.show_view(self._parent_view.completion_callback_view)
 
     def on_key_release(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key release events."""

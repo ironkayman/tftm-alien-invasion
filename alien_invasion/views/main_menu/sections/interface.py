@@ -54,10 +54,12 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         #     self.hovered = self.rect.collide_with_point(event.x, event.y)
 
         if self.hovered and isinstance(event, UIKeyPressEvent) and event.symbol == KEYMAP['confirm']:
+            print(1)
             self.pressed = True
             return EVENT_HANDLED
 
         if self.pressed and self.hovered and isinstance(event, UIKeyReleaseEvent) and event.symbol == KEYMAP['confirm']:
+            print(2)
             self.pressed = False
             # Dispatch new on_click event, source is this widget itself
             self.dispatch_event("on_event", UIKeyPressEvent(self, KEYMAP['confirm'], 0))  # type: ignore
@@ -65,6 +67,7 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
             return EVENT_HANDLED
 
         if self.hovered and isinstance(event, UIKeyPressEvent) and event.symbol == KEYMAP['confirm']:
+            print(3)
             return self.dispatch_event("on_click", event)
 
         if super().on_event(event):
@@ -138,8 +141,6 @@ class Interface(arc.Section, arc.Scene):
             child=self.menu,
         ))
 
-        self.selected_index = EnumButton.SELECT_MISSION
-        self.get_widget().hovered = True
 
     def __deploy_view_invasion(self) -> None:
         """Callback funct for starting Invasion view."""
@@ -156,8 +157,10 @@ class Interface(arc.Section, arc.Scene):
             if index == self.selected_index:
                 return widget_from_tree
 
-    def clear_widget_selection(self) -> None:
+    def reset_widget_selection(self) -> None:
         for widget_from_tree in self.manager.walk_widgets():
+            if getattr(widget_from_tree, 'pressed', None):
+                widget_from_tree.pressed = False
             widget_from_tree.hovered = False
 
     def widget_next(self) -> None:
@@ -177,21 +180,15 @@ class Interface(arc.Section, arc.Scene):
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process standard keyboard input."""
-        event = UIKeyPressEvent(self, symbol, 0)
+        # event = UIKeyEvent(self, symbol, 0)
         widget = self.get_widget()
-        if not any([
-            w.pressed
-            for w in filter(
-                lambda w: isinstance(w, CallbackButton),
-                self.manager.walk_widgets()
-            )
-        ]):
-            if symbol == arc.key.DOWN:
-                widget = self.widget_next()
-            elif symbol == arc.key.UP:
-                widget = self.widget_prev()
+
+        if symbol == arc.key.DOWN:
+            widget = self.widget_next()
+        elif symbol == arc.key.UP:
+            widget = self.widget_prev()
 
         if widget:
-            self.clear_widget_selection()
+            self.reset_widget_selection()
             widget.hovered = True
-            widget.on_event(event)
+            # firther interactions are passed directrly to CallbackButtons

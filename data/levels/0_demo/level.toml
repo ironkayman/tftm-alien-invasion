@@ -1,0 +1,19 @@
+display_name = "0_demo"
+description = """
+    a
+"""
+
+[[waves]]
+
+    # time oriented wave
+    pass_time = 20
+    interval = 3
+    density_multiplier = 1.2
+
+    [waves.spawns]
+
+    [waves.spawns.castle_wall_sontra]
+        approach_velocity_multiplier = 35.0
+        spawn_interval = 0.05
+        spawn_random_rotation = true
+        scale = 1.1

@@ -4,6 +4,7 @@ import arcade.gui
 from .sections import Interface
 from .scenes import Background
 
+from .sections.interface import EnumButton
 
 class MainMenu(arc.View):
     """Main menu view."""
@@ -26,6 +27,13 @@ class MainMenu(arc.View):
 
     def on_show_view(self) -> None:
         self.human_interface.manager.enable()
+
+        self.human_interface.reset_widget_selection()
+        self.human_interface.selected_index = EnumButton.SELECT_MISSION
+        self.human_interface.get_widget().hovered = True
+
+    def on_hide_view(self) -> None:
+        self.human_interface.manager.disable()
 
     def on_update(self, delta_time: float):
         self.background.on_update(delta_time)
