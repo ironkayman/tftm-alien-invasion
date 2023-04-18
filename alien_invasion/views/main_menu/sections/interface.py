@@ -32,6 +32,7 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.click_callback = kwargs['click_callback']
+        self.ui_state = 'main_menu'
 
     def on_event(self, event: UIEvent) -> bool|None:
         """Override method of event processing since we dont need Mouse control
@@ -116,6 +117,7 @@ class Interface(arc.Section, arc.Scene):
 
     def _create_start_menu(self) -> None:
         self.manager.clear()
+        self.ui_state = 'start_menu'
         # Create a vertical BoxGroup to align buttons
         start_menu = arc.gui.UIBoxLayout()
 
@@ -145,6 +147,7 @@ class Interface(arc.Section, arc.Scene):
 
     def _create_level_select_menu(self) -> None:
         self.manager.clear()
+        self.ui_state = 'level_selection'
 
         level_select = arc.gui.UIBoxLayout()
         for level in load_level_configs():
@@ -165,15 +168,6 @@ class Interface(arc.Section, arc.Scene):
             level_select.add(
                 level_button,
             )
-
-        level_select.add(
-            CallbackButton(
-                width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                text='Back',
-                click_callback=self._create_start_menu
-            ).with_space_around(40 * CONSTANTS.DISPLAY.SCALE_RELATION)
-        )
 
         self.manager.add(arc.gui.UIAnchorWidget(
             anchor_x="center_x",
@@ -220,6 +214,10 @@ class Interface(arc.Section, arc.Scene):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process standard keyboard input."""
         # event = UIKeyEvent(self, symbol, 0)
+        if symbol == KEYMAP['back']:
+            if self.ui_state == 'level_selection':
+                self._create_start_menu()
+
         widget = self.get_widget()
 
         if symbol == arc.key.DOWN:

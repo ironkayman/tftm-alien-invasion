@@ -100,6 +100,13 @@ class Background(arc.Scene):
         self.asteroids_spin.angle += 0.02
         # super().on_update(dt)
 
+    def _draw_keyboard_tips(self) -> None:
+        """Draw interface button keys from KEYMAP
+        - Back
+        - Confirm
+        """
+        return
+
     def draw(self):
         """
         Render background section.
@@ -157,3 +164,5 @@ class Background(arc.Scene):
 
         # render foreground over all golden arcs
         self.foreground_castle_ruins.draw(pixelated=False)
+
+        self._draw_keyboard_tips()
