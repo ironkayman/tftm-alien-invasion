@@ -1,5 +1,4 @@
 from abc import ABC
-from enum import IntEnum, auto
 from functools import partial
 
 import arcade as arc
@@ -7,7 +6,6 @@ import arcade as arc
 import arcade.gui
 from arcade.gui.events import (
     UIEvent,
-    UIKeyEvent,
     UIKeyPressEvent,
     UIKeyReleaseEvent,
     UIMouseEvent,
@@ -27,11 +25,6 @@ from alien_invasion.views import Invasion
 from alien_invasion.utils.loaders.level import loader as load_levels
 
 
-class UIState(IntEnum):
-    start_menu = auto()
-    level_select = auto()
-
-
 class CallbackButton(arc.gui.UIFlatButton, ABC):
     """Abstract class for buttons with callback"""
 
@@ -44,9 +37,6 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         """
         if isinstance(event, UIMouseEvent):
             return EVENT_HANDLED
-
-        # if isinstance(event, UIMouseMovementEvent):
-        #     self.hovered = self.rect.collide_with_point(event.x, event.y)
 
         if self.hovered and isinstance(event, UIKeyPressEvent) and event.symbol == KEYMAP['confirm']:
             self.pressed = True
@@ -125,7 +115,6 @@ class Interface(arc.Section, arc.Scene):
 
     def _create_start_menu(self) -> None:
         self.manager.clear()
-        self.ui_state = UIState.start_menu
         # Create a vertical BoxGroup to align buttons
         start_menu = arc.gui.UIBoxLayout()
 
@@ -155,28 +144,34 @@ class Interface(arc.Section, arc.Scene):
 
     def _create_level_select_menu(self) -> None:
         self.manager.clear()
-        self.ui_state = UIState.level_select
 
         level_select = arc.gui.UIBoxLayout()
-        levels = load_levels()
-        for level_index in range(len(levels)):
+        for level in load_levels():
             level_button = CallbackButton(
-                width=150,
-                height=40,
-                text=levels[level_index].display_name,
-                click_callback=partial(self.__deploy_view_invasion_with_level, level=levels[level_index]),
-            ).with_space_around(20)
+                width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                text=level.display_name,
+                # partial fixes 2 problems:
+                # 1. pointer for level variable changes
+                # for previos oteration to the last one
+                # 2. we had to pass level dict object
+                # into a deployed view
+                click_callback=partial(
+                    self.__deploy_view_invasion_with_level,
+                    level=level
+                ),
+            ).with_space_around(10 * CONSTANTS.DISPLAY.SCALE_RELATION)
             level_select.add(
                 level_button,
             )
 
         level_select.add(
             CallbackButton(
-                width=150,
-                height=40,
+                width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 text='Back',
                 click_callback=self._create_start_menu
-            ).with_space_around(40)
+            ).with_space_around(40 * CONSTANTS.DISPLAY.SCALE_RELATION)
         )
 
         self.manager.add(arc.gui.UIAnchorWidget(
