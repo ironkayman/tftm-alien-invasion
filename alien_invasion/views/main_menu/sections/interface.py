@@ -1,5 +1,6 @@
 from abc import ABC
 from enum import IntEnum, auto
+from functools import partial
 
 import arcade as arc
 # why simple import?
@@ -23,18 +24,12 @@ from alien_invasion.constants import DISPLAY
 from alien_invasion.settings import KEYMAP
 from alien_invasion.views import Invasion
 
-
-class EnumButton(IntEnum):
-    """Custom Button IDs (.sid) for custom button widgets."""
-    SELECT_MISSION = auto()
-    QUIT = auto()
-
-    LAUNCH_MISSION = auto()
-    BACK = auto()
+from alien_invasion.utils.loaders.level import loader as load_levels
 
 
-class EnumButtonGroup(IntEnum):
-    menu = auto()
+class UIState(IntEnum):
+    start_menu = auto()
+    level_select = auto()
 
 
 class CallbackButton(arc.gui.UIFlatButton, ABC):
@@ -73,18 +68,33 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         return EVENT_UNHANDLED
 
 
-class QuitButton(CallbackButton):
-    """Exit."""
-    sid = EnumButton.QUIT
+class KeyTextArea(arc.gui.UITextArea, ABC):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        # self.click_callback = kwargs['click_callback']
+        self.hovered = False
+
+    def on_event(self, event: UIEvent) -> bool:
+        if not self.hovered: return EVENT_HANDLED
+        if isinstance(event, UIKeyPressEvent):
+            if event.symbol == arc.key.UP:
+                self.layout.view_y += 3 * self.scroll_speed
+            elif event.symbol == arc.key.DOWN:
+                self.layout.view_y += -3 * self.scroll_speed
+            else:
+                return EVENT_HANDLED
+            self.trigger_full_render()
+            return EVENT_HANDLED
+        # elif isinstance(event, UIKeyReleaseEvent):
+        #     self.layout.view_y += event.scroll_y * self.scroll_speed
+        #     self.trigger_full_render()
+
+        # if super().on_event(event):
+        #     return EVENT_HANDLED
+
+        return EVENT_UNHANDLED
 
 
-class SelectMissionButton(CallbackButton):
-    """Start gameplay loop."""
-    sid = EnumButton.SELECT_MISSION
-
-class LaunchMissionButton(CallbackButton):
-    """Start gameplay loop."""
-    sid = EnumButton.LAUNCH_MISSION
 
 
 class Interface(arc.Section, arc.Scene):
@@ -110,39 +120,75 @@ class Interface(arc.Section, arc.Scene):
         arc.Scene.__init__(self)
 
         self.manager = arc.gui.UIManager(self.view)
-        # enabling moved to parent View
 
+        self._create_start_menu()
+
+    def _create_start_menu(self) -> None:
+        self.manager.clear()
+        self.ui_state = UIState.start_menu
         # Create a vertical BoxGroup to align buttons
-        self.menu = arc.gui.UIBoxLayout()
+        start_menu = arc.gui.UIBoxLayout()
 
-        start_button = LaunchMissionButton(
-            text="Start Game",
+        start_button = CallbackButton(
+            text="Mission Select",
             width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
             height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            click_callback=self.__deploy_view_invasion)
-        self.menu.add(start_button.with_space_around(
+            click_callback=self._create_level_select_menu)
+        start_menu.add(start_button.with_space_around(
             bottom=20 * CONSTANTS.DISPLAY.SCALE_RELATION
         ))
 
-        quit_button = QuitButton(
+        quit_button = CallbackButton(
             text="Quit",
             width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
             height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
             click_callback=self.__deploy_exit)
-        self.menu.add(quit_button)
+        start_menu.add(quit_button)
 
         # Create a widget to hold the menu widget, that will center the buttons
         self.manager.add(arc.gui.UIAnchorWidget(
             anchor_x="center_x",
             anchor_y="center_y",
             align_y=-20 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            child=self.menu,
+            child=start_menu,
+        ))
+
+    def _create_level_select_menu(self) -> None:
+        self.manager.clear()
+        self.ui_state = UIState.level_select
+
+        level_select = arc.gui.UIBoxLayout()
+        levels = load_levels()
+        for level_index in range(len(levels)):
+            level_button = CallbackButton(
+                width=150,
+                height=40,
+                text=levels[level_index].display_name,
+                click_callback=partial(self.__deploy_view_invasion_with_level, level=levels[level_index]),
+            ).with_space_around(20)
+            level_select.add(
+                level_button,
+            )
+
+        level_select.add(
+            CallbackButton(
+                width=150,
+                height=40,
+                text='Back',
+                click_callback=self._create_start_menu
+            ).with_space_around(40)
+        )
+
+        self.manager.add(arc.gui.UIAnchorWidget(
+            anchor_x="center_x",
+            anchor_y="center_y",
+            child=level_select,
         ))
 
 
-    def __deploy_view_invasion(self) -> None:
+    def __deploy_view_invasion_with_level(self, level) -> None:
         """Callback funct for starting Invasion view."""
-        invasion_view = Invasion(self.view)
+        invasion_view = Invasion(self.view, mission=level)
         invasion_view.setup()
         self.window.show_view(invasion_view)
 

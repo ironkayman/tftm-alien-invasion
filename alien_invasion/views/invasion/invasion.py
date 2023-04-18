@@ -16,7 +16,7 @@ from .scenes import (
 
 
 class Invasion(arc.View):
-    def __init__(self, completion_callback_view: arc.View) -> None:
+    def __init__(self, completion_callback_view: arc.View, mission: Level) -> None:
         """Creates entity vars"""
         super().__init__()
 
@@ -41,8 +41,7 @@ class Invasion(arc.View):
 
         self.pilot_overlay = PilotOverlay(self.player_area)
 
-        self.LEVELS = load_levels()
-        self.level: Level = self.LEVELS[1]
+        self.level = mission
 
         self.background = Background(self.level.title_image_path)
 
