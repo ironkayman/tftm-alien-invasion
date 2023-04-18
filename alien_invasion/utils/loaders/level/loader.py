@@ -1,12 +1,12 @@
 from typing import cast, Generator
+from pathlib import Path
 
 from alien_invasion import CONSTANTS
 
 from ..config.file_opener import reader
 
-from alien_invasion.views.invasion.scenes import Level
 
-def loader() -> list[Level]:
+def loader() -> list[tuple[dict, Path]]:
     """Gets predifined levels in a Generator object.
 
     Returns
@@ -21,5 +21,5 @@ def loader() -> list[Level]:
         level_config = cast(dict, level_config)
         if error is not Ellipsis:
             raise NotImplementedError(error)
-        levels.append(Level(level_config, title_image))
+        levels.append((level_config, title_image))
     return levels

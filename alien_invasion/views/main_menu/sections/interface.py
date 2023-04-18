@@ -1,5 +1,6 @@
 from abc import ABC
 from functools import partial
+from pathlib import Path
 
 import arcade as arc
 # why simple import?
@@ -22,7 +23,7 @@ from alien_invasion.constants import DISPLAY
 from alien_invasion.settings import KEYMAP
 from alien_invasion.views import Invasion
 
-from alien_invasion.utils.loaders.level import loader as load_levels
+from alien_invasion.utils.loaders.level import loader as load_level_configs
 
 
 class CallbackButton(arc.gui.UIFlatButton, ABC):
@@ -146,11 +147,11 @@ class Interface(arc.Section, arc.Scene):
         self.manager.clear()
 
         level_select = arc.gui.UIBoxLayout()
-        for level in load_levels():
+        for level in load_level_configs():
             level_button = CallbackButton(
                 width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                text=level.display_name,
+                text=level[0]['display_name'],
                 # partial fixes 2 problems:
                 # 1. pointer for level variable changes
                 # for previos oteration to the last one
@@ -158,7 +159,7 @@ class Interface(arc.Section, arc.Scene):
                 # into a deployed view
                 click_callback=partial(
                     self.__deploy_view_invasion_with_level,
-                    level=level
+                    level_config=level
                 ),
             ).with_space_around(10 * CONSTANTS.DISPLAY.SCALE_RELATION)
             level_select.add(
@@ -181,10 +182,9 @@ class Interface(arc.Section, arc.Scene):
         ))
 
 
-    def __deploy_view_invasion_with_level(self, level) -> None:
+    def __deploy_view_invasion_with_level(self, level_config: tuple[dict, Path]) -> None:
         """Callback funct for starting Invasion view."""
-        invasion_view = Invasion(self.view, mission=level)
-        invasion_view.setup()
+        invasion_view = Invasion(self.view, mission_config=level_config)
         self.window.show_view(invasion_view)
 
     def __deploy_exit(self) -> None:

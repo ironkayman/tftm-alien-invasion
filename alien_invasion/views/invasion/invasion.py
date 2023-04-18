@@ -1,11 +1,11 @@
 import arcade as arc
+from pathlib import Path
 
 from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from .sections import (
     PlayerArea,
 )
-from alien_invasion.utils.loaders.level import loader as load_levels
 
 from .scenes import (
     Background,
@@ -16,8 +16,21 @@ from .scenes import (
 
 
 class Invasion(arc.View):
-    def __init__(self, completion_callback_view: arc.View, mission: Level) -> None:
-        """Creates entity vars"""
+    def __init__(
+        self,
+        completion_callback_view: arc.View,
+        mission_config: tuple[dict, Path]
+    ) -> None:
+        """Creates entity vars
+
+        Parameters
+        ----------
+        completion_callback_view : arc.View
+            View to return to at level completion/exit/death.
+        mission_config : tuple[dict, Path]
+            A pair of objects: mission's config represented as dict,
+            and title image path.
+        """
         super().__init__()
 
         self.on_pause = False
@@ -41,18 +54,21 @@ class Invasion(arc.View):
 
         self.pilot_overlay = PilotOverlay(self.player_area)
 
-        self.level = mission
+        self.level = Level(*mission_config)
 
         self.background = Background(self.level.title_image_path)
 
         self.section_manager.add_section(self.player_area)
         self.window.set_mouse_visible(False)
 
-    def setup(self) -> None:
+    def on_show_view(self) -> None:
         """Initialises entities"""
-        # move passing of bullet lists outside of starship
-        # for more transparency
+        # FIXME: move passthrough of bullets' lists
+        # outside of starship for less propdrilling
         self.level.setup(self.player_area.starship)
+
+    def on_hide_view(self) -> None:
+        self.level = None
 
     def on_draw(self) -> None:
         arc.start_render()
