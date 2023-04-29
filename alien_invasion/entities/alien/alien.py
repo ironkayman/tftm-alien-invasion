@@ -82,7 +82,6 @@ class Alien(Entity, OnUpdateMixin):
         overrides: dict,
         approach_velocity_multiplier: float,
         hit_effect_list: arc.SpriteList,
-        starship: Starship,
         alien_bullets: arc.SpriteList,
         parent_sprite_list: arc.SpriteList,
         # Particle-oriented properties
@@ -95,7 +94,6 @@ class Alien(Entity, OnUpdateMixin):
         # super().__init__()
         # self._aliens = parent_sprite_list
 
-        self._starship = starship
         self._approach_velocity_multiplier = approach_velocity_multiplier
 
         self._overrides = Overrides.parse_obj(overrides)
@@ -113,7 +111,6 @@ class Alien(Entity, OnUpdateMixin):
 
         # create hit-particles emitter
         self.__configure_emitter()
-        self._spacial_danger_ranges: arc.SpriteList = self._starship.fired_shots
         self.dodging = False
 
         self.timeouts = Timeouts(
@@ -161,29 +158,30 @@ class Alien(Entity, OnUpdateMixin):
         """When alien reaches it's final state - simply remove it"""
         self._can_reap = True
 
+
+    def update_particles_on_hit(self) -> None:
+        """Updates health `hp`
+        """
+        if self.__hit_emitter:
+            self.__hit_emitter.center_x = self.center_x
+            self.__hit_emitter.center_y = self.center_y
+        self.__hit_emitter.update()
+
     def on_update(self, delta_time) -> None:
         """Particle's update method.
 
         Updates movement from allowed movesets by current `state`.
         """
 
-        def update_particles_on_hit() -> None:
-            """Updates health `hp`
-            """
-            if self.__hit_emitter:
-                self.__hit_emitter.center_x = self.center_x
-                self.__hit_emitter.center_y = self.center_y
-            self.__hit_emitter.update()
+        # update_particles_on_hit()
 
-        update_particles_on_hit()
+        # self._on_update_plot_movement(delta_time)
 
-        self._on_update_plot_movement(delta_time)
+        # if AlienMoveset.dodging in self.state.movesets:
+        #     self._on_update_evade_bullets(delta_time)
 
-        if AlienMoveset.dodging in self.state.movesets:
-            self._on_update_evade_bullets(delta_time)
-
-        if AlienMoveset.firing in self.state.movesets:
-            self._on_update_fire_bullets(delta_time)
+        # if AlienMoveset.firing in self.state.movesets:
+        #     self._on_update_fire_bullets(delta_time)
 
         super().update()
 

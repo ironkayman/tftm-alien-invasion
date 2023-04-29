@@ -61,7 +61,7 @@ class Level(arc.Scene):
                 (CONSTANTS.DISPLAY.WIDTH // 2, 0)
             ),
             hit_effect_list=self.alien_was_hit_effect_particles,
-            starship=self.starship,
+            # starship=self.starship,
             alien_bullets=self.alien_bullets,
             change_xy=arc.rand_vec_spread_deg(-90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION),
             parent_sprite_list=emitter._particles,
