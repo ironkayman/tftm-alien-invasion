@@ -2,6 +2,7 @@
 """
 
 from pathlib import Path
+from itertools import chain
 
 import arcade as arc
 
@@ -13,6 +14,10 @@ from alien_invasion.entities import Alien
 
 from .spawner import AlienSpawner
 
+from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import on_update_plot_movement
+from alien_invasion.entities.alien.mixins.on_update.evade_bullets import on_update_evade_bullets
+from alien_invasion.entities.alien.mixins.on_update.fire_bullets import on_update_fire_bullets
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s.
@@ -230,6 +235,18 @@ class Level(arc.Scene):
         self._wave_timer += delta_time
         process_wave_amplification()
 
+        for alien in chain.from_iterable([
+            sp._particles for sp in self.spawners
+        ]):
+            # plot movement
+            on_update_plot_movement(alien, self.starship, delta_time)
+            # evade bullets
+            if AlienMoveset.dodging in alien.state.movesets:
+                on_update_evade_bullets(alien, self.starship, delta_time)
+            # firing logic
+            if AlienMoveset.firing in alien.state.movesets:
+                on_update_fire_bullets(alien, self.starship, delta_time)
+            alien.on_update(delta_time)
         # update alien emitter/spawner
         for spawn in self.spawners:
             spawn.on_update(delta_time)
