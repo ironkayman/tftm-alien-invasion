@@ -11,10 +11,7 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
-from .mixins import OnUpdateMixin
-
 from ..common.state_manager.state import State, AlienMoveset
-from alien_invasion.entities import Starship
 
 from alien_invasion.utils.loaders.alien import AlienConfig
 
@@ -68,7 +65,7 @@ class Overrides(BaseModel):
     should_persue: bool
 
 
-class Alien(Entity, OnUpdateMixin):
+class Alien(Entity):
     """Alien sprite class.
 
     Manages HP, states, emits hit-effects (from `hit_effect_list`).
@@ -167,22 +164,12 @@ class Alien(Entity, OnUpdateMixin):
             self.__hit_emitter.center_y = self.center_y
         self.__hit_emitter.update()
 
-    def on_update(self, delta_time) -> None:
+    def on_update(self, delta_time: float) -> None:
         """Particle's update method.
 
         Updates movement from allowed movesets by current `state`.
         """
-
-        # update_particles_on_hit()
-
-        # self._on_update_plot_movement(delta_time)
-
-        # if AlienMoveset.dodging in self.state.movesets:
-        #     self._on_update_evade_bullets(delta_time)
-
-        # if AlienMoveset.firing in self.state.movesets:
-        #     self._on_update_fire_bullets(delta_time)
-
+        self.update_particles_on_hit()
         super().update()
 
     def can_reap(self) -> bool:
