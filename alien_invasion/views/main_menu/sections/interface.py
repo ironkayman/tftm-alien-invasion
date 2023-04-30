@@ -33,6 +33,7 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         super().__init__(**kwargs)
         self.click_callback = kwargs['click_callback']
         self.ui_state = 'main_menu'
+        self.scale(CONSTANTS.DISPLAY.SCALE_RELATION)
 
     def on_event(self, event: UIEvent) -> bool|None:
         """Override method of event processing since we dont need Mouse control
@@ -123,17 +124,17 @@ class Interface(arc.Section, arc.Scene):
 
         start_button = CallbackButton(
             text="Mission Select",
-            width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            width=150,
+            height=40,
             click_callback=self._create_level_select_menu)
         start_menu.add(start_button.with_space_around(
-            bottom=20 * CONSTANTS.DISPLAY.SCALE_RELATION
+            bottom=20 * CONSTANTS.DISPLAY.SCALE_RELATION,
         ))
 
         quit_button = CallbackButton(
             text="Quit",
-            width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            width=150,
+            height=40,
             click_callback=self.__deploy_exit)
         start_menu.add(quit_button)
 
@@ -152,8 +153,8 @@ class Interface(arc.Section, arc.Scene):
         level_select = arc.gui.UIBoxLayout()
         for level in load_level_configs():
             level_button = CallbackButton(
-                width=150 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                height=40 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                width=150,
+                height=40,
                 text=level[0]['display_name'],
                 # partial fixes 2 problems:
                 # 1. pointer for level variable changes
