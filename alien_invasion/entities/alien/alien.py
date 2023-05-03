@@ -2,8 +2,7 @@
 """
 
 import random
-from copy import deepcopy
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 from pydantic import BaseModel
 
@@ -18,8 +17,6 @@ from alien_invasion.utils.loaders.alien import AlienConfig
 from ..common.entity import Entity
 
 
-
-@dataclass(slots=True, kw_only=True)
 class Timeouts:
     """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
 
@@ -29,10 +26,10 @@ class Timeouts:
         Primary weapon firing timeout.
     """
 
-    primary: float
+    def __init__(self, primary: float) -> None:
+        self.primary = primary
 
 
-@dataclass(slots=True)
 class Timers:
     """Alien object timers increased by `delta_times` in `on_update` methods
 
@@ -47,9 +44,14 @@ class Timers:
         last movement change in during tracking moveset.
     """
 
-    primary: float = 0.0
-    dodge: float = 0.0
-    track: float = 0.0
+    def __init__(self,
+        primary: float = 0.0,
+        dodge: float = 0.0,
+        track: float = 0.0,
+    ) -> None:
+        self.primary = primary
+        self.dodge = dodge
+        self.track = track
 
     def reset_primary(self) -> None:
         self.primary = 0.0
