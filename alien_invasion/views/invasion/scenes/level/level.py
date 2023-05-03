@@ -246,10 +246,10 @@ class Level(arc.Scene):
             sp._particles for sp in self.spawners
         ]):
             # plot movement
-            # on_update_plot_movement(alien, self.starship, delta_time)
+            on_update_plot_movement(alien, self.starship, delta_time)
             # evade bullets
-            # if AlienMoveset.dodging in alien.state.movesets:
-            #     on_update_evade_bullets(alien, self.starship, delta_time)
+            if AlienMoveset.dodging in alien.state.movesets:
+                on_update_evade_bullets(alien, self.starship, delta_time)
             # firing logic
             if AlienMoveset.firing in alien.state.movesets:
                 on_update_fire_bullets(alien, self.starship, delta_time)
@@ -264,9 +264,9 @@ class Level(arc.Scene):
 
         if self.starship.can_reap(): return
         process_bounds_starship_bullets()
-        # process_collisions_starship_damage_bullets()
-        # process_collisions_aliens_damage_bullets()
-        # process_collisions_aliens_starship_sprites()
+        process_collisions_starship_damage_bullets()
+        process_collisions_aliens_damage_bullets()
+        process_collisions_aliens_starship_sprites()
 
         self.alien_was_hit_effect_particles.update()
 
