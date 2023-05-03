@@ -143,19 +143,21 @@ class Level(arc.Scene):
             """Check if starship's bullets hit aliens and damage them
             """
             collisions = []
-            # detects cullet collisions
-            # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
-            # changes in being-hit animation
-            for bullet in self.starship.fired_shots:
-                collisions = arc.check_for_collision_with_lists(
-                    bullet, [sp._particles for sp in self.spawners]
-                )
-                if not collisions: continue
-                bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
-                bullet.kill()
+            for aliens in self.spawners:
+                # detects cullet collisions
+                # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
+                # changes in being-hit animation
+                for bullet in self.starship.fired_shots:
+                    collisions_local = arc.check_for_collision_with_list(
+                        bullet, aliens._particles
+                    )
+                    if not collisions_local: continue
+                    collisions.extend(collisions_local)
+                    bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
+                    bullet.kill()
 
-                for alien in collisions:
-                    alien.hp -= bullet_damage
+            for alien in collisions:
+                alien.hp -= bullet_damage
 
         def process_collisions_bullets_clearout() -> None:
             """Check if starship's bullets collide with aliens' bulles and remove them
@@ -180,30 +182,35 @@ class Level(arc.Scene):
             """Remove starship's bullets which reched top of the viewport
             """
             # remove all out of window player bullets
-            for bullet in self.starship.fired_shots:
-                if bullet.bottom > CONSTANTS.DISPLAY.HEIGHT:
-                    bullet.remove_from_sprite_lists()
+            for bullet in filter(
+                lambda bullet:
+                    bullet.bottom > CONSTANTS.DISPLAY.HEIGHT,
+                self.starship.fired_shots
+            ):
+                bullet.remove_from_sprite_lists()
 
         def process_collisions_starship_damage_bullets() -> None:
             """Damage starship if alien bullets hit it
             """
-            collisions = arc.check_for_collision_with_list(
+            for collision in arc.check_for_collision_with_list(
                 self.starship, self.alien_bullets
-            )
-            for collision in collisions:
+            ):
                 self.starship.hp -= 9
                 collision.remove_from_sprite_lists()
 
         def process_collisions_aliens_starship_sprites() -> None:
             """Damage starship if it collides with aliens
             """
-            # process collisions between starship and aliens
-            if (collisions := arc.check_for_collision_with_lists(
-                self.starship,
-                [sp._particles for sp in self.spawners]
-            )):
-                for c in collisions:
-                    self.starship.hp -= round(self.starship.max_hp * 0.01)
+            collisions = []
+            for aliens in self.spawners:
+                # process collisions between starship and aliens
+                if (collisions_local := arc.check_for_collision_with_list(
+                    self.starship,
+                    aliens._particles
+                )):
+                    collisions.extend(collisions_local)
+            for c in collisions:
+                self.starship.hp -= round(self.starship.max_hp * 0.01)
 
         def process_wave_amplification() -> None:
             """Amplifies alien spawning density
@@ -239,14 +246,14 @@ class Level(arc.Scene):
             sp._particles for sp in self.spawners
         ]):
             # plot movement
-            on_update_plot_movement(alien, self.starship, delta_time)
+            # on_update_plot_movement(alien, self.starship, delta_time)
             # evade bullets
-            if AlienMoveset.dodging in alien.state.movesets:
-                on_update_evade_bullets(alien, self.starship, delta_time)
+            # if AlienMoveset.dodging in alien.state.movesets:
+            #     on_update_evade_bullets(alien, self.starship, delta_time)
             # firing logic
             if AlienMoveset.firing in alien.state.movesets:
                 on_update_fire_bullets(alien, self.starship, delta_time)
-            alien.on_update(delta_time)
+            # alien.on_update(delta_time)
         # update alien emitter/spawner
         for spawn in self.spawners:
             spawn.on_update(delta_time)

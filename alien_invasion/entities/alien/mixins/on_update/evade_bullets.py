@@ -19,19 +19,22 @@ def on_update_evade_bullets(alien, starship: Starship, delta_time: float) -> Non
     from ...alien import Alien
     alien = cast(Alien, alien)
 
-    spacial_danger_ranges = starship.fired_shots
+    starship_bullets = starship.fired_shots
 
     # configure movement based on state's movesets
     movesets = alien.state.movesets
 
     is_bordered = AlienMoveset.bordered in movesets
 
-    cl = arc.get_closest_sprite(alien, spacial_danger_ranges)
-    if not cl:
-        # set default
-        cl = [0, 600] # 600px
-    for b in spacial_danger_ranges:
-        if (isect := set(range(round(alien.left - alien.width * 0.4), round(alien.right + alien.width * 0.4))).intersection(range(round(b.left), round(b.right)))):
+    cl = arc.get_closest_sprite(alien, starship_bullets)
+    if not cl: return
+    for b in starship_bullets:
+        if (isect := set(
+            range(
+                round(alien.left - alien.width * 0.4),
+                round(alien.right + alien.width * 0.4)))
+                    .intersection(
+                    range(round(b.left), round(b.right)))):
             alien.change_x = alien.speed * delta_time
             # if aggressive moveset present and dodge is active
             # stop dodging by chance not in favour of time past dodging
