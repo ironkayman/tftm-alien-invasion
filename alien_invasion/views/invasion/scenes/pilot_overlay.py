@@ -6,6 +6,7 @@ from ..sections import PlayerArea
 
 class PilotOverlay(arc.Scene):
     """Starship's pilot overlay UI components."""
+
     def __init__(self, player_area: PlayerArea) -> None:
         super().__init__()
         self.starship = player_area.starship
@@ -14,51 +15,48 @@ class PilotOverlay(arc.Scene):
         # Render FPS formated with 2 decimal places
         arc.draw_text(
             f"FPS: {arc.get_fps():.2f}",
-            start_x=35,
-            start_y=CONSTANTS.DISPLAY.HEIGHT - 35,
+            start_x=CONSTANTS.DISPLAY.SCALE_RELATION // 11,
+            start_y=CONSTANTS.DISPLAY.HEIGHT * 10/11,
             color=arc.color.GRAY_BLUE,
-            font_size=12,
+            font_size=12 * CONSTANTS.DISPLAY.SCALE_RELATION,
             font_name="Courier New",
+            anchor_x='left',
+            anchor_y='top',
         )
-
         arc.draw_text(
             (
-                f"Reactor: {self.starship.current_energy_capacity:.1f}/"
-                f"{self.starship.loadout.engine.energy_cap}"
+                f"{100*(self.starship.current_energy_capacity/self.starship.loadout.engine.energy_cap):.0f}%"
             ),
-            start_x=35,
-            start_y=CONSTANTS.DISPLAY.HEIGHT - 70,
-            color=arc.color.GRAY_BLUE,
-            font_size=12,
-            font_name="Courier New",
-        )
-        arc.draw_text(
-            f"XP: {self.starship.xp}",
-            start_x=35,
-            start_y=CONSTANTS.DISPLAY.HEIGHT - 105,
-            color=arc.color.GRAY_BLUE,
-            font_size=12,
+            start_x=self.starship.center_x - 60 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            start_y=self.starship.top + 12 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            color=arc.color.AERO_BLUE if not self.starship.free_falling else arc.color.MAYA_BLUE,
+            font_size=12 * CONSTANTS.DISPLAY.SCALE_RELATION,
             font_name="Courier New",
         )
 
         if self.starship.state.index != 1:
             arc.draw_text(
-                f"HP: {self.starship.hp}",
-                start_x=35,
-                start_y=CONSTANTS.DISPLAY.HEIGHT - 140,
-                color=arc.color.GRAY_BLUE,
-                font_size=12,
+                f"{100*(self.starship.hp/self.starship.max_hp):.0f}%",
+                start_x=self.starship.center_x + 20 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                start_y=self.starship.top + 12 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                color=arc.color.TEA_GREEN,
+                font_size=12 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 font_name="Courier New",
             )
-        # golden ridge overlay
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
-        #     (237, 207, 80),
-        #     1,
-        # )
-
-    def on_update(self, delta_time: float = 1 / 60) -> None:
-        pass
+        else:
+            arc.draw_text(
+                f"Ω {22}%",
+                start_x=self.starship.center_x + 20 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                start_y=self.starship.top + 12 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                color=arc.color.RED_DEVIL,
+                font_size=12 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                font_name="Courier New",
+            )
+        arc.draw_text(
+            f"{self.starship.xp}",
+            start_x=self.starship.center_x + 35 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            start_y=self.starship.center_y - 5 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            color=arc.color.PURPLE_HEART,
+            font_size=12 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            font_name="Courier New",
+        )

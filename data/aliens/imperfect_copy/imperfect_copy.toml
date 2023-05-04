@@ -1,0 +1,25 @@
+[info]
+    name = "Imperfect Copy"
+    size = 'small'
+    type = ['corporeal']
+    xp = 40
+
+[state]
+
+[state.initial]
+    # looks inside resources/sprites, searched after state name
+    # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
+    movesets = ['tracking', 'dodging', 'firing', 'persuing', 'bordered']
+    speed = 120
+    hp = 40
+    death_damage_cap = false
+
+    bullet_damage = 8
+    bullet_speed = 800
+    recharge_timeout = 300
+
+[state.shattered]
+    movesets = ['tracking', 'dodging', 'firing', 'persuing', 'bordered']
+    speed = 220
+    hp = 52
+    death_damage_cap = false

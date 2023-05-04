@@ -25,7 +25,7 @@ class Background(arc.Scene):
         # unanimated background
         self.backfall = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/entry_ns.png'),
-            scale=0.36,
+            scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 30,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
@@ -40,7 +40,7 @@ class Background(arc.Scene):
         # structure at screen center behind buttons
         self.cental_node = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_crack.png'),
-            scale=0.36,
+            scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
@@ -53,7 +53,7 @@ class Background(arc.Scene):
         # inner asteroids, should periodically float up-and-down
         self.asteroids_float = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
-            scale=0.38,
+            scale=0.38 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 40,
         )
@@ -62,7 +62,7 @@ class Background(arc.Scene):
         # outter asteroid circle, spins slowly
         self.asteroids_spin = arc.Sprite(
             filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
-            scale=0.58,
+            scale=0.58 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 40,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 60,
             angle=-30,
@@ -77,17 +77,35 @@ class Background(arc.Scene):
         self.last_update_time = 0
         self.float_interval = 1.4
 
+        # foreground
+        self.foreground_castle_ruins = arc.Sprite(
+            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_foreground.png'),
+            scale=0.9 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            center_x=CONSTANTS.DISPLAY.WIDTH // 4.3,
+            center_y=CONSTANTS.DISPLAY.HEIGHT // 14,
+            angle=-20,
+        )
+
     def on_update(self, dt: float = 1 / 60) -> None:
         """Compute background layer changes."""
         # calculate inner astaroids elevation
         self.last_update_time += dt
         if self.last_update_time > self.float_interval:
             self.asteroids_float.center_y += randrange(-6, 6)
+            self.foreground_castle_ruins.center_x += randrange(-1, 1)
+            self.foreground_castle_ruins.center_y += randrange(-1, 1)
             self.last_update_time = 0
 
         # spin outer asteroids
         self.asteroids_spin.angle += 0.02
         # super().on_update(dt)
+
+    def _draw_keyboard_tips(self) -> None:
+        """Draw interface button keys from KEYMAP
+        - Back
+        - Confirm
+        """
+        return
 
     def draw(self):
         """
@@ -98,20 +116,53 @@ class Background(arc.Scene):
         # draw under specific progression conditions
         #
         # golden frame
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     CONSTANTS.CL_DISPLAY.WIDTH - 20,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT - 20,
-        #     (237, 207, 80),
-        #     1,
-        # )
-        # golden column
-        # arc.draw_rectangle_outline(
-        #     CONSTANTS.CL_DISPLAY.WIDTH // 2,
-        #     CONSTANTS.CL_DISPLAY.HEIGHT // 2,
-        #     50,
-        #     220,
-        #     (237, 207, 80),
-        #     1,
-        # )
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT // 2,
+            CONSTANTS.DISPLAY.WIDTH - 20,
+            CONSTANTS.DISPLAY.HEIGHT - 20,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+
+        # golden columns
+        # top wide
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT - 20,
+            320 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            160 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+        # top long
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT * 6/7,
+            120 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            260 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT * 5/6,
+            80 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            300 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+        # bottom
+        arc.draw_rectangle_outline(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT // 7,
+            100 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            240 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            (237, 207, 80),
+            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+
+        # render foreground over all golden arcs
+        self.foreground_castle_ruins.draw(pixelated=False)
+
+        self._draw_keyboard_tips()

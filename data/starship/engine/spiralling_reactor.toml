@@ -1,16 +1,19 @@
-display_name = "spiralling reactor"
+display_name = "Restained spiralling reactor"
 description = """
-    Telescope rotary engine seemingly violently
+    Telescope rotary engine which seems to be violently
     ripped from unspoken foundations of Manser's Observatory.
+
     The innerworkings of the engine are yet
     to be fully understood, but it fits finely
-    into our ship's skeleton and produces enough
-    energy to sustain relatively small starship.
-    Just be couceous of it exploding/collapsing/beeing
-    transported into different spacetime or going
-    critical due to prolonged reality-bending effects,
-    since neither you nor your collegues would like
-    see that happening in proximity of
+    into our ship's structure and produces just enough
+    energy to sustain relatively small yet armed spacecraft 
+    under placed upon it restrains.
+
+    Just be couceous of it's reality-bending
+    properties and keep an eye or two on
+    taking sure it won't go critical,
+    - neither you nor your collegues would like
+    to see that happening in proximity of
     anybodies' home planet.
 """
 energy_restored = 19

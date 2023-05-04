@@ -16,7 +16,7 @@ class GameOver(arc.Scene):
             start_x=CONSTANTS.DISPLAY.WIDTH // 3,
             start_y=CONSTANTS.DISPLAY.HEIGHT // 2.5,
             color=arc.color.GRAY_BLUE,
-            font_size=42,
+            font_size=42 * CONSTANTS.DISPLAY.SCALE_RELATION,
             font_name="Courier New",
         )
 

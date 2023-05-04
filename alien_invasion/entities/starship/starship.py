@@ -83,6 +83,8 @@ class Starship(Entity, OnUpdateMixin):
     _current_state_index = 0
     _can_reap: bool = False
 
+    max_hp: int
+
     xp: int = 0
 
     def __init__(self,
@@ -146,18 +148,20 @@ class Starship(Entity, OnUpdateMixin):
             state.hp = sum([
                 item.armor for item in self.loadout.hull.armor
             ])
-            state.speed = self.loadout.thrusters.velocity
+            self.max_hp = sum([
+                item.armor for item in self.loadout.hull.armor
+            ])
 
         else:
             state.hp = 1
-            state.speed = self.loadout.thrusters.velocity
+        state.speed = self.loadout.thrusters.velocity
 
         self.texture = arc.load_texture(
             file_name=state.texture_path,
             can_cache=True,
         )
         self._hp_curr = state.hp
-        self.speed = state.speed
+        self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
 
     def on_update(self, delta_time: float = 1 / 60):
         """Update movement based on its self states."""
@@ -183,8 +187,8 @@ class Starship(Entity, OnUpdateMixin):
         """
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png")
-        bullet.change_y = self.loadout.weaponry.primary.speed * delta_time
+        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png", scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION)
+        bullet.change_y = self.loadout.weaponry.primary.speed * delta_time * CONSTANTS.DISPLAY.SCALE_RELATION
 
         # Position the bullet
         bullet.center_x = self.center_x

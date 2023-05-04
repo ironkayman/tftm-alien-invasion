@@ -2,24 +2,21 @@
 """
 
 import random
-from copy import deepcopy
-from dataclasses import dataclass
+from pydantic import BaseModel
+
+from pydantic import BaseModel
 
 import arcade as arc
 
-from .mixins import OnUpdateMixin
+from alien_invasion import CONSTANTS
 
-from ..common.state_manager import StateManager
-from ..common.state_manager.state import State
-from alien_invasion.entities import Starship
+from ..common.state_manager.state import State, AlienMoveset
 
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 from ..common.entity import Entity
 
 
-
-@dataclass(slots=True, kw_only=True)
 class Timeouts:
     """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
 
@@ -29,10 +26,10 @@ class Timeouts:
         Primary weapon firing timeout.
     """
 
-    primary: float
+    def __init__(self, primary: float) -> None:
+        self.primary = primary
 
 
-@dataclass(slots=True)
 class Timers:
     """Alien object timers increased by `delta_times` in `on_update` methods
 
@@ -47,21 +44,30 @@ class Timers:
         last movement change in during tracking moveset.
     """
 
-    primary: float = 0.0
-    dodge: float = 0.0
-    track: float = 0.0
+    def __init__(self,
+        primary: float = 0.0,
+        dodge: float = 0.0,
+        track: float = 0.0,
+    ) -> None:
+        self.primary = primary
+        self.dodge = dodge
+        self.track = track
 
     def reset_primary(self) -> None:
-        self.primary = 0
+        self.primary = 0.0
 
     def reset_dodge(self) -> None:
-        self.dodge = 0
+        self.dodge = 0.0
 
     def reset_track(self) -> None:
-        self.track = 0
+        self.track = 0.0
 
 
-class Alien(Entity, OnUpdateMixin):
+class Overrides(BaseModel):
+    should_persue: bool
+
+
+class Alien(Entity):
     """Alien sprite class.
 
     Manages HP, states, emits hit-effects (from `hit_effect_list`).
@@ -72,8 +78,9 @@ class Alien(Entity, OnUpdateMixin):
 
     def __init__(self,
         config: AlienConfig,
+        overrides: dict,
+        approach_velocity_multiplier: float,
         hit_effect_list: arc.SpriteList,
-        starship: Starship,
         alien_bullets: arc.SpriteList,
         parent_sprite_list: arc.SpriteList,
         # Particle-oriented properties
@@ -86,7 +93,11 @@ class Alien(Entity, OnUpdateMixin):
         # super().__init__()
         # self._aliens = parent_sprite_list
 
-        self._starship = starship
+        self._approach_velocity_multiplier = approach_velocity_multiplier
+
+        self._overrides = Overrides.parse_obj(overrides)
+
+        particle_kwargs['scale'] *= CONSTANTS.DISPLAY.SCALE_RELATION
 
         super().__init__(
             config=config,
@@ -99,11 +110,10 @@ class Alien(Entity, OnUpdateMixin):
 
         # create hit-particles emitter
         self.__configure_emitter()
-        self._spacial_danger_ranges: arc.SpriteList = self._starship.fired_shots
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=self.speed * self.scale**2 * 10,
+            primary=700 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         self._timers = Timers()
 
@@ -116,9 +126,9 @@ class Alien(Entity, OnUpdateMixin):
             emit_controller=arc.EmitBurst(0), # no particle given at spawn
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
-                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4),
+                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4 * CONSTANTS.DISPLAY.SCALE_RELATION),
                 lifetime=random.uniform(0.4, 1.4),
-                scale=0.3,
+                scale=0.3 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 alpha=200
             ),
         )
@@ -147,24 +157,21 @@ class Alien(Entity, OnUpdateMixin):
         """When alien reaches it's final state - simply remove it"""
         self._can_reap = True
 
-    def on_update(self, delta_time) -> None:
+
+    def update_particles_on_hit(self) -> None:
+        """Updates health `hp`
+        """
+        if self.__hit_emitter:
+            self.__hit_emitter.center_x = self.center_x
+            self.__hit_emitter.center_y = self.center_y
+        self.__hit_emitter.update()
+
+    def on_update(self, delta_time: float) -> None:
         """Particle's update method.
 
         Updates movement from allowed movesets by current `state`.
         """
-
-        def update_particles_on_hit() -> None:
-            """Updates health `hp`
-            """
-            if self.__hit_emitter:
-                self.__hit_emitter.center_x = self.center_x
-                self.__hit_emitter.center_y = self.center_y
-            self.__hit_emitter.update()
-
-        update_particles_on_hit()
-        self._on_update_plot_movement(delta_time)
-        self._on_update_evade_bullets(delta_time)
-        self._on_update_fire_bullets(delta_time)
+        self.update_particles_on_hit()
         super().update()
 
     def can_reap(self) -> bool:
@@ -198,8 +205,8 @@ class Alien(Entity, OnUpdateMixin):
             hit_box_algorithm='Simple',
         )
         self._hp_curr = state.hp
-        self.speed = state.speed
-        self.change_y = self.speed * -0.01
+        self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
+        self.change_y = self.speed * -0.01 * self._approach_velocity_multiplier
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
@@ -210,9 +217,9 @@ class Alien(Entity, OnUpdateMixin):
         bullet = arc.Sprite(
             ":resources:images/space_shooter/laserRed01.png",
             flipped_vertically=True,
-            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale),
+            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale) * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
-        bullet.change_y = -self.speed * delta_time * 4
+        bullet.change_y = -1 * self.speed * 4 * delta_time
 
         # Position the bullet
         bullet.center_x = self.center_x

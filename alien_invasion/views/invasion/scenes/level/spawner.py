@@ -2,6 +2,7 @@
 """
 
 from typing import cast
+from itertools import filterfalse
 from functools import partial
 
 
@@ -21,14 +22,9 @@ class AlienSpawner(arc.Emitter):
         **emitter_kwargs,
     ) -> None:
         super().__init__(**emitter_kwargs)
-        # makes it possible to pass parent sprite list
-        # self.particle_factory = partial(
-        #     self.particle_factory,
-        #     parent_sprite_list=self._particles
-        # )
         self.starship = starship
 
-    def on_update(self, delta_time):
+    def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update
         """
         # update emitter
@@ -40,25 +36,13 @@ class AlienSpawner(arc.Emitter):
         emit_count = self.rate_factory.how_many(1 / 60, len(self._particles))
         for _ in range(emit_count):
             self._emit()
-        # notice
+        # notice:
         self._particles.on_update(delta_time)
         aliens_to_reap: list[Alien] = [p for p in self._particles if cast(Particle, p).can_reap()]
-        for dead_alien in aliens_to_reap:
-            self.starship.xp += dead_alien.config.info.xp
-            dead_alien.kill()
-
-    # def _emit(self):
-    #     """Emit one particle, its initial position and velocity are relative to the position and angle of the emitter"""
-    #     p = self.particle_factory(self)
-    #     p.center_x += self.center_x
-    #     p.center_y += self.center_y
-
-    #     # given the velocity, rotate it by emitter's current angle
-    #     vel = _Vec2(p.change_x, p.change_y).rotated(self.angle)
-
-    #     p.change_x = vel.x
-    #     p.change_y = vel.y
-    #     self._particles.append(p)
+        for alien in aliens_to_reap:
+            if not (alien.top <= 0):
+                self.starship.xp += alien.config.info.xp
+            alien.kill()
 
     def draw(self, pixelated=False):
         self._particles.draw(pixelated=pixelated, filter=arc.gl.NEAREST)
