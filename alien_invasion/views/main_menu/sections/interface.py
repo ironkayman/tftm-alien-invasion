@@ -29,6 +29,8 @@ from alien_invasion.utils.loaders.level import loader as load_level_configs
 class CallbackButton(arc.gui.UIFlatButton, ABC):
     """Abstract class for buttons with callback"""
 
+    SOUND = arc.Sound(CONSTANTS.DIR_MUSIC / 'button_press.ogg', streaming=False)
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.click_callback = kwargs['click_callback']
@@ -49,6 +51,7 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
             self.pressed = False
             # Dispatch new on_click event, source is this widget itself
             self.dispatch_event("on_event", UIKeyPressEvent(self, KEYMAP['confirm'], 0))  # type: ignore
+            self.SOUND.play(volume=0.2)
             self.click_callback()
             return EVENT_HANDLED
 
@@ -216,6 +219,7 @@ class Interface(arc.Section, arc.Scene):
         """Process standard keyboard input."""
         # event = UIKeyEvent(self, symbol, 0)
         if symbol == KEYMAP['back']:
+            CallbackButton.SOUND.play(volume=0.2)
             if self.ui_state == 'level_selection':
                 self._create_start_menu()
 
