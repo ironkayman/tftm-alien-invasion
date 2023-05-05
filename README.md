@@ -38,7 +38,7 @@ I'll update the source as soon as I can recover it and throw in together some wo
 
 Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
-Default controls (confirured at [configs/config.json](configs/config.json)`::current_keymap`):
+Default controls (confirured at [configs/config.json](configs/config.json) - `current_keymap`):
 
 - in-menu select: `enter`
 - in-game exit: `q`
@@ -48,7 +48,22 @@ Default controls (confirured at [configs/config.json](configs/config.json)`::cur
 
 ## Credits
 
-Images present are licenced by [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0):
+### Music
 
-- [1042x1432 Proportions And Measurements](http://getdrawings.com/get-drawing#hand-anatomy-drawing-37.jpg) - edited: cropped, removed fill
-- [945x650 Anatomy Of Hands By Richterbach](http://getdrawings.com/get-drawing#hand-anatomy-drawing-52.jpg) - edited: cropped, removed fill
+Music present is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/):
+
+- Main menu theme: [Maid Dresses - ILLUSIONS (2022) - pandora box](https://maiddresses.bandcamp.com/track/pandora-box)
+
+### Images
+
+Following images present are licenced under [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).
+
+- [Hand Anatomy - Proportions And Measurements (1042x1432)](http://getdrawings.com/get-drawing#hand-anatomy-drawing-37.jpg) - cropped
+
+### GAIA Observatory Images
+
+Following images are licensed under [ESA/Rosetta/NAVCAM – CC BY-SA IGO 3.0](https://imagearchives.esac.esa.int/index.php?/page/copyright_information)
+
+[Licensing text](https://creativecommons.org/licenses/by-sa/3.0/igo/)
+
+- [ROS_CAM1_20100609T033505_P.png](https://imagearchives.esac.esa.int/picture.php?/6029/category/45)
