@@ -187,6 +187,7 @@ class Interface(arc.Section, arc.Scene):
 
     def __deploy_exit(self) -> None:
         """Callback func for Exiting Arcade."""
+        self.view.on_hide_view()
         arc.exit()
 
     def get_widget(self) -> CallbackButton:
