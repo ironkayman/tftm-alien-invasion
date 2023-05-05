@@ -10,6 +10,9 @@ WINDOW_TITLE = "Tales From the Maelstorm: Alien Invasion"
 PROJECT_SOURCE = Path().cwd() / "alien_invasion"
 
 DIR_RESOURCES = PROJECT_SOURCE / 'resources'
+
+DIR_MUSIC = DIR_RESOURCES / 'music'
+
 DIR_IMAGES = DIR_RESOURCES / 'images'
 DIR_SAVES = Path().cwd() / 'configs/saves'
 DIR_DATA = Path().cwd() / 'data'
