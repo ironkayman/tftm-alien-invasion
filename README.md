@@ -46,6 +46,16 @@ Default controls (confirured at [configs/config.json](configs/config.json) - `cu
 - move right: `right arrow`
 - primary fire: `c`
 
+## Screenshots
+
+
+<p align="center">
+    <img src="./docs/imgs/s1.png" alt="arc" style="display: block; margin: auto; "/>
+    <img src="./docs/imgs/s2.png" alt="arc" style="display: block; margin: auto; "/>
+    <img src="./docs/imgs/s3.png" alt="arc" style="display: block; margin: auto; "/>
+</p>
+
+
 ## Credits
 
 ### Music
@@ -63,8 +73,8 @@ Following images present are licenced under [Creative Commons | Attribution-NonC
 
 ### GAIA Observatory Images
 
-Following images are licensed under [ESA/Rosetta/NAVCAM – CC BY-SA IGO 3.0](https://imagearchives.esac.esa.int/index.php?/page/copyright_information)
-
-[Licensing text](https://creativecommons.org/licenses/by-sa/3.0/igo/)
+Following images are licensed under [ESA/Rosetta/NAVCAM – CC BY-SA IGO 3.0](https://imagearchives.esac.esa.int/index.php?/page/copyright_information):
 
 - [ROS_CAM1_20100609T033505_P.png](https://imagearchives.esac.esa.int/picture.php?/6029/category/45)
+
+[Licensing text](https://creativecommons.org/licenses/by-sa/3.0/igo/)
