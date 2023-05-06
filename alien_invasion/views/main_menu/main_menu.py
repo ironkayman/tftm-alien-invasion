@@ -42,7 +42,7 @@ class MainMenu(arc.View):
         self.human_interface.get_widget().hovered = True
 
         self.media_player = self.theme.play(
-            loop=True, volume=0.2
+            loop=True, volume=0.2, speed=0.88,
         )
 
     def on_hide_view(self) -> None:
