@@ -11,3 +11,4 @@ start:
 install:
 	$(POETRY) config virtualenvs.in-project true --local
 	$(POETRY) install
+	$(POETRY) run pre-commit install
