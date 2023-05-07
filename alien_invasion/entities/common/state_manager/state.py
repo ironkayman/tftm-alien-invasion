@@ -1,9 +1,10 @@
+"""State-specific logic
+"""
+
 from enum import IntEnum, auto
 from pathlib import Path
 
-from pydantic import BaseModel, validator
-
-from ..loadout import Loadout
+from pydantic import BaseModel, root_validator
 
 
 class AlienSize(IntEnum):
@@ -66,20 +67,27 @@ class State(BaseModel):
 
     Attributes
     ----------
-    name: str
+    name : str
         State name.
-    movesets: set[AlienMoveset]
+    movesets : set[AlienMoveset]
         Movesets available for this alien's state represented as Enums.
-    hp: int
+    hp : int
         HitPoints for this state.
-    death_damage_cap: bool
+    death_damage_cap : bool
         Does damage beyond hp = 0 is translated to damage to alen's nex state.
         `True` - damage is capped whch means that next state does not
         absorb this state's incoming damage.
         `False` - remaining from hp = 0 damage is absorbed by
         next alien's state if any present, dealng damage to its HP bar.
-    texture: Path
+    texture : Path
         Path to a state's texure.
+    bullet_damage : int | None
+        Bullet damage at a specific state.
+        Parameter is required if `firing` moveset is present.
+    bullet_speed : int | None
+        Optional parameter for overriding calculated bullet speed (vector).
+    recharge_timeout : int | None
+        Optional parameter for overriding default rechange of 1000 ms.
     """
 
     # required kwargs
@@ -93,7 +101,7 @@ class State(BaseModel):
     index: int
 
     # overrides of prev state, optional
-    bullet_damage: int
+    bullet_damage: int | None
     bullet_speed: int | None
     recharge_timeout: int | None
 
@@ -101,10 +109,23 @@ class State(BaseModel):
     data: dict
     texture_path: Path
 
-    @validator("movesets", pre=True)
-    def get_movesets(cls, val) -> set[AlienMoveset]:
-        """Turns moveset string names to Enums"""
-        return set(map(lambda m: AlienMoveset[m], val))
+    @root_validator(pre=True)
+    def check_conditional_parameters(cls, values) -> dict:
+        movesets = set(map(lambda m: AlienMoveset[m], values["movesets"]))
+        values["movesets"] = movesets
+        if AlienMoveset.firing in movesets:
+            if "bullet_damage" not in values.keys():
+                raise Exception
+        else:
+            if any(
+                [
+                    "bullet_damage" in values.keys(),
+                    "bullet_speed" in values.keys(),
+                    "recharge_timeout" in values.keys(),
+                ]
+            ):
+                raise Exception
+        return values
 
     def __init__(
         self,

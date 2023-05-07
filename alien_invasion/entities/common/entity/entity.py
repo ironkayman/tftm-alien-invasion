@@ -2,7 +2,6 @@
 """
 from abc import ABC
 from copy import deepcopy
-from dataclasses import dataclass
 
 import arcade as arc
 
@@ -12,24 +11,25 @@ from ..state_manager import StateManager
 from ..state_manager.state import State
 
 
-@dataclass(slots=True, kw_only=True)
 class Timeouts(ABC):
-    """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+    """Interval tracker for `on_update` submethods
 
     Attributes
     ----------
     primary : float
         Primary weapon firing timeout.
     """
+
     pass
 
-@dataclass(slots=True)
+
 class Timers(ABC):
-    """Alien object timers increased by `delta_times` in `on_update` methods
+    """Timers increased by `delta_time` in `on_update` method
 
     Attributes
     ----------
     """
+
     pass
 
 
@@ -50,8 +50,8 @@ class Entity(arc.Sprite, ABC):
     timeouts: Timeouts
     _timers: Timers
 
-
-    def __init__(self,
+    def __init__(
+        self,
         config,
         parent_sprite_list: arc.SpriteList,
         fired_shots: arc.SpriteList,
@@ -66,8 +66,7 @@ class Entity(arc.Sprite, ABC):
         alpha: int = 255,
         mutation_callback=None,
     ):
-        """Crearte instance of alien from given `config`
-        """
+        """Crearte instance of alien from given `config`"""
         # self._hp_curr: int
         # self._hp_old: int
         # self.state: State
@@ -109,8 +108,7 @@ class Entity(arc.Sprite, ABC):
 
     @hp.setter
     def hp(self, hp_new: int) -> None:
-        """Setter and manager for alien's HP considering current `state`.
-        """
+        """Setter and manager for alien's HP considering current `state`."""
         self._restart_hit_effect_emitter()
         if hp_new > 0:
             self._hp_old = self._hp_curr
@@ -154,7 +152,6 @@ class Entity(arc.Sprite, ABC):
 
     def apply_state(self) -> None:
         raise NotImplementedError
-
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
