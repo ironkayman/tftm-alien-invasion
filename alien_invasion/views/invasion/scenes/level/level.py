@@ -1,23 +1,27 @@
 """Loadable entites of level structure.
 """
 
-from pathlib import Path
 from itertools import chain
+from pathlib import Path
 
 import arcade as arc
 
 from alien_invasion import CONSTANTS
-
-from .wave import Wave
-from alien_invasion.entities import Starship
-from alien_invasion.entities import Alien
+from alien_invasion.entities import Alien, Starship
+from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
+    on_update_evade_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.fire_bullets import (
+    on_update_fire_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
+    on_update_plot_movement,
+)
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 from .spawner import AlienSpawner
+from .wave import Wave
 
-from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import on_update_plot_movement
-from alien_invasion.entities.alien.mixins.on_update.evade_bullets import on_update_evade_bullets
-from alien_invasion.entities.alien.mixins.on_update.fire_bullets import on_update_fire_bullets
-from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s.
@@ -42,14 +46,10 @@ class Level(arc.Scene):
         config : dict
         """
         super().__init__()
-        self.display_name = config['display_name']
-        self.description = config['description']
+        self.display_name = config["display_name"]
+        self.description = config["description"]
         self._config = config
-        self.waves=[
-            Wave(**wave_config)
-            for wave_config
-            in self._config['waves']
-        ]
+        self.waves = [Wave(**wave_config) for wave_config in self._config["waves"]]
         self.alien_was_hit_effect_particles = arc.SpriteList()
         self.title_image_path = title_image
 
@@ -62,27 +62,26 @@ class Level(arc.Scene):
             approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
             # relative to emitter's center_xy
             center_xy=arc.rand_on_line(
-                (- CONSTANTS.DISPLAY.WIDTH // 2, 0),
-                (CONSTANTS.DISPLAY.WIDTH // 2, 0)
+                (-CONSTANTS.DISPLAY.WIDTH // 2, 0), (CONSTANTS.DISPLAY.WIDTH // 2, 0)
             ),
             hit_effect_list=self.alien_was_hit_effect_particles,
             # starship=self.starship,
             alien_bullets=self.alien_bullets,
-            change_xy=arc.rand_vec_spread_deg(-90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION),
+            change_xy=arc.rand_vec_spread_deg(
+                -90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION
+            ),
             parent_sprite_list=emitter._particles,
             scale=alien_config.spawner.scale,
-            angle=arc.rand_angle_360_deg() if alien_config.spawner.spawn_random_rotation else 0
+            angle=arc.rand_angle_360_deg()
+            if alien_config.spawner.spawn_random_rotation
+            else 0,
         )
         return AlienSpawner(
             starship=self.starship,
-            center_xy=(
-                CONSTANTS.DISPLAY.WIDTH // 2,
-                CONSTANTS.DISPLAY.HEIGHT - 20
-            ),
+            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
             emit_controller=arc.EmitInterval(alien_config.spawner.spawn_interval),
             particle_factory=particle_factory,
         )
-
 
     def setup(self, starship: Starship) -> None:
         """Starts the level.
@@ -99,20 +98,13 @@ class Level(arc.Scene):
         self.initialise_wave()
 
     def initialise_wave(self) -> None:
-        """Initialises a `Wave` object to spawn aliens from
-        """
+        """Initialises a `Wave` object to spawn aliens from"""
         # sort by size, this will affect draw order, so
         # less sized aliens may be placed under larger once
         wave = self.__current_wave
-        wave.spawns.sort(
-            key=lambda c: c.config.info.size.value,
-            reverse=True
-        )
+        wave.spawns.sort(key=lambda c: c.config.info.size.value, reverse=True)
         self.spawners = []
-        spawn_pairs = zip(
-            [self.alien_constructor] * len(wave.spawns),
-            wave.spawns
-        )
+        spawn_pairs = zip([self.alien_constructor] * len(wave.spawns), wave.spawns)
         # workound to prevent pointer of config-spawners
         # to update through external variable passed to func
         # under for/while cycle across multiple iterations
@@ -121,18 +113,19 @@ class Level(arc.Scene):
             self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
     def check_wave_completion_requirements(self) -> None:
-        """Checks if required XP gained to proceed to a next Wave
-        """
-        if all((
-            self.__current_wave.pass_score <= self.starship.xp,
-            self._wave_timer > self.__current_wave.pass_time,
-        )):
+        """Checks if required XP gained to proceed to a next Wave"""
+        if all(
+            (
+                self.__current_wave.pass_score <= self.starship.xp,
+                self._wave_timer > self.__current_wave.pass_time,
+            )
+        ):
             self._wave_timer = 0.0
             if self._current_wave_index == len(self.waves) - 1:
                 self.is_finished = True
                 return
             self._current_wave_index += 1
-            print('Reached Wave:', self._current_wave_index + 1)
+            print("Reached Wave:", self._current_wave_index + 1)
             self.__current_wave: Wave = self.waves[self._current_wave_index]
             self.initialise_wave()
 
@@ -140,8 +133,7 @@ class Level(arc.Scene):
         """Compute background layer changes."""
 
         def process_collisions_aliens_damage_bullets() -> None:
-            """Check if starship's bullets hit aliens and damage them
-            """
+            """Check if starship's bullets hit aliens and damage them"""
             collisions = []
             for aliens in self.spawners:
                 # detects cullet collisions
@@ -151,17 +143,19 @@ class Level(arc.Scene):
                     collisions_local = arc.check_for_collision_with_list(
                         bullet, aliens._particles
                     )
-                    if not collisions_local: continue
+                    if not collisions_local:
+                        continue
                     collisions.extend(collisions_local)
-                    bullet_damage: int = self.starship.loadout.weaponry.primary.bullet_damage
+                    bullet_damage: int = (
+                        self.starship.loadout.weaponry.primary.bullet_damage
+                    )
                     bullet.kill()
 
             for alien in collisions:
                 alien.hp -= bullet_damage
 
         def process_collisions_bullets_clearout() -> None:
-            """Check if starship's bullets collide with aliens' bulles and remove them
-            """
+            """Check if starship's bullets collide with aliens' bulles and remove them"""
             # ship's bullets can clear out aliens' bullets
             for bullet in self.starship.fired_shots:
                 collisions = arc.check_for_collision_with_list(
@@ -171,43 +165,37 @@ class Level(arc.Scene):
                     c.remove_from_sprite_lists()
 
         def process_out_of_bounds_alien_bullets() -> None:
-            """If alien bullets reach bottom of the viewport remove them
-            """
+            """If alien bullets reach bottom of the viewport remove them"""
             # remove all out of window player bullets
             for bullet in self.alien_bullets:
                 if bullet.top < 0:
                     bullet.remove_from_sprite_lists()
 
         def process_bounds_starship_bullets() -> None:
-            """Remove starship's bullets which reched top of the viewport
-            """
+            """Remove starship's bullets which reched top of the viewport"""
             # remove all out of window player bullets
             for bullet in filter(
-                lambda bullet:
-                    bullet.bottom > CONSTANTS.DISPLAY.HEIGHT,
-                self.starship.fired_shots
+                lambda bullet: bullet.bottom > CONSTANTS.DISPLAY.HEIGHT,
+                self.starship.fired_shots,
             ):
                 bullet.remove_from_sprite_lists()
 
         def process_collisions_starship_damage_bullets() -> None:
-            """Damage starship if alien bullets hit it
-            """
-            for collision in arc.check_for_collision_with_list(
+            """Damage starship if alien bullets hit it"""
+            for bullet in arc.check_for_collision_with_list(
                 self.starship, self.alien_bullets
             ):
-                self.starship.hp -= 9
-                collision.remove_from_sprite_lists()
+                self.starship.hp -= bullet.damage
+                bullet.remove_from_sprite_lists()
 
         def process_collisions_aliens_starship_sprites() -> None:
-            """Damage starship if it collides with aliens
-            """
+            """Damage starship if it collides with aliens"""
             collisions = []
             for aliens in self.spawners:
                 # process collisions between starship and aliens
-                if (collisions_local := arc.check_for_collision_with_list(
-                    self.starship,
-                    aliens._particles
-                )):
+                if collisions_local := arc.check_for_collision_with_list(
+                    self.starship, aliens._particles
+                ):
                     collisions.extend(collisions_local)
             for c in collisions:
                 self.starship.hp -= round(self.starship.max_hp * 0.01)
@@ -226,25 +214,26 @@ class Level(arc.Scene):
                 for spawner in self.spawners:
                     spawner.rate_factory = arc.EmitInterval(
                         round(
-                            spawner.rate_factory._emit_interval /
-                            self.__current_wave.density_multiplier,
-                            2
+                            spawner.rate_factory._emit_interval
+                            / self.__current_wave.density_multiplier,
+                            2,
                         )
                     )
-                    print('amplification:',
+                    print(
+                        "amplification:",
                         spawner.rate_factory._emit_interval,
-                        '->',
-                        round(spawner.rate_factory._emit_interval /
-                        self.__current_wave.density_multiplier, 2)
+                        "->",
+                        round(
+                            spawner.rate_factory._emit_interval
+                            / self.__current_wave.density_multiplier,
+                            2,
+                        ),
                     )
-
 
         self._wave_timer += delta_time
         process_wave_amplification()
 
-        for alien in chain.from_iterable([
-            sp._particles for sp in self.spawners
-        ]):
+        for alien in chain.from_iterable([sp._particles for sp in self.spawners]):
             # plot movement
             on_update_plot_movement(alien, self.starship, delta_time)
             # evade bullets
@@ -262,7 +251,8 @@ class Level(arc.Scene):
         process_collisions_bullets_clearout()
         process_out_of_bounds_alien_bullets()
 
-        if self.starship.can_reap(): return
+        if self.starship.can_reap():
+            return
         process_bounds_starship_bullets()
         process_collisions_starship_damage_bullets()
         process_collisions_aliens_damage_bullets()
@@ -271,7 +261,6 @@ class Level(arc.Scene):
         self.alien_was_hit_effect_particles.update()
 
         self.check_wave_completion_requirements()
-
 
     def draw(self):
         """

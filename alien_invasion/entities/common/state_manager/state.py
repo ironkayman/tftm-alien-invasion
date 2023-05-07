@@ -1,12 +1,10 @@
-from pathlib import Path
 from enum import IntEnum, auto
+from pathlib import Path
 
-from pydantic import (
-    BaseModel,
-    validator,
-)
+from pydantic import BaseModel, validator
 
 from ..loadout import Loadout
+
 
 class AlienSize(IntEnum):
     """Allowed enemy sizes"""
@@ -30,6 +28,7 @@ class AlienType(IntEnum):
     # Tier 3
     narrativistic = auto()
     metaphysic = auto()
+
 
 class AlienMoveset(IntEnum):
     """Allowed movesets for an arbitrary state.
@@ -94,7 +93,7 @@ class State(BaseModel):
     index: int
 
     # overrides of prev state, optional
-    bullet_damage: int | None
+    bullet_damage: int
     bullet_speed: int | None
     recharge_timeout: int | None
 
@@ -102,13 +101,13 @@ class State(BaseModel):
     data: dict
     texture_path: Path
 
-
-    @validator('movesets', pre=True)
+    @validator("movesets", pre=True)
     def get_movesets(cls, val) -> set[AlienMoveset]:
         """Turns moveset string names to Enums"""
         return set(map(lambda m: AlienMoveset[m], val))
 
-    def __init__(self,
+    def __init__(
+        self,
         name: str,
         index: int,
         texture_path: Path,
@@ -152,4 +151,3 @@ class State(BaseModel):
             texture_path=texture_path,
             **data,
         )
-

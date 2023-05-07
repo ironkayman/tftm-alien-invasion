@@ -18,7 +18,7 @@
     hp = 12
     death_damage_cap = false
 
-    bullet_damage = 8
+    bullet_damage = 20
     bullet_speed = 800
     recharge_timeout = 300
 
@@ -27,9 +27,11 @@
     speed = 80
     hp = 12
     death_damage_cap = false
+    bullet_damage = 30
 
 [state.bleeding]
     movesets = ['tracking', 'dodging', 'firing']
     speed = 140
     hp = 12
     death_damage_cap = false
+    bullet_damage = 40

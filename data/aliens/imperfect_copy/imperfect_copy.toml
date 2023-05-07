@@ -14,7 +14,7 @@
     hp = 40
     death_damage_cap = false
 
-    bullet_damage = 8
+    bullet_damage = 18
     bullet_speed = 800
     recharge_timeout = 300
 
@@ -23,3 +23,4 @@
     speed = 220
     hp = 52
     death_damage_cap = false
+    bullet_damage = 2
