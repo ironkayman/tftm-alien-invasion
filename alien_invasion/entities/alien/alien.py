@@ -10,11 +10,11 @@ from alien_invasion import CONSTANTS
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 from ..common.entity import Entity
-from ..common.state_manager.state import AlienMoveset, State
+from ..common.state_manager.state import State
 
 
 class Timeouts:
-    """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+    """Alien timeouts tracker
 
     Attributes
     ----------
@@ -27,7 +27,7 @@ class Timeouts:
 
 
 class Timers:
-    """Alien object timers increased by `delta_times` in `on_update` methods
+    """Timers increased by `delta_times` in `on_update` submethods
 
     Attributes
     ----------
@@ -218,9 +218,12 @@ class Alien(Entity):
             * CONSTANTS.DISPLAY.SCALE_RELATION,
             angle=180,
         )
-        # if self.state.bullet_speed
         # if self.state.recharge_timeout
-        bullet.change_y = -1 * self.speed * 4 * delta_time
+        bullet.change_y = (
+            -1
+            * (self.state.bullet_speed if self.state.bullet_speed else self.speed * 4)
+            * delta_time
+        )
 
         # Position the bullet
         bullet.center_x = self.center_x
