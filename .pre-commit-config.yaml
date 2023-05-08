@@ -3,10 +3,10 @@ repos:
   rev: v2.3.0
   hooks:
     - id: check-yaml
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: 'v0.0.265'
+- repo: https://github.com/ambv/black
+  rev: stable
   hooks:
-    - id: ruff
+    - id: black
 - repo: https://github.com/pycqa/isort
   rev: 5.12.0
   hooks:
