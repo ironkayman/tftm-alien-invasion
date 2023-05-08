@@ -8,15 +8,12 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 from alien_invasion.entities import Alien, Starship
-from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
-    on_update_evade_bullets,
-)
-from alien_invasion.entities.alien.mixins.on_update.fire_bullets import (
-    on_update_fire_bullets,
-)
-from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
-    on_update_plot_movement,
-)
+from alien_invasion.entities.alien.mixins.on_update.evade_bullets import \
+    on_update_evade_bullets
+from alien_invasion.entities.alien.mixins.on_update.fire_bullets import \
+    on_update_fire_bullets
+from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import \
+    on_update_plot_movement
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 from .spawner import AlienSpawner
@@ -75,7 +72,7 @@ class Level(arc.Scene):
             angle=arc.rand_angle_360_deg()
             if alien_config.spawner.spawn_random_rotation
             else 0,
-        )
+        )  # type: ignore E731
         return AlienSpawner(
             starship=self.starship,
             center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
@@ -133,11 +130,12 @@ class Level(arc.Scene):
         """Compute background layer changes."""
 
         def process_collisions_aliens_damage_bullets() -> None:
-            """Check if starship's bullets hit aliens and damage them"""
+            """Check if starship's bullets hit alienm"""
             collisions = []
             for aliens in self.spawners:
                 # detects cullet collisions
-                # TODO: pass collided bullet object for bullet-specific (or ships primary weapon)
+                # TODO: pass collided bulle
+                #    object for bullet-specific (or ships primary weapon)
                 # changes in being-hit animation
                 for bullet in self.starship.fired_shots:
                     collisions_local = arc.check_for_collision_with_list(
@@ -155,7 +153,7 @@ class Level(arc.Scene):
                 alien.hp -= bullet_damage
 
         def process_collisions_bullets_clearout() -> None:
-            """Check if starship's bullets collide with aliens' bulles and remove them"""
+            """Check if starship's bullets collide with aliensm"""
             # ship's bullets can clear out aliens' bullets
             for bullet in self.starship.fired_shots:
                 collisions = arc.check_for_collision_with_list(
@@ -197,8 +195,10 @@ class Level(arc.Scene):
                     self.starship, aliens._particles
                 ):
                     collisions.extend(collisions_local)
-            for c in collisions:
+            for collisioned_alien in collisions:
+                # drain both starship's and collided alien's HP
                 self.starship.hp -= round(self.starship.max_hp * 0.01)
+                collisioned_alien.hp -= round(collisioned_alien.hp * 0.01)
 
         def process_wave_amplification() -> None:
             """Amplifies alien spawning density

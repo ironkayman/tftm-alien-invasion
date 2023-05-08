@@ -219,11 +219,7 @@ class Alien(Entity):
             angle=180,
         )
         # if self.state.recharge_timeout
-        bullet.change_y = (
-            -1
-            * (self.state.bullet_speed if self.state.bullet_speed else self.speed * 4)
-            * delta_time
-        )
+        bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time
 
         # Position the bullet
         bullet.center_x = self.center_x

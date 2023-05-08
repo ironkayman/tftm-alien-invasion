@@ -12,22 +12,22 @@ from random import random
 import arcade as arc
 
 from alien_invasion import CONSTANTS
-
-from .constants import LastDirection
-from .types import TMovementArea
-from .mixins import OnUpdateMixin
-from .transmission import Transmission
-
-from ..common.state_manager import StateManager
+from alien_invasion.entities import Bullet
+from alien_invasion.utils.loaders.alien.config import AlienConfig
 
 from ..common.entity import Entity
-from alien_invasion.utils.loaders.alien.config import AlienConfig
+from .constants import LastDirection
+from .mixins import OnUpdateMixin
+from .transmission import Transmission
+from .types import TMovementArea
+
 
 @dataclass(slots=True, kw_only=True)
 class Timeouts:
     primary: float
     secondaries: list[float]
     engine: int = 1
+
 
 @dataclass(slots=True)
 class Timers:
@@ -59,7 +59,7 @@ class Timers:
 
 class Starship(Entity, OnUpdateMixin):
     """ViewModel Starship entity.
-    
+
     Input is passed through parent Section object
     in shich keybindings are being translated to movement states
     of the ship.
@@ -77,7 +77,6 @@ class Starship(Entity, OnUpdateMixin):
 
     firing_primary = False
 
-
     _hp_curr: int
     _hp_old: int
     _current_state_index = 0
@@ -87,7 +86,8 @@ class Starship(Entity, OnUpdateMixin):
 
     xp: int = 0
 
-    def __init__(self,
+    def __init__(
+        self,
         fired_shots: arc.SpriteList,
         area_coords: list,
         enemy_shots: arc.SpriteList,
@@ -106,6 +106,7 @@ class Starship(Entity, OnUpdateMixin):
 
         # workaround for cycling imports
         from alien_invasion.settings import STARSHIP
+
         self.loadout = STARSHIP
 
         super().__init__(
@@ -118,7 +119,9 @@ class Starship(Entity, OnUpdateMixin):
 
         self.timeouts = Timeouts(
             primary=self.loadout.weaponry.primary.recharge_timeout,
-            secondaries=[tm.recharge_timeout for tm in self.loadout.weaponry.secondaries],
+            secondaries=[
+                tm.recharge_timeout for tm in self.loadout.weaponry.secondaries
+            ],
         )
         self._timers = Timers()
 
@@ -144,13 +147,9 @@ class Starship(Entity, OnUpdateMixin):
     def apply_state(self) -> None:
         state = self.state
 
-        if state.name == 'initial':
-            state.hp = sum([
-                item.armor for item in self.loadout.hull.armor
-            ])
-            self.max_hp = sum([
-                item.armor for item in self.loadout.hull.armor
-            ])
+        if state.name == "initial":
+            state.hp = sum([item.armor for item in self.loadout.hull.armor])
+            self.max_hp = sum([item.armor for item in self.loadout.hull.armor])
 
         else:
             state.hp = 1
@@ -176,7 +175,6 @@ class Starship(Entity, OnUpdateMixin):
         if self.free_falling:
             self._timers.outage += delta_time
 
-        # print(f"{self.current_energy_capacity:.1f}/{self.loadout.engine.energy_cap} | lost: {'++' if frame_energy_change > 0 else '-'}{frame_energy_change:.1f}eu")
         super().update()
 
     def _fire_primary(self, delta_time: float) -> None:
@@ -187,8 +185,16 @@ class Starship(Entity, OnUpdateMixin):
         """
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = arc.Sprite(":resources:images/space_shooter/laserRed01.png", scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION)
-        bullet.change_y = self.loadout.weaponry.primary.speed * delta_time * CONSTANTS.DISPLAY.SCALE_RELATION
+        bullet = Bullet(
+            ":resources:images/space_shooter/laserRed01.png",
+            damage=self.loadout.weaponry.primary.bullet_damage,
+            scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        )
+        bullet.change_y = (
+            self.loadout.weaponry.primary.speed
+            * delta_time
+            * CONSTANTS.DISPLAY.SCALE_RELATION
+        )
 
         # Position the bullet
         bullet.center_x = self.center_x
@@ -203,6 +209,7 @@ class Starship(Entity, OnUpdateMixin):
             self.apply_state()
         else:
             self._can_reap = True
+        print("death chance:", chance)
 
     def can_reap(self) -> bool:
         return self._can_reap
