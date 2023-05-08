@@ -130,7 +130,7 @@ class Level(arc.Scene):
         """Compute background layer changes."""
 
         def process_collisions_aliens_damage_bullets() -> None:
-            """Check if starship's bullets hit alienm"""
+            """Check if starship's bullets hit aliens"""
             collisions = []
             for aliens in self.spawners:
                 # detects cullet collisions
@@ -143,14 +143,11 @@ class Level(arc.Scene):
                     )
                     if not collisions_local:
                         continue
-                    collisions.extend(collisions_local)
-                    bullet_damage: int = (
-                        self.starship.loadout.weaponry.primary.bullet_damage
-                    )
+                    collisions.append([collisions_local[-1], bullet.damage])
                     bullet.kill()
 
-            for alien in collisions:
-                alien.hp -= bullet_damage
+            for alien_bullet_pair in collisions:
+                alien_bullet_pair[0].hp -= alien_bullet_pair[1]
 
         def process_collisions_bullets_clearout() -> None:
             """Check if starship's bullets collide with aliensm"""
