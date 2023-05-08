@@ -7,6 +7,8 @@
 > Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
 
 ## Introduction
 ```
@@ -40,8 +42,8 @@ Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
 Default controls (confirured at [configs/config.json](configs/config.json) - `current_keymap`):
 
-- in-menu select: `enter`
-- in-game exit: `q`
+- in-menu select: `c`
+- in-game exit: `x`
 - move left: `left arrow`
 - move right: `right arrow`
 - primary fire: `c`
