@@ -196,7 +196,7 @@ class Alien(Entity):
             file_name=state.texture_path,
             flipped_vertically=True,
             can_cache=True,
-            hit_box_algorithm="Simple",
+            hit_box_algorithm="Detailed",
         )
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION

@@ -73,7 +73,7 @@ class Entity(arc.Sprite, ABC):
         self._can_reap: bool = False
         # self.speed: int
 
-        super().__init__()
+        super().__init__(hit_box_algorithm="Detailed")
         self._parent_sprite_list = parent_sprite_list
 
         # Particle properties
