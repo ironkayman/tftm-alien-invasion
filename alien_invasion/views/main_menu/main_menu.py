@@ -1,12 +1,11 @@
 import arcade as arc
 import arcade.gui
-
 from pyglet.media import Player
 
 from alien_invasion.constants import DIR_MUSIC
 
-from .sections import Interface
 from .scenes import Background
+from .sections import Interface
 
 
 class MainMenu(arc.View):
@@ -20,7 +19,8 @@ class MainMenu(arc.View):
 
         # isolate UI
         self.human_interface = Interface(
-            left=0, bottom=0,
+            left=0,
+            bottom=0,
             width=self.window.width,
             height=self.window.height,
             name="human_interface",
@@ -28,9 +28,9 @@ class MainMenu(arc.View):
 
         self.section_manager.add_section(self.human_interface)
 
-        self.media_player: Player|None = None
+        self.media_player: Player | None = None
         self.theme = arc.Sound(
-            DIR_MUSIC / 'main_menu.ogg',
+            DIR_MUSIC / "main_menu.ogg",
             streaming=False,
         )
 
@@ -42,7 +42,9 @@ class MainMenu(arc.View):
         self.human_interface.get_widget().hovered = True
 
         self.media_player = self.theme.play(
-            loop=True, volume=0.2, speed=0.88,
+            loop=True,
+            volume=0.3,
+            speed=1.0,
         )
 
     def on_hide_view(self) -> None:
