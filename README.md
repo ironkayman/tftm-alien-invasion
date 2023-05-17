@@ -7,6 +7,8 @@
 > Alien Invasion is an unfiction classic space invaders-like arcade shmup written on python 3 and [arcade](https://github.com/pythonarcade/arcade) library based around the lore of **Maelstrom Takes Toll** fictional universe and its canon body of stories under **Tales from the Maelstrom** umbrella.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
 
 ## Introduction
 ```
@@ -40,8 +42,8 @@ Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
 Default controls (confirured at [configs/config.json](configs/config.json) - `current_keymap`):
 
-- in-menu select: `enter`
-- in-game exit: `q`
+- in-menu select: `c`
+- in-game exit: `x`
 - move left: `left arrow`
 - move right: `right arrow`
 - primary fire: `c`
@@ -50,9 +52,11 @@ Default controls (confirured at [configs/config.json](configs/config.json) - `cu
 
 
 <p align="center">
-    <img src="./docs/imgs/s1.png" alt="arc" style="display: block; margin: auto; "/>
-    <img src="./docs/imgs/s2.png" alt="arc" style="display: block; margin: auto; "/>
-    <img src="./docs/imgs/s3.png" alt="arc" style="display: block; margin: auto; "/>
+    <img src="./docs/imgs/s1.png" style="width: 90%; display: block; margin: auto; "/>
+    <br>
+    <img src="./docs/imgs/s2.png" style="width: 90%; display: block; margin: auto; "/>
+    <br>
+    <img src="./docs/imgs/s3.png" style="width: 90%; display: block; margin: auto; "/>
 </p>
 
 
@@ -62,8 +66,9 @@ Default controls (confirured at [configs/config.json](configs/config.json) - `cu
 
 Music present is licensed under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/):
 
-- Main menu theme: [Maid Dresses - ILLUSIONS (2022) - pandora box](https://maiddresses.bandcamp.com/track/pandora-box)
-- Button press sound. [Vine boom sfx](https://www.youtube.com/watch?v=Oc7Cin_87H4)
+- Main menu theme: [I Stare Into The Void - Jaxius](https://mixmastermusic2021.bandcamp.com/track/i-stare-into-the-void)
+<!-- - Main menu theme: [Maid Dresses - ILLUSIONS (2022) - pandora box](https://maiddresses.bandcamp.com/track/pandora-box) -->
+- Button press sound: [Vine boom sfx](https://www.youtube.com/watch?v=Oc7Cin_87H4)
 
 ### Images
 
