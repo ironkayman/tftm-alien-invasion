@@ -12,41 +12,20 @@
 
 ## Introduction
 ```
-This game was found on Everexpanding Toybox Entertainment corporate hard drives after tonal shift
-hit the gamedev wing of an office.
-Since all the mess settled the deparment was significantly shrunk down to focus on remaining projects
-worth on persuit while some equipment was auctioned and resold multiple times until
-it was impossible to track it or the transactions.
+Rescently I was approached by ETE representative with a quite a job of restoring some scrambled data off the ETE-labeled and sealed hard drives. As he said, the containers, which are most of the time are shielded from a such event affecting the disks, were affected by manifested nearby breach of a much higher than extected density. As a result, most of the storage facilites inside the building, including the building itself were altered beyond recognition, you probably heard about it - suprisingly, no casualties only a massive property damage despite a gruesome look of it. Notably, no watchtowers forecasted such breach taking place, which is alarming to say at least. All and all since the damage was too great for a conventional restorative techniques that's were I come in: ETE  says that such outsourcing is beneficial in a long run both for us due to sheer difficulty of the case, their public image, and the ETE's archival puposes, but I suppose there's more to it - Everexpanding Toybox has no less than a massive division of high-class restorative scientists working on same class issues.
 
-Meanwhile I was approached by ETE representative to restore data on those drives
-as a data recovery freelancer with a permission to open source the restored data
-for company public archival puposes.
-
-Data restoration from narraphysic influence is a profitable source of income nowdays.
-Turns out the data itself was pretty corrupt so I said it'll take some time -
-they're fine with that as long as at least something representing the original will work.
-
-The source in this repository is everything I managed to recover by far and reconstruct
-in a cohesive more-or-less working state with a hefty amount of my own's work patched in
-where recovery is too risky and/or entirely impossible
-due to disks' narrative identity being completely scrambled.
+Anyway, they are fine with me taking time with this project as long as at least something representing the original will turn out. The source in this repository is everything I managed to recover so far and reconstruct in a cohesive more-or-less working state with a hefty amount of my own's work patched in where recovery is too risky for a time being.
 
 I'll update the source as soon as I can recover it and throw in together some working version.
 
-- Mike
+- Messer "Mike" Erzhmann
 ```
 
-## Gameplay
+## Mechanics
 
 Mechanics describes in detail at [mechanics.md](docs/mechanics.md).
 
-Default controls (confirured at [configs/config.json](configs/config.json) - `current_keymap`):
-
-- in-menu select: `c`
-- in-game exit: `x`
-- move left: `left arrow`
-- move right: `right arrow`
-- primary fire: `c`
+Default controls are configured at [configs/config.json](configs/config.json) - `current_keymap`.
 
 ## Screenshots
 
