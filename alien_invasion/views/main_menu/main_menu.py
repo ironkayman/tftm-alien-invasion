@@ -30,7 +30,7 @@ class MainMenu(arc.View):
 
         self.media_player: Player | None = None
         self.theme = arc.Sound(
-            DIR_MUSIC / "main_menu.ogg",
+            DIR_MUSIC / "main_menu.opus",
             streaming=False,
         )
 
