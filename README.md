@@ -10,6 +10,20 @@
 [![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
 
+## Introduction
+
+---
+
+_Rescently I was approached by ETE representative with a quite a job of restoring some scrambled data off the ETE-labeled and sealed hard drives. As he said, the containers, which are most of the time are shielded from a such event affecting the disks, were in fact affected by manifested nearby breach of a much higher than extected magnitude. As a result, most of the storage facilites inside the building, including the building itself were altered beyond recognition, you probably heard about it - suprisingly, no casualties only a massive property damage despite a gruesome look of it. Notably, no watchtowers forecasted such breach taking place, which is alarming to say at least. All in all since the damage was too great for a conventional restorative techniques that's were I come in: ETE says that such outsourcing is beneficial in a long run both for us due to sheer difficulty of the case, their public image, and the ETE's archival puposes, but I suppose there's more to it - Everexpanding Toybox has no less than a massive division of high-class restorative scientists working on same issues._
+
+_Anyway, they are fine with me taking time with this project as long as at least something representing the original will turn out. The source in this repository is everything I managed to recover so far and reconstruct in a cohesive more-or-less working state with a hefty amount of my own's work patched in where recovery is too risky for a time being._
+
+_I'll update the source as soon as I can recover it and throw in together some working version._
+
+`- Messer "Mike" Erzhmann`
+
+---
+
 ## External dependencies
 
 Project is managed with [poetry](https://python-poetry.org/docs/#installation).
@@ -34,20 +48,6 @@ Default controls are configured in [configs/config.json](configs/config.json) at
     <br>
     <img src="./docs/imgs/s3.png" style="width: 90%; display: block; margin: auto; "/>
 </p>
-
-## Introduction
-
----
-
-_Rescently I was approached by ETE representative with a quite a job of restoring some scrambled data off the ETE-labeled and sealed hard drives. As he said, the containers, which are most of the time are shielded from a such event affecting the disks, were in fact affected by manifested nearby breach of a much higher than extected magnitude. As a result, most of the storage facilites inside the building, including the building itself were altered beyond recognition, you probably heard about it - suprisingly, no casualties only a massive property damage despite a gruesome look of it. Notably, no watchtowers forecasted such breach taking place, which is alarming to say at least. All in all since the damage was too great for a conventional restorative techniques that's were I come in: ETE says that such outsourcing is beneficial in a long run both for us due to sheer difficulty of the case, their public image, and the ETE's archival puposes, but I suppose there's more to it - Everexpanding Toybox has no less than a massive division of high-class restorative scientists working on same issues._
-
-_Anyway, they are fine with me taking time with this project as long as at least something representing the original will turn out. The source in this repository is everything I managed to recover so far and reconstruct in a cohesive more-or-less working state with a hefty amount of my own's work patched in where recovery is too risky for a time being._
-
-_I'll update the source as soon as I can recover it and throw in together some working version._
-
-`- Messer "Mike" Erzhmann`
-
----
 
 ## Credits
 
