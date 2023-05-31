@@ -20,7 +20,7 @@ _Anyway, they are fine with me taking time with this project as long as at least
 
 _I'll update the source as soon as I can recover it and throw in together some working version._
 
-`- Messer "Mike" Erzhmann`
+`- Messer Erzhmann`
 
 ---
 
