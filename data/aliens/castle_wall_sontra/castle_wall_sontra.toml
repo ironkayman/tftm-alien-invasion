@@ -27,12 +27,14 @@
     speed = 15
     hp = 80
     death_damage_cap = false
+    bullet_damage = 8
 
 [state.revealed]
     movesets = ['tracking', 'firing']
     speed = 60
     hp = 80
     death_damage_cap = false
+    bullet_damage = 20
 
 # [state.aggrevated]
 #     movesets = ['tracking', 'firing', 'persuing']

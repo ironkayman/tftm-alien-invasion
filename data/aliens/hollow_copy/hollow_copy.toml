@@ -34,7 +34,6 @@
     death_damage_cap = false
 
     bullet_damage = 8
-    bullet_speed = 800
     recharge_timeout = 300
 
 [state.shattered]

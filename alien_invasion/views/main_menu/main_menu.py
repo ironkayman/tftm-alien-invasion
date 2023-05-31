@@ -44,7 +44,7 @@ class MainMenu(arc.View):
         self.media_player = self.theme.play(
             loop=True,
             volume=0.3,
-            speed=1.0,
+            speed=0.6,
         )
 
     def on_hide_view(self) -> None:

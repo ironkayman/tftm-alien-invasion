@@ -2,23 +2,19 @@
 """
 
 import random
-from pydantic import BaseModel
-
-from pydantic import BaseModel
 
 import arcade as arc
+from pydantic import BaseModel
 
 from alien_invasion import CONSTANTS
-
-from ..common.state_manager.state import State, AlienMoveset
-
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 from ..common.entity import Entity
+from ..common.state_manager.state import State
 
 
 class Timeouts:
-    """Alien object timeout to track intervals of specific functions execution dinside `on_update` method.
+    """Alien timeouts tracker
 
     Attributes
     ----------
@@ -31,7 +27,7 @@ class Timeouts:
 
 
 class Timers:
-    """Alien object timers increased by `delta_times` in `on_update` methods
+    """Timers increased by `delta_times` in `on_update` submethods
 
     Attributes
     ----------
@@ -44,7 +40,8 @@ class Timers:
         last movement change in during tracking moveset.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         primary: float = 0.0,
         dodge: float = 0.0,
         track: float = 0.0,
@@ -76,7 +73,8 @@ class Alien(Entity):
     factory creation inside an `arc.Emitter`.
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         config: AlienConfig,
         overrides: dict,
         approach_velocity_multiplier: float,
@@ -86,8 +84,7 @@ class Alien(Entity):
         # Particle-oriented properties
         **particle_kwargs
     ):
-        """Crearte instance of alien from given `config`
-        """
+        """Crearte instance of alien from given `config`"""
         # self._can_reap: bool = False
 
         # super().__init__()
@@ -97,7 +94,7 @@ class Alien(Entity):
 
         self._overrides = Overrides.parse_obj(overrides)
 
-        particle_kwargs['scale'] *= CONSTANTS.DISPLAY.SCALE_RELATION
+        particle_kwargs["scale"] *= CONSTANTS.DISPLAY.SCALE_RELATION
 
         super().__init__(
             config=config,
@@ -117,19 +114,19 @@ class Alien(Entity):
         )
         self._timers = Timers()
 
-
     def __configure_emitter(self):
-        """Creates emitter for particles after being hit.
-        """
+        """Creates emitter for particles after being hit."""
         self.__hit_emitter = arc.Emitter(
             center_xy=(self.center_x, self.center_y),
-            emit_controller=arc.EmitBurst(0), # no particle given at spawn
+            emit_controller=arc.EmitBurst(0),  # no particle given at spawn
             particle_factory=lambda emitter: arc.LifetimeParticle(
                 filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
-                change_xy=arc.rand_vec_spread_deg(90, 20, 0.4 * CONSTANTS.DISPLAY.SCALE_RELATION),
+                change_xy=arc.rand_vec_spread_deg(
+                    90, 20, 0.4 * CONSTANTS.DISPLAY.SCALE_RELATION
+                ),
                 lifetime=random.uniform(0.4, 1.4),
                 scale=0.3 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                alpha=200
+                alpha=200,
             ),
         )
         # replace internal spritelist,
@@ -157,10 +154,8 @@ class Alien(Entity):
         """When alien reaches it's final state - simply remove it"""
         self._can_reap = True
 
-
     def update_particles_on_hit(self) -> None:
-        """Updates health `hp`
-        """
+        """Updates health `hp`"""
         if self.__hit_emitter:
             self.__hit_emitter.center_x = self.center_x
             self.__hit_emitter.center_y = self.center_y
@@ -195,14 +190,13 @@ class Alien(Entity):
         return self._can_reap or self.top < 0
 
     def apply_state(self) -> None:
-        """Applies `self.state`'s changes to the entity
-        """
+        """Applies `self.state`'s changes to the entity"""
         state: State = self.state  # type: ignore
         self.texture = arc.load_texture(
             file_name=state.texture_path,
             flipped_vertically=True,
             can_cache=True,
-            hit_box_algorithm='Simple',
+            hit_box_algorithm="Detailed",
         )
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
@@ -212,14 +206,20 @@ class Alien(Entity):
         """Creates a bullet sets its position
         and moves it inside passed `self.fired_shots`.
         """
+        from alien_invasion.entities import Bullet
+
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = arc.Sprite(
+        bullet = Bullet(
             ":resources:images/space_shooter/laserRed01.png",
-            flipped_vertically=True,
-            scale=0.5 * (self.scale / 2 if self.scale > 2 else self.scale) * CONSTANTS.DISPLAY.SCALE_RELATION,
+            damage=self.state.bullet_damage,
+            scale=0.5
+            * (self.scale / 2 if self.scale > 2 else self.scale)
+            * CONSTANTS.DISPLAY.SCALE_RELATION,
+            angle=180,
         )
-        bullet.change_y = -1 * self.speed * 4 * delta_time
+        # if self.state.recharge_timeout
+        bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time
 
         # Position the bullet
         bullet.center_x = self.center_x
