@@ -5,7 +5,8 @@
         "player_starship_movement_left": "left",
         "player_starship_movement_right": "right",
         "confirm": "c",
-        "fire_secondary": "x"
+        "fire_secondary": "x",
+        "mute": "m"
     },
     "keymap_override": null,
     "gamestats": {},

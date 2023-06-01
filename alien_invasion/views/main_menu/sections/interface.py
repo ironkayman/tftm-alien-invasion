@@ -3,14 +3,13 @@ from functools import partial
 from pathlib import Path
 
 import arcade as arc
-
 # why simple import?
 import arcade.gui
-from arcade.gui.events import UIEvent, UIKeyPressEvent, UIKeyReleaseEvent, UIMouseEvent
+from arcade.gui.events import (UIEvent, UIKeyPressEvent, UIKeyReleaseEvent,
+                               UIMouseEvent)
 from pyglet.event import EVENT_HANDLED, EVENT_UNHANDLED
 
 from alien_invasion import CONSTANTS
-from alien_invasion.constants import DISPLAY
 from alien_invasion.settings import KEYMAP
 from alien_invasion.utils.loaders.level import loader as load_level_configs
 from alien_invasion.views import Invasion
@@ -48,7 +47,9 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         ):
             self.pressed = False
             # Dispatch new on_click event, source is this widget itself
-            self.dispatch_event("on_event", UIKeyPressEvent(self, KEYMAP["confirm"], 0))  # type: ignore
+            self.dispatch_event(
+                "on_event", UIKeyPressEvent(self, KEYMAP["confirm"], 0)
+            )  # type: ignore
             self.SOUND.play(volume=0.4)
             self.click_callback()
             return EVENT_HANDLED
@@ -227,6 +228,8 @@ class Interface(arc.Section, arc.Scene):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process standard keyboard input."""
         # event = UIKeyEvent(self, symbol, 0)
+        if symbol == KEYMAP["mute"]:
+            self.view._toggle_mute_main_theme()
         if symbol == KEYMAP["back"]:
             CallbackButton.SOUND.play(volume=0.4)
             if self.ui_state == "level_selection":

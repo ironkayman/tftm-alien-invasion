@@ -11,6 +11,9 @@ from .sections import Interface
 class MainMenu(arc.View):
     """Main menu view."""
 
+    SFX_MAIN: float = 0.3
+    SFX_BUTTON_PRESS: float = 0.4
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -58,3 +61,7 @@ class MainMenu(arc.View):
         arc.start_render()
         self.background.draw()
         self.human_interface.draw()
+
+    def _toggle_mute_main_theme(self) -> None:
+        """Toggle volume of main menu theme"""
+        self.media_player.volume = 0.0 if self.media_player.volume else self.SFX_MAIN
