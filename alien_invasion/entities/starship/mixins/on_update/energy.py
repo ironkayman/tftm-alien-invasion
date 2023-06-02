@@ -3,15 +3,12 @@
 
 from typing import cast
 
-def on_update_energy_capacity(
-    self,
-    delta_time: float,
-    frame_energy_change: float
-):
-    """Control engine energy flow and free fall mode.
-    """
+
+def on_update_energy_capacity(self, delta_time: float, frame_energy_change: float):
+    """Control engine energy flow and free fall mode."""
     # workaround circular imports
     from ...starship import Starship
+
     self = cast(Starship, self)
 
     # restore energy
@@ -21,7 +18,12 @@ def on_update_energy_capacity(
         if self.current_energy_capacity > self.loadout.engine.energy_cap:
             self.current_energy_capacity = self.loadout.engine.energy_cap
 
-    motion = (self.moving_left, self.moving_right)
+    motion = (
+        self.moving_left,
+        self.moving_right,
+        self.moving_up,
+        self.moving_down,
+    )
     # calculate sprite movement state
     # and stop if its both L and R pressed
     # calculate energy loss from base
@@ -29,8 +31,11 @@ def on_update_energy_capacity(
     # first check for energy low
     if self.transmission.low_energy:
         energy_loss = 0
-    # both
-    elif all(motion):
+    # l+r+u/d
+    elif all(motion[0:2]) and self.moving_up:
+        energy_loss *= 1.4
+    # l+r
+    elif all(motion[0:2]):
         energy_loss *= 1.3
     # single
     elif any(motion):
@@ -47,22 +52,18 @@ def on_update_energy_capacity(
     # continue free falling
     # moving will disrupt free falling state
     # when at a timer more than 2sec passed of free fall
+    free_falling_prev = self.free_falling
     self.free_falling = (
-        (
-            0 < self._timers.outage < 1 # 1 sec
-            or self.transmission.low_energy
-        ) or (
-            self.free_falling and
-            not self.transmission.low_energy and
-            not any(motion)
-        )
-    )
+        0 < self._timers.outage < 1 or self.transmission.low_energy  # 1 sec
+    ) or (self.free_falling and not self.transmission.low_energy and not any(motion))
 
     # disable moving and firing during free fall initialisation (time == 0)
     # and dont forcibly disbale it during free-fall following updates
     # so the player may himself press again keys for moving/fireing
     # separately
-    if self.free_falling and self._timers.outage == 0:
+    if self.free_falling and not free_falling_prev:
         self.moving_left = False
         self.moving_right = False
+        self.moving_up = False
+        self.moving_down = False
         self.firing_primary = False

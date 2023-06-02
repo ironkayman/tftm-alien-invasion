@@ -4,6 +4,8 @@
         "back": "x",
         "player_starship_movement_left": "left",
         "player_starship_movement_right": "right",
+        "player_starship_movement_up": "up",
+        "player_starship_movement_down": "down",
         "confirm": "c",
         "fire_secondary": "x",
         "mute": "m"

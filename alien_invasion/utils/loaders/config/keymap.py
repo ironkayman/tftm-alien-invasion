@@ -23,6 +23,8 @@ def load_keymap_from_config(config: dict) -> dict:
         "back",
         "player_starship_movement_left",
         "player_starship_movement_right",
+        "player_starship_movement_up",
+        "player_starship_movement_down",
         "confirm",
         "fire_secondary",
         "mute",

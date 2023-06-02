@@ -72,6 +72,9 @@ class Starship(Entity, OnUpdateMixin):
 
     moving_left = False
     moving_right = False
+    moving_up = False
+    moving_down = False
+
     last_direction = LastDirection.STATIONARY
     free_falling = False
 

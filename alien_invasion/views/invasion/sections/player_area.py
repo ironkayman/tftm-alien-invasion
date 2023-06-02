@@ -3,9 +3,10 @@ import arcade as arc
 from alien_invasion import CONSTANTS
 from alien_invasion.entities import Starship
 
+
 class PlayerArea(arc.Section, arc.Scene):
     """Player ship area of movement.
-    
+
     Handles and coordinates sprite lists
     contenets of which originated by player:
 
@@ -16,14 +17,17 @@ class PlayerArea(arc.Section, arc.Scene):
     Ship can be moved left or right or shot;
     these events are handled in `on_key_press` / `on_key_release`
     """
-    
-    def __init__(self,
+
+    def __init__(
+        self,
         left: int,
         bottom: int,
         width: int,
         height: int,
         key_left: int,
         key_right: int,
+        key_up: int,
+        key_down: int,
         key_fire_primary: int,
         key_fire_secondary: int,
         key_on_pause: int,
@@ -32,11 +36,17 @@ class PlayerArea(arc.Section, arc.Scene):
     ) -> None:
         """Area of a view in which ship is placed"""
         # Manual MRO resolution
-        arc.Section.__init__(self,
-            left, bottom, width, height,
+        arc.Section.__init__(
+            self,
+            left,
+            bottom,
+            width,
+            height,
             accept_keyboard_events={
                 key_left,
                 key_right,
+                key_up,
+                key_down,
                 key_fire_primary,
                 key_fire_secondary,
                 key_on_pause,
@@ -51,6 +61,8 @@ class PlayerArea(arc.Section, arc.Scene):
         # keys assigned to move the paddle
         self.key_left: int = key_left
         self.key_right: int = key_right
+        self.key_up: int = key_up
+        self.key_down: int = key_down
         # if movement if l/r, and white both pressed any
         # other key on arrowpad wont be registered
         # also up, left wont register righ, right up  wond register left
@@ -73,13 +85,14 @@ class PlayerArea(arc.Section, arc.Scene):
         self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
         self.starship.center_y = self.starship.height
 
-
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
 
-        if self.on_pause: return
+        if self.on_pause:
+            return
 
-        if self.starship.can_reap(): return
+        if self.starship.can_reap():
+            return
         # player update func considers its movement states
         # which were potentially changed
         self.starship.on_update(delta_time)
@@ -89,7 +102,8 @@ class PlayerArea(arc.Section, arc.Scene):
         """Redraws its sprites"""
         self.starship_bullets.draw()
 
-        if self.starship.can_reap(): return
+        if self.starship.can_reap():
+            return
 
         self.starship.draw()
         self.starship.draw_hit_box(
@@ -108,6 +122,12 @@ class PlayerArea(arc.Section, arc.Scene):
             self.starship.moving_left = True
         elif symbol == self.key_right:
             self.starship.moving_right = True
+
+        elif symbol == self.key_up:
+            self.starship.moving_up = True
+        elif symbol == self.key_down:
+            self.starship.moving_down = True
+
         elif symbol == self.key_fire_primary:
             self.starship.firing_primary = True
 
@@ -128,5 +148,11 @@ class PlayerArea(arc.Section, arc.Scene):
             self.starship.moving_left = False
         elif symbol == self.key_right:
             self.starship.moving_right = False
+
+        elif symbol == self.key_up:
+            self.starship.moving_up = False
+        elif symbol == self.key_down:
+            self.starship.moving_down = False
+
         elif symbol == self.key_fire_primary:
             self.starship.firing_primary = False

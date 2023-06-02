@@ -17,9 +17,7 @@ from .scenes import (
 
 class Invasion(arc.View):
     def __init__(
-        self,
-        completion_callback_view: arc.View,
-        mission_config: tuple[dict, Path]
+        self, completion_callback_view: arc.View, mission_config: tuple[dict, Path]
     ) -> None:
         """Creates entity vars
 
@@ -40,15 +38,18 @@ class Invasion(arc.View):
         self.game_over = GameOver()
 
         self.player_area = PlayerArea(
-            left=0, bottom=0,
+            left=0,
+            bottom=0,
             width=CONSTANTS.DISPLAY.WIDTH,
-            height=64,
+            height=CONSTANTS.DISPLAY.HEIGHT,
             name="player_area",
-            key_left=KEYMAP['player_starship_movement_left'],
-            key_right=KEYMAP['player_starship_movement_right'],
-            key_fire_primary=KEYMAP['confirm'],
-            key_fire_secondary=KEYMAP['fire_secondary'],
-            key_on_pause=KEYMAP['pause'],
+            key_left=KEYMAP["player_starship_movement_left"],
+            key_right=KEYMAP["player_starship_movement_right"],
+            key_up=KEYMAP["player_starship_movement_up"],
+            key_down=KEYMAP["player_starship_movement_down"],
+            key_fire_primary=KEYMAP["confirm"],
+            key_fire_secondary=KEYMAP["fire_secondary"],
+            key_on_pause=KEYMAP["pause"],
             parent_view=self,
         )
 
@@ -81,10 +82,10 @@ class Invasion(arc.View):
         self.pilot_overlay.draw()
 
     def on_update(self, delta_time: float) -> None:
-        """
-        """
+        """ """
 
-        if self.on_pause: return
+        if self.on_pause:
+            return
 
         self.background.on_update(delta_time)
         self.level.on_update(delta_time)
