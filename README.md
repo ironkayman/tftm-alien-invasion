@@ -41,12 +41,23 @@ Default controls are configured in [configs/config.json](configs/config.json) at
 ## Screenshots
 
 
-<p align="center">
-    <img src="./docs/imgs/s1.png" style="width: 90%; display: block; margin: auto; "/>
-    <br>
-    <img src="./docs/imgs/s2.png" style="width: 90%; display: block; margin: auto; "/>
-    <br>
-    <img src="./docs/imgs/s3.png" style="width: 90%; display: block; margin: auto; "/>
+<style>
+    /* screenshot styles */
+    .scst {
+        width: 30%;
+        margin: 4px;
+        display: block;
+    };
+</style>
+<p>
+    <!-- TODO: Add justify-content: center;
+    when 6 screenshots -->
+    <div style="display: flex; flex-wrap: wrap;">
+        <img class="scst" src="./docs/imgs/s1.png"/>
+        <img class="scst" src="./docs/imgs/s2.png"/>
+        <img class="scst" src="./docs/imgs/s3.png"/>
+        <img class="scst" src="./docs/imgs/s4.png"/>
+    </div>
 </p>
 
 ## Credits
