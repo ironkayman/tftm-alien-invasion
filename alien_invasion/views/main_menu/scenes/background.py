@@ -14,7 +14,7 @@ class Background(arc.Scene):
 
     def __init__(self) -> None:
         """Animated backfround logic setup.
-        
+
         Prepares 4 sprites as a background for
         UIManager at `human_interface` section.
         """
@@ -24,7 +24,7 @@ class Background(arc.Scene):
 
         # unanimated background
         self.backfall = arc.Sprite(
-            filename=CONSTANTS.DIR_IMAGES.joinpath('background/entry_ns.png'),
+            filename=CONSTANTS.DIR_IMAGES.joinpath("background/entry_ns.png"),
             scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 30,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
@@ -32,36 +32,40 @@ class Background(arc.Scene):
         self.backfall.color = (85, 70, 110)
         self.backfall.alpha = 170
         self.add_sprite_list(
-            name='backfall',
+            name="backfall",
             sprite_list=self.backfall,
         )
 
-
         # structure at screen center behind buttons
         self.cental_node = arc.Sprite(
-            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_crack.png'),
+            filename=CONSTANTS.DIR_IMAGES.joinpath(
+                "background/main_menu_cold_crack.png"
+            ),
             scale=0.36 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
         )
         self.add_sprite_list(
-            name='central_node',
+            name="central_node",
             sprite_list=self.cental_node,
         )
 
-
         # inner asteroids, should periodically float up-and-down
         self.asteroids_float = arc.Sprite(
-            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
+            filename=CONSTANTS.DIR_IMAGES.joinpath(
+                "background/main_menu_cold_asteroids.png"
+            ),
             scale=0.38 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 20,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 40,
         )
-        self.add_sprite_list(name='asteroids_float', sprite_list=self.asteroids_float)
+        self.add_sprite_list(name="asteroids_float", sprite_list=self.asteroids_float)
 
         # outter asteroid circle, spins slowly
         self.asteroids_spin = arc.Sprite(
-            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_cold_asteroids.png'),
+            filename=CONSTANTS.DIR_IMAGES.joinpath(
+                "background/main_menu_cold_asteroids.png"
+            ),
             scale=0.58 * CONSTANTS.DISPLAY.SCALE_RELATION,
             center_x=CONSTANTS.DISPLAY.WIDTH // 2 - 40,
             center_y=CONSTANTS.DISPLAY.HEIGHT // 2 + 60,
@@ -71,7 +75,7 @@ class Background(arc.Scene):
         # self.asteroids_spin.color = (240, 220, 200)
         # make more bluish and darker tint
         self.asteroids_spin.color = (200, 220, 240)
-        self.add_sprite_list(name='asteroids_spin', sprite_list=self.asteroids_spin)
+        self.add_sprite_list(name="asteroids_spin", sprite_list=self.asteroids_spin)
 
         # variables for periodic center_y change of asteroids_float
         self.last_update_time = 0
@@ -79,12 +83,16 @@ class Background(arc.Scene):
 
         # foreground
         self.foreground_castle_ruins = arc.Sprite(
-            filename=CONSTANTS.DIR_IMAGES.joinpath('background/main_menu_foreground.png'),
-            scale=0.9 * CONSTANTS.DISPLAY.SCALE_RELATION,
-            center_x=CONSTANTS.DISPLAY.WIDTH // 4.3,
-            center_y=CONSTANTS.DISPLAY.HEIGHT // 14,
-            angle=-20,
+            filename=CONSTANTS.DIR_IMAGES.joinpath(
+                "background/main_menu_foreground_new.png"
+            ),
+            scale=0.26 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            center_x=CONSTANTS.DISPLAY.WIDTH // 3,
+            center_y=CONSTANTS.DISPLAY.HEIGHT // 2,
+            angle=0,
         )
+        self.foreground_castle_ruins.left = 0
+        self.foreground_castle_ruins.top = CONSTANTS.DISPLAY.HEIGHT
 
     def on_update(self, dt: float = 1 / 60) -> None:
         """Compute background layer changes."""
@@ -92,8 +100,8 @@ class Background(arc.Scene):
         self.last_update_time += dt
         if self.last_update_time > self.float_interval:
             self.asteroids_float.center_y += randrange(-6, 6)
-            self.foreground_castle_ruins.center_x += randrange(-1, 1)
-            self.foreground_castle_ruins.center_y += randrange(-1, 1)
+            # self.foreground_castle_ruins.center_x += randrange(-1, 1)
+            # self.foreground_castle_ruins.center_y += randrange(-1, 1)
             self.last_update_time = 0
 
         # spin outer asteroids
@@ -138,7 +146,7 @@ class Background(arc.Scene):
         # top long
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
-            CONSTANTS.DISPLAY.HEIGHT * 6/7,
+            CONSTANTS.DISPLAY.HEIGHT * 6 / 7,
             120 * CONSTANTS.DISPLAY.SCALE_RELATION,
             260 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
@@ -146,7 +154,7 @@ class Background(arc.Scene):
         )
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
-            CONSTANTS.DISPLAY.HEIGHT * 5/6,
+            CONSTANTS.DISPLAY.HEIGHT * 5 / 6,
             80 * CONSTANTS.DISPLAY.SCALE_RELATION,
             300 * CONSTANTS.DISPLAY.SCALE_RELATION,
             (237, 207, 80),
