@@ -6,14 +6,14 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+
 class Outlines(arc.Scene):
     """Foreground outlines manager"""
 
     OUTLINE_COLOR = (237, 207, 80)
 
     def __init__(self) -> None:
-        """Animated backfround logic setup.
-        """
+        """Animated backfround logic setup."""
         super().__init__()
 
         self.last_update_time = 0
@@ -58,7 +58,7 @@ class Outlines(arc.Scene):
                 self.position_top_wide += movement
 
             self.float_interval_repeat_counter += 1
-            
+
     def draw(self):
         """
         Render background section.

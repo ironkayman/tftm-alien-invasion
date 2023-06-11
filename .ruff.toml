@@ -1,0 +1,31 @@
+exclude = [
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Disable https://beta.ruff.rs/docs/rules/lambda-assignment/.
+ignore = ["E731"]
+
+[per-file-ignores]
+# ignore unused imports in __init__
+"alien_invasion/views/main_menu/scenes/__init__.py" = ["F401"]
+
+
+[pydocstyle]
+# Use numpy-style docstrings.
+convention = "numpy"

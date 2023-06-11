@@ -8,12 +8,12 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
+
 class Obelisk(arc.Scene):
     """Background animations"""
 
     def __init__(self) -> None:
-        """Animated backfround logic setup.
-        """
+        """Animated backfround logic setup."""
         super().__init__()
 
         arc.set_background_color(arc.color.BLACK)
