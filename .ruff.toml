@@ -23,7 +23,7 @@ ignore = ["E731"]
 
 [per-file-ignores]
 # ignore unused imports in __init__
-"alien_invasion/views/main_menu/scenes/__init__.py" = ["F401"]
+"alien_invasion/**/__init__.py" = ["F401"]
 
 
 [pydocstyle]
