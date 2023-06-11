@@ -1,5 +1,5 @@
 """
-Module for main_menu background management.
+Module for Main Menu's background sprite management
 """
 
 from random import randrange
@@ -10,7 +10,7 @@ from alien_invasion import CONSTANTS
 
 
 class Obelisk(arc.Scene):
-    """Background animations"""
+    """Background Obelisk manager"""
 
     def __init__(self) -> None:
         """Animated backfround logic setup."""

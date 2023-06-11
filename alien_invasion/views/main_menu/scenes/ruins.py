@@ -1,5 +1,5 @@
 """
-Module for main_menu background management.
+Module for Main Menu's Ruins foreground management
 """
 
 from random import randrange
@@ -12,22 +12,28 @@ from alien_invasion.utils.animations import SpriteTimed
 
 
 class RuinsBackground(SpriteTimed):
+    """Ruins' background sprite animations"""
+
     def timed_update(self) -> None:
         self.center_y += randrange(-3, 3)
 
 
 class RuinsCathedral(SpriteTimed):
+    """Ruins' cathedral sprite animations"""
+
     def timed_update(self) -> None:
         self.center_y += randrange(-2, 2)
 
 
 class RuinsTemple(SpriteTimed):
+    """Ruins' temple sprite animations"""
+
     def timed_update(self) -> None:
         self.center_y += randrange(-2, 2)
 
 
 class Ruins(arc.Scene):
-    """ """
+    """Manager for foreground's Ruins"""
 
     def __init__(self) -> None:
         super().__init__()

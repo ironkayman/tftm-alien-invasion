@@ -1,5 +1,5 @@
 """
-Module for main_menu background management.
+Module for Main Menu's drawn Outline
 """
 
 import arcade as arc
