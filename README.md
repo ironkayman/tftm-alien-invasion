@@ -28,7 +28,12 @@ _I'll update the source as soon as I can recover it and throw in together some w
 
 Project is managed with [poetry](https://python-poetry.org/docs/#installation).
 
-On Linux, consider installing `make`.
+On Linux, consider installing `make`. For a first run execute following commands:
+
+```sh
+make install
+make run
+```
 
 Further instructions are described in [`GNUmakefile`](./GNUmakefile).
 
@@ -58,12 +63,12 @@ Default controls are configured in [configs/config.json](configs/config.json) at
 
 Install dependencies:
 
-- patchelf
+- `patchelf`
 
-Command:
+After that run:
 
 ```sh
-poetry run python -m nuitka ./run.py  --standalone  --include-data-dir=/home/kayman/git/mtt/tftm-alien-invasion/alien_invasion/resources=. --include-data-dir=/home/kayman/git/mtt/tftm-alien-invasion/data=.
+make build
 ```
 
 Resulting build will be placed to `./run.dist/run.bin`.
