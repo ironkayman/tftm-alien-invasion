@@ -29,7 +29,7 @@ class Outlines(arc.Scene):
         # so movement can be done up or down
         self.movement_direction = 1
         # step in pixels for every block mvement per interval
-        self.vertical_movement_step = 4 * CONSTANTS.DISPLAY.SCALE_RELATION
+        self.vertical_movement_step = 3.3 * CONSTANTS.DISPLAY.SCALE_RELATION
 
         self.position_top_wide = CONSTANTS.DISPLAY.HEIGHT - 20
         self.position_top_vertical_middle = CONSTANTS.DISPLAY.HEIGHT * 6 / 7 + 15

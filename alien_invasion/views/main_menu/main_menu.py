@@ -4,7 +4,7 @@ from pyglet.media import Player
 
 from alien_invasion.constants import DIR_MUSIC
 
-from .scenes import Outlines, Obelisk
+from .scenes import Obelisk, Outlines, Ruins
 from .sections import Interface
 
 
@@ -17,8 +17,9 @@ class MainMenu(arc.View):
     def __init__(self) -> None:
         super().__init__()
 
-        self.outlines = Outlines()
         self.obelisk = Obelisk()
+        self.outlines = Outlines()
+        self.ruins = Ruins()
 
         # isolate UI
         self.human_interface = Interface(
@@ -57,11 +58,13 @@ class MainMenu(arc.View):
     def on_update(self, delta_time: float):
         self.obelisk.on_update(delta_time)
         self.outlines.on_update(delta_time)
+        self.ruins.on_update(delta_time)
 
     def on_draw(self) -> None:
         arc.start_render()
         self.obelisk.draw()
         self.outlines.draw()
+        self.ruins.draw()
         self.human_interface.draw()
 
     def _toggle_mute_main_theme(self) -> None:
