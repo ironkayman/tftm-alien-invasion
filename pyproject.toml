@@ -29,6 +29,7 @@ build-backend = "poetry.core.masonry.api"
 # Disable https://beta.ruff.rs/docs/rules/lambda-assignment/.
 ignore = ["E731"]
 
+
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",

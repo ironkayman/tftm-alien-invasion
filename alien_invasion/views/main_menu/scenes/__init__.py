@@ -1,1 +1,2 @@
-from .background import Background
+from .outlines import Outlines
+from .obelisk import Obelisk
