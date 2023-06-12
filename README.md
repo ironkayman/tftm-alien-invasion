@@ -28,7 +28,12 @@ _I'll update the source as soon as I can recover it and throw in together some w
 
 Project is managed with [poetry](https://python-poetry.org/docs/#installation).
 
-On Linux, consider installing `make`.
+On Linux, consider installing `make`. For a first run execute following commands:
+
+```sh
+make install
+make run
+```
 
 Further instructions are described in [`GNUmakefile`](./GNUmakefile).
 
@@ -51,6 +56,22 @@ Default controls are configured in [configs/config.json](configs/config.json) at
         <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/s4.png"/>
     </div>
 </p>
+
+## Build from source
+
+### Linux
+
+Install dependencies:
+
+- `patchelf`
+
+After that run:
+
+```sh
+make build
+```
+
+Resulting build will be placed to `./run.dist/run.bin`.
 
 ## Credits
 

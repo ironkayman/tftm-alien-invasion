@@ -5,3 +5,8 @@ __pycache__
 # kdevelop
 *.kdev4
 .kdev4/
+
+# nuitka build
+run.build/
+run.dist/
+

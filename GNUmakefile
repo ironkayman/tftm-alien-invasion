@@ -1,5 +1,6 @@
 POETRY	:= poetry
 PYTHON	:= $(POETRY) run python
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 default: help
 
@@ -16,3 +17,12 @@ install: ## Create environment and install dependencies
 	$(POETRY) config virtualenvs.in-project true --local
 	$(POETRY) install
 	$(POETRY) run pre-commit install
+
+# see https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
+build: ## Compile using nuitka to ./run.dist/run.bin
+	$(PYTHON) -m nuitka \
+	--follow-imports ./run.py \
+	--standalone \
+	--include-data-dir=$(ROOT_DIR)/alien_invasion/resources=internal_resources \
+	--include-data-dir=$(ROOT_DIR)/data=data \
+	--include-package=uuid
