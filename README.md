@@ -50,7 +50,7 @@ Default controls are configured in [configs/config.json](configs/config.json) at
     <!-- TODO: Add justify-content: center;
     when 6 screenshots -->
     <div style="display: flex; flex-wrap: wrap;">
-        <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/s1.png"/>
+        <img style="width: 50%; margin: 4px; display: block;" src="./docs/imgs/main_menu_animated.gif"/>
         <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/s2.png"/>
         <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/s3.png"/>
         <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/s4.png"/>
