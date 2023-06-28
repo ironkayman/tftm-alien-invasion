@@ -8,6 +8,7 @@ This includes:
 
 from dataclasses import dataclass
 from random import random
+from copy import deepcopy as dc
 
 import arcade as arc
 
@@ -132,6 +133,7 @@ class Starship(Entity, OnUpdateMixin):
         self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
+        self.__original_hit_box = dc(self.get_hit_box())
         self.set_hit_box(
             (
                 (-2, 5),
@@ -205,6 +207,29 @@ class Starship(Entity, OnUpdateMixin):
 
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
+
+    def draw(self) -> None:
+        """Draw state-directed patterns
+
+        TODO: Move to scene update method
+        """
+        # normal scenario:
+        # if state is not final, and there's a bullet is close proximity
+        if (
+            self.state.index != 1
+            and (closest := arc.get_closest_sprite(self, self.enemy_shots))
+            and closest[1] < 45 * CONSTANTS.DISPLAY.SCALE_RELATION
+        ):
+            original_hit_box = [
+                (self.center_x + p[0] * 3, self.center_y + p[1] * 3)
+                for p in self.__original_hit_box
+            ]
+            arc.draw_polygon_outline(
+                original_hit_box,
+                arc.color.ALIZARIN_CRIMSON,
+                1,
+            )
+        super().draw()
 
     def handle_final_state(self) -> None:
         if (chance := random()) > 0.22:
