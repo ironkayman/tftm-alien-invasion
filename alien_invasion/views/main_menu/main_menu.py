@@ -3,6 +3,7 @@ import arcade.gui
 from pyglet.media import Player
 
 from alien_invasion.constants import DIR_MUSIC
+from alien_invasion.settings import CONFIG_DICT
 
 from .scenes import Obelisk, Outlines, Ruins
 from .sections import Interface
@@ -47,7 +48,7 @@ class MainMenu(arc.View):
 
         self.media_player = self.theme.play(
             loop=True,
-            volume=0.3,
+            volume=0.3 if not CONFIG_DICT["config"]["mute"] else 0.0,
             speed=1.0,
         )
 
