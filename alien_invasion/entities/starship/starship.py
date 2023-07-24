@@ -17,7 +17,7 @@ from alien_invasion.entities import Bullet
 from alien_invasion.utils.loaders.alien.config import AlienConfig
 
 from ..common.entity import Entity
-from .constants import LastDirection
+from .constants import LastDirection, HITBOX_POLYGON_SHAPE
 from .mixins import OnUpdateMixin
 from .transmission import Transmission
 from .types import TMovementArea
@@ -90,6 +90,9 @@ class Starship(Entity, OnUpdateMixin):
 
     xp: int = 0
 
+    # flag - if needed to draw enemy proximity polygon
+    is_proximity: bool = False
+
     def __init__(
         self,
         fired_shots: arc.SpriteList,
@@ -133,17 +136,9 @@ class Starship(Entity, OnUpdateMixin):
         self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
-        self.__original_hit_box = dc(self.get_hit_box())
-        self.set_hit_box(
-            (
-                (-2, 5),
-                (2, 5),
-                (5, 0),
-                (2, -5),
-                (-2, -5),
-                (-5, 0),
-            )
-        )
+        self._original_hit_box = dc(self.get_hit_box())
+        self.current_position_original_hit_box = self._original_hit_box
+        self.set_hit_box(HITBOX_POLYGON_SHAPE)
 
     def _restart_hit_effect_emitter(self) -> None:
         """Stub for being-hit animation"""
@@ -180,6 +175,11 @@ class Starship(Entity, OnUpdateMixin):
         if self.free_falling:
             self._timers.outage += delta_time
 
+        self.current_position_original_hit_box = [
+            (self.center_x + p[0] * 3, self.center_y + p[1] * 3)
+            for p in self._original_hit_box
+        ]
+
         super().update()
 
     def _fire_primary(self, delta_time: float) -> None:
@@ -207,29 +207,6 @@ class Starship(Entity, OnUpdateMixin):
 
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
-
-    def draw(self) -> None:
-        """Draw state-directed patterns
-
-        TODO: Move to scene update method
-        """
-        # normal scenario:
-        # if state is not final, and there's a bullet is close proximity
-        if (
-            self.state.index != 1
-            and (closest := arc.get_closest_sprite(self, self.enemy_shots))
-            and closest[1] < 45 * CONSTANTS.DISPLAY.SCALE_RELATION
-        ):
-            original_hit_box = [
-                (self.center_x + p[0] * 3, self.center_y + p[1] * 3)
-                for p in self.__original_hit_box
-            ]
-            arc.draw_polygon_outline(
-                original_hit_box,
-                arc.color.ALIZARIN_CRIMSON,
-                1,
-            )
-        super().draw()
 
     def handle_final_state(self) -> None:
         if (chance := random()) > 0.22:
