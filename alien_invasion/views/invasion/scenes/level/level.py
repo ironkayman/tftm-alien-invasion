@@ -8,12 +8,15 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 from alien_invasion.entities import Alien, Starship
-from alien_invasion.entities.alien.mixins.on_update.evade_bullets import \
-    on_update_evade_bullets
-from alien_invasion.entities.alien.mixins.on_update.fire_bullets import \
-    on_update_fire_bullets
-from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import \
-    on_update_plot_movement
+from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
+    on_update_evade_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.fire_bullets import (
+    on_update_fire_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
+    on_update_plot_movement,
+)
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 from .spawner import AlienSpawner
@@ -109,6 +112,35 @@ class Level(arc.Scene):
         for spawn_pair in spawn_pairs:
             self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
+    @property
+    def aliens(self) -> arc.SpriteList:
+        """All aliens
+
+        Returns
+        -------
+        arc.SpriteList
+            All aliens currently present,
+            disregarding their original spawner.
+        """
+        aliens_all = arc.SpriteList()
+        for aliens in self.spawners:
+            aliens_all.extend(aliens._particles)
+        return aliens_all
+
+    @property
+    def starship_danger(self) -> arc.SpriteList:
+        """All objects capable of damaging starship
+
+        Returns
+        -------
+        arc.SpriteList
+            All aliens (`self.aliens` property) and their
+            currently present bullets.
+        """
+        starship_danger_list = self.aliens
+        starship_danger_list.extend(self.alien_bullets)
+        return starship_danger_list
+
     def check_wave_completion_requirements(self) -> None:
         """Checks if required XP gained to proceed to a next Wave"""
         if all(
@@ -197,6 +229,15 @@ class Level(arc.Scene):
                 self.starship.hp -= round(self.starship.max_hp * 0.01)
                 collisioned_alien.hp -= round(collisioned_alien.hp * 0.01)
 
+        def process_starship_danger_proximity() -> None:
+            """Check for enemies' proximity to starship, set it's flag"""
+            self.starship.is_proximity = False
+            tracked_objects = self.starship_danger
+            if (
+                closest := arc.get_closest_sprite(self.starship, tracked_objects)
+            ) and closest[1] < 45 * CONSTANTS.DISPLAY.SCALE_RELATION:
+                self.starship.is_proximity = True
+
         def process_wave_amplification() -> None:
             """Amplifies alien spawning density
 
@@ -247,6 +288,7 @@ class Level(arc.Scene):
 
         process_collisions_bullets_clearout()
         process_out_of_bounds_alien_bullets()
+        process_starship_danger_proximity()
 
         if self.starship.can_reap():
             return
@@ -265,6 +307,14 @@ class Level(arc.Scene):
         """
         for spawn in self.spawners:
             spawn.draw()
+
+        if self.starship.is_proximity:
+            arc.draw_polygon_outline(
+                self.starship.current_position_original_hit_box,
+                arc.color.ALIZARIN_CRIMSON,
+                1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            )
+
         # Externally (outside of particles and emitter) draw hit effect sprites
         self.alien_was_hit_effect_particles.draw()
         self.alien_bullets.draw()
