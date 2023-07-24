@@ -1,3 +1,6 @@
+# IDE: VSCode
+*.code-workspace
+
 # python
 **/__pycache__
 __pycache__
