@@ -120,12 +120,12 @@ class Alien(Entity):
             center_xy=(self.center_x, self.center_y),
             emit_controller=arc.EmitBurst(0),  # no particle given at spawn
             particle_factory=lambda emitter: arc.LifetimeParticle(
-                filename_or_texture=":resources:images/space_shooter/meteorGrey_tiny2.png",
+                filename_or_texture=":resources:images/tiles/stone.png",
                 change_xy=arc.rand_vec_spread_deg(
                     90, 20, 0.4 * CONSTANTS.DISPLAY.SCALE_RELATION
                 ),
                 lifetime=random.uniform(0.4, 1.4),
-                scale=0.3 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                scale=0.05 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 alpha=200,
             ),
         )
@@ -157,8 +157,14 @@ class Alien(Entity):
     def update_particles_on_hit(self) -> None:
         """Updates health `hp`"""
         if self.__hit_emitter:
-            self.__hit_emitter.center_x = self.center_x
-            self.__hit_emitter.center_y = self.center_y
+            # self.__hit_emitter.center_x = self.center_x
+            # self.__hit_emitter.center_y = self.center_y
+            x = round(self.center_x)
+            y = round(self.center_y)
+            wd = self.width // 3
+            hd = self.height // 3
+            self.__hit_emitter.center_x = random.randint(x - wd, x + wd)
+            self.__hit_emitter.center_y = random.randint(y - hd, y + hd)
         self.__hit_emitter.update()
 
     def on_update(self, delta_time: float) -> None:
