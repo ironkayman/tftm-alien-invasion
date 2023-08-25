@@ -3,10 +3,10 @@ from functools import partial
 from pathlib import Path
 
 import arcade as arc
+
 # why simple import?
 import arcade.gui
-from arcade.gui.events import (UIEvent, UIKeyPressEvent, UIKeyReleaseEvent,
-                               UIMouseEvent)
+from arcade.gui.events import UIEvent, UIKeyPressEvent, UIKeyReleaseEvent, UIMouseEvent
 from pyglet.event import EVENT_HANDLED, EVENT_UNHANDLED
 
 from alien_invasion import CONSTANTS
@@ -134,7 +134,10 @@ class Interface(arc.Section, arc.Scene):
         )
 
         quit_button = CallbackButton(
-            text="Quit", width=150, height=40, click_callback=self.__deploy_exit
+            text="Quit",
+            width=150,
+            height=40,
+            click_callback=self.__deploy_exit,
         )
         start_menu.add(quit_button)
 

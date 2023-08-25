@@ -312,7 +312,7 @@ class Level(arc.Scene):
             arc.draw_polygon_outline(
                 self.starship.current_position_original_hit_box,
                 arc.color.ALIZARIN_CRIMSON,
-                1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                3 * CONSTANTS.DISPLAY.SCALE_RELATION,
             )
 
         # Externally (outside of particles and emitter) draw hit effect sprites

@@ -213,9 +213,6 @@ class Alien(Entity):
         bullet = Bullet(
             ":resources:images/space_shooter/laserRed01.png",
             damage=self.state.bullet_damage,
-            scale=0.5
-            * (self.scale / 2 if self.scale > 2 else self.scale)
-            * CONSTANTS.DISPLAY.SCALE_RELATION,
             angle=180,
         )
         # if self.state.recharge_timeout

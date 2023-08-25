@@ -10,7 +10,7 @@
         "fire_secondary": "x",
         "mute": "m"
     },
-    "mute": false,
+    "mute": true,
     "keymap_override": null,
     "gamestats": {},
     "progression": {},

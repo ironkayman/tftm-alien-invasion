@@ -193,7 +193,7 @@ class Starship(Entity, OnUpdateMixin):
         bullet = Bullet(
             ":resources:images/space_shooter/laserRed01.png",
             damage=self.loadout.weaponry.primary.bullet_damage,
-            scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            # scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         bullet.change_y = (
             self.loadout.weaponry.primary.speed

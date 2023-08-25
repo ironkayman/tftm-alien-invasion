@@ -8,6 +8,9 @@ from alien_invasion.settings import CONFIG_DICT
 from .scenes import Obelisk, Outlines, Ruins
 from .sections import Interface
 
+from arcade.experimental.crt_filter import CRTFilter
+from pyglet.math import Vec2
+
 
 class MainMenu(arc.View):
     """Main menu view."""
@@ -17,6 +20,17 @@ class MainMenu(arc.View):
 
     def __init__(self) -> None:
         super().__init__()
+
+        self.filter = CRTFilter(
+            self.window.width,
+            self.window.height,
+            resolution_down_scale=5.0,
+            hard_scan=-15.0,
+            hard_pix=-10.0,
+            display_warp=Vec2(0.0, 0.0),
+            mask_dark=1.0,
+            mask_light=1.0,
+        )
 
         self.obelisk = Obelisk()
         self.outlines = Outlines()
@@ -62,11 +76,18 @@ class MainMenu(arc.View):
         self.ruins.on_update(delta_time)
 
     def on_draw(self) -> None:
-        arc.start_render()
+        # arc.start_render()
+        self.filter.use()
+        self.filter.clear()
+
         self.obelisk.draw()
         self.outlines.draw()
         self.ruins.draw()
         self.human_interface.draw()
+
+        self.window.use()
+        self.window.clear()
+        self.filter.draw()
 
     def _toggle_mute_main_theme(self) -> None:
         """Toggle volume of main menu theme"""

@@ -3,6 +3,8 @@
 
 import arcade as arc
 
+from alien_invasion import CONSTANTS
+
 
 class Bullet(arc.Sprite):
     """Bullet class used for starship/alien firing
@@ -21,8 +23,8 @@ class Bullet(arc.Sprite):
     """
 
     def __init__(
-        self, filename: str, damage: int, scale: float = 1, angle: int = 0, **kwargs
+        self, filename: str, damage: int, scale: float = 1.0, angle: int = 0, **kwargs
     ):
-        super().__init__(filename, scale, **kwargs)
+        super().__init__(filename, scale * CONSTANTS.DISPLAY.SCALE_RELATION, **kwargs)
         self.angle = angle
         self.damage = damage

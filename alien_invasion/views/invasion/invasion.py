@@ -1,6 +1,9 @@
 import arcade as arc
 from pathlib import Path
 
+from arcade.experimental.crt_filter import CRTFilter
+from pyglet.math import Vec2
+
 from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from .sections import (
@@ -30,6 +33,17 @@ class Invasion(arc.View):
             and title image path.
         """
         super().__init__()
+
+        self.filter = CRTFilter(
+            self.window.width,
+            self.window.height,
+            resolution_down_scale=5.0,
+            hard_scan=-15.0,
+            hard_pix=-10.0,
+            display_warp=Vec2(0.0, 0.0),
+            mask_dark=1.0,
+            mask_light=1.0,
+        )
 
         self.on_pause = False
 
@@ -72,14 +86,21 @@ class Invasion(arc.View):
         self.level = None
 
     def on_draw(self) -> None:
-        arc.start_render()
+        # arc.start_render()
+
+        self.filter.use()
+        self.filter.clear()
+
         self.background.draw()
         self.level.draw()
         self.player_area.draw()
         if self.level.starship.can_reap():
             self.game_over.draw()
-            return
         self.pilot_overlay.draw()
+
+        self.window.use()
+        self.window.clear()
+        self.filter.draw()
 
     def on_update(self, delta_time: float) -> None:
         """ """
