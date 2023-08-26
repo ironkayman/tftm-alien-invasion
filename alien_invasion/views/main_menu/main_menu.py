@@ -8,8 +8,7 @@ from alien_invasion.settings import CONFIG_DICT
 from .scenes import Obelisk, Outlines, Ruins
 from .sections import Interface
 
-from arcade.experimental.crt_filter import CRTFilter
-from pyglet.math import Vec2
+from alien_invasion.utils.crt_filters import CRTFilterDefault
 
 
 class MainMenu(arc.View):
@@ -21,16 +20,7 @@ class MainMenu(arc.View):
     def __init__(self) -> None:
         super().__init__()
 
-        self.filter = CRTFilter(
-            self.window.width,
-            self.window.height,
-            resolution_down_scale=5.0,
-            hard_scan=-15.0,
-            hard_pix=-10.0,
-            display_warp=Vec2(0.0, 0.0),
-            mask_dark=1.0,
-            mask_light=1.0,
-        )
+        self.filter = CRTFilterDefault(self.window)
 
         self.obelisk = Obelisk()
         self.outlines = Outlines()
