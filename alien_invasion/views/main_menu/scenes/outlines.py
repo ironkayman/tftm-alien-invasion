@@ -70,7 +70,7 @@ class Outlines(arc.Scene):
             CONSTANTS.DISPLAY.WIDTH - 20,
             CONSTANTS.DISPLAY.HEIGHT - 20,
             Outlines.OUTLINE_COLOR,
-            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            2 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
 
         arc.draw_rectangle_outline(
@@ -79,7 +79,7 @@ class Outlines(arc.Scene):
             320 * CONSTANTS.DISPLAY.SCALE_RELATION,
             160 * CONSTANTS.DISPLAY.SCALE_RELATION,
             Outlines.OUTLINE_COLOR,
-            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            2 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
@@ -87,7 +87,7 @@ class Outlines(arc.Scene):
             120 * CONSTANTS.DISPLAY.SCALE_RELATION,
             260 * CONSTANTS.DISPLAY.SCALE_RELATION,
             Outlines.OUTLINE_COLOR,
-            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            2 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
@@ -95,7 +95,7 @@ class Outlines(arc.Scene):
             80 * CONSTANTS.DISPLAY.SCALE_RELATION,
             300 * CONSTANTS.DISPLAY.SCALE_RELATION,
             Outlines.OUTLINE_COLOR,
-            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            2 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,
@@ -103,5 +103,5 @@ class Outlines(arc.Scene):
             100 * CONSTANTS.DISPLAY.SCALE_RELATION,
             240 * CONSTANTS.DISPLAY.SCALE_RELATION,
             Outlines.OUTLINE_COLOR,
-            1 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            2 * CONSTANTS.DISPLAY.SCALE_RELATION,
         )
