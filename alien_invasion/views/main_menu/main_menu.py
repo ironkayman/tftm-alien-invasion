@@ -66,17 +66,27 @@ class MainMenu(arc.View):
         self.ruins.on_update(delta_time)
 
     def on_draw(self) -> None:
-        # arc.start_render()
+        """Render
+
+        - renders `obelisk` structure under 2 filter layers
+        - `outline` is rendered with 1 filter (inherited by next render) layer
+        - `ruins` and `human_interface` are drawn with 1 filter layer
+        """
         self.filter.use()
         self.filter.clear()
 
         self.obelisk.draw()
+
+        self.filter.draw()
+
         self.outlines.draw()
+
+        self.filter.use()
+
         self.ruins.draw()
         self.human_interface.draw()
 
         self.window.use()
-        self.window.clear()
         self.filter.draw()
 
     def _toggle_mute_main_theme(self) -> None:
