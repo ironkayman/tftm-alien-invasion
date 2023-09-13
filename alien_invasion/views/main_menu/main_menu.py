@@ -17,11 +17,12 @@ class MainMenu(arc.View):
     SFX_MAIN: float = 0.3
     SFX_BUTTON_PRESS: float = 0.4
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, window=None, view_filter=None) -> None:
+        super().__init__(window=window)
 
-        self.filter = CRTFilterDefault(self.window)
+        self.filter = view_filter or CRTFilterDefault(self.window)
 
+        # FIXME: make obelisk scene elements darker
         self.obelisk = Obelisk()
         self.outlines = Outlines()
         self.ruins = Ruins()
@@ -44,6 +45,7 @@ class MainMenu(arc.View):
         )
 
     def on_show_view(self) -> None:
+        self.window.set_mouse_visible(False)
         self.human_interface.manager.enable()
 
         self.human_interface.reset_widget_selection()
@@ -77,11 +79,11 @@ class MainMenu(arc.View):
 
         self.obelisk.draw()
 
-        self.filter.draw()
+        # self.filter.draw()
 
         self.outlines.draw()
 
-        self.filter.use()
+        # self.filter.use()
 
         self.ruins.draw()
         self.human_interface.draw()

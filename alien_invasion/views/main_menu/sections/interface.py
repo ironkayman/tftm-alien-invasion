@@ -25,6 +25,7 @@ class CallbackButton(arc.gui.UIFlatButton, ABC):
         self.click_callback = kwargs["click_callback"]
         self.ui_state = "main_menu"
         self.scale(CONSTANTS.DISPLAY.SCALE_RELATION)
+        self._style["bold"] = True
         self._style["font_size"] = 16 * CONSTANTS.DISPLAY.SCALE_RELATION
         self._style["border_width"] = 2 * CONSTANTS.DISPLAY.SCALE_RELATION
 
