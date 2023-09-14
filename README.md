@@ -85,6 +85,8 @@ Music present is licensed under [CC BY-NC 3.0](https://creativecommons.org/licen
 <!-- - Main menu theme: [Maid Dresses - ILLUSIONS (2022) - pandora box](https://maiddresses.bandcamp.com/track/pandora-box) -->
 - Button press sound: [Vine boom sfx](https://www.youtube.com/watch?v=Oc7Cin_87H4)
 
+- Intro cassette tape sound: [Tape Player Sounds](https://pixabay.com/sound-effects/tape-player-sounds-90780/)
+
 ### Images
 
 Following images present are licenced under [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).

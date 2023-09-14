@@ -1,3 +1,5 @@
+from threading import Event
+
 import arcade as arc
 import arcade.gui
 from pyglet.media import Player
@@ -17,15 +19,30 @@ class MainMenu(arc.View):
     SFX_MAIN: float = 0.3
     SFX_BUTTON_PRESS: float = 0.4
 
-    def __init__(self, window=None, view_filter=None) -> None:
+    def __init__(
+        self,
+        window=None,
+        view_filter=None,
+        f1: Event = None,
+        f2: Event = None,
+        f3: Event = None,
+        f4: Event = None,
+    ) -> None:
+        """ """
         super().__init__(window=window)
 
         self.filter = view_filter or CRTFilterDefault(self.window)
 
         # FIXME: make obelisk scene elements darker
         self.obelisk = Obelisk()
+        if f1:
+            f1.set()
         self.outlines = Outlines()
+        if f2:
+            f2.set()
         self.ruins = Ruins()
+        if f3:
+            f3.set()
 
         # isolate UI
         self.human_interface = Interface(
@@ -37,6 +54,8 @@ class MainMenu(arc.View):
         )
 
         self.section_manager.add_section(self.human_interface)
+        if f4:
+            f4.set()
 
         self.media_player: Player | None = None
         self.theme = arc.Sound(
