@@ -58,7 +58,7 @@ class Ruins(arc.Scene):
             self.ruins_cathedral = RuinsCathedral(
                 filename=self._dir_images / "ruins_cathedral.png",
                 scale=self.__ruins_scaling,
-                timer_interval=4.6,
+                timer_interval=4.4,
             )
             self.ruins_cathedral.bottom = -20 * CONSTANTS.DISPLAY.SCALE_RELATION
             self.ruins_cathedral.left = 9.8 * CONSTANTS.DISPLAY.SCALE_RELATION

@@ -16,6 +16,9 @@ class Obelisk(arc.Scene):
         """Animated backfround logic setup."""
         super().__init__()
 
+        # RGBA color of tinting shape above all sprites
+        self.darken_tint = (0, 0, 0, 92)
+
         arc.set_background_color(arc.color.BLACK)
 
         # unanimated background
@@ -106,6 +109,10 @@ class Obelisk(arc.Scene):
         Render background section.
         """
         super().draw(pixelated=True)
-
-        # render foreground over all golden arcs
-        # self.foreground_castle_ruins.draw(pixelated=False)
+        arc.draw_rectangle_filled(
+            CONSTANTS.DISPLAY.WIDTH // 2,
+            CONSTANTS.DISPLAY.HEIGHT // 2,
+            CONSTANTS.DISPLAY.WIDTH,
+            CONSTANTS.DISPLAY.HEIGHT,
+            self.darken_tint,
+        )
