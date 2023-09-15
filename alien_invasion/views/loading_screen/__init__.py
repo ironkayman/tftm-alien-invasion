@@ -1,1 +1,1 @@
-from .loading_screen import LoaderForView
+from .loading_screen import ViewLoader

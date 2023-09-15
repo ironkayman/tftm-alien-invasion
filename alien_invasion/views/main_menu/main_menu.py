@@ -21,28 +21,21 @@ class MainMenu(arc.View):
 
     def __init__(
         self,
-        window=None,
+        window: arc.Window = None,
         view_filter=None,
-        f1: Event = None,
-        f2: Event = None,
-        f3: Event = None,
-        f4: Event = None,
+        flags: (Event) = None,
     ) -> None:
         """ """
         super().__init__(window=window)
 
         self.filter = view_filter or CRTFilterDefault(self.window)
 
-        # FIXME: make obelisk scene elements darker
         self.obelisk = Obelisk()
-        if f1:
-            f1.set()
+        flags[0].set()
         self.outlines = Outlines()
-        if f2:
-            f2.set()
+        flags[1].set()
         self.ruins = Ruins()
-        if f3:
-            f3.set()
+        flags[2].set()
 
         # isolate UI
         self.human_interface = Interface(
@@ -52,10 +45,8 @@ class MainMenu(arc.View):
             height=self.window.height,
             name="human_interface",
         )
-
         self.section_manager.add_section(self.human_interface)
-        if f4:
-            f4.set()
+        flags[3].set()
 
         self.media_player: Player | None = None
         self.theme = arc.Sound(

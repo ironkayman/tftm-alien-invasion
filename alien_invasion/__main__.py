@@ -2,7 +2,7 @@ import arcade as arc
 
 from alien_invasion.constants import DISPLAY, WINDOW_TITLE
 
-from alien_invasion.views import LoaderForView
+from alien_invasion.views import ViewLoader, MainMenu
 from alien_invasion.utils.crt_filters import CRTFilterDefault
 
 
@@ -19,5 +19,5 @@ def main() -> None:
 
     main_filter = CRTFilterDefault(window)
 
-    with LoaderForView("MainMenu", main_filter):
+    with ViewLoader(MainMenu, main_filter, progress_flag_count=4, is_root=True):
         arc.run()
