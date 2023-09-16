@@ -5,7 +5,6 @@ import arcade as arc
 import arcade.gui
 from arcade.experimental.crt_filter import CRTFilter
 
-
 from pyglet.media import Player
 
 from alien_invasion.constants import DIR_MUSIC
@@ -48,20 +47,12 @@ class ViewLoader(arc.View):
 
         self.filter = CRTFilterDefault(self.window)
 
-        # intro malfunction audio
-        self.theme_alarm = arc.Sound(
-            DIR_MUSIC / "kallichore.opus",
-            streaming=False,
-        )
-
-        # Intro loading audio
+        # Intro audio
         self.media_player: Player | None = None
         self.theme = arc.Sound(
             DIR_MUSIC / "tape_in.opus",
             streaming=False,
         )
-        # malfunction player
-        self.media_player_last: Player | None = None
         self._queue = Queue()
         # prepare passable events
         self._progress_events = [Event() for _ in range(progress_flag_count + 1)]
@@ -113,9 +104,6 @@ class ViewLoader(arc.View):
                 progress_flags,
             )
         )
-        from time import sleep
-
-        sleep(1.2)
         closing_event.set()
 
     def on_show_view(self):
@@ -126,14 +114,13 @@ class ViewLoader(arc.View):
         self.window.show_view(self)
         self.media_player = self.theme.play(
             loop=True,
-            volume=1.2,
+            volume=1.0,
             speed=1.0,
         )
         return self
 
     def on_hide_view(self):
         self.media_player.delete()
-        self.media_player_last.delete()
         self.window.set_mouse_visible(False)
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -146,22 +133,6 @@ class ViewLoader(arc.View):
         Updates the view. Checks `_thread`ed
         view completion and if so, switches to it.
         """
-        self.__trailing_count += 1
-        if self.__trailing_count > 20:
-            self.__trailing_count = 0
-
-        if self._progress_events[2].is_set():
-            if not self.media_player_last:
-                self.media_player_last = self.theme_alarm.play(
-                    loop=False,
-                    volume=0.0,
-                    speed=1.0,
-                )
-        if self._progress_events[3].is_set():
-            if self.media_player_last.volume > 0.0326:
-                self.media_player_last.volume += 0.002
-            else:
-                self.media_player_last.volume += 0.0004
 
         # check for created view instance
         if self._target_view_loaded.is_set():
@@ -224,16 +195,6 @@ class ViewLoader(arc.View):
             arc.draw_text(
                 "Loading Narraphysic Isolation Env... MALFUNC",
                 20 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                CONSTANTS.DISPLAY.HEIGHT - 220 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                arcade.color.CRIMSON,
-                18 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                font_name="Courier New",
-                bold=True,
-            )
-        if self.media_player_last and self.media_player_last.volume > 0.0326:
-            arc.draw_text(
-                "Initiating Narrativistic Safeguards...",
-                CONSTANTS.DISPLAY.WIDTH * 5 / 6,
                 CONSTANTS.DISPLAY.HEIGHT - 220 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 arcade.color.CRIMSON,
                 18 * CONSTANTS.DISPLAY.SCALE_RELATION,

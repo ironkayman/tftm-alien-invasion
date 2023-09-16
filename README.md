@@ -87,6 +87,8 @@ Music present is licensed under [CC BY-NC 3.0](https://creativecommons.org/licen
 
 - Intro cassette tape sound: [Tape Player Sounds](https://pixabay.com/sound-effects/tape-player-sounds-90780/)
 
+- [Sound Of Kallichore](https://www.youtube.com/watch?v=Mta-Uc-VzFU)
+
 ### Images
 
 Following images present are licenced under [Creative Commons | Attribution-NonCommercial 4.0 International | CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0).

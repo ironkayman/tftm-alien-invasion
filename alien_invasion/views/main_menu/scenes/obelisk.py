@@ -17,7 +17,7 @@ class Obelisk(arc.Scene):
         super().__init__()
 
         # RGBA color of tinting shape above all sprites
-        self.darken_tint = (0, 0, 0, 92)
+        self.darken_tint = (0, 0, 0, 10)
 
         arc.set_background_color(arc.color.BLACK)
 
