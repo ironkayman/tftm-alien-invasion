@@ -196,6 +196,15 @@ class ViewLoader(arc.View):
                 font_name="Courier New",
                 bold=True,
             )
+            arc.draw_text(
+                "Loading Narraphysic Isolation Env... MALFUNC",
+                20 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                CONSTANTS.DISPLAY.HEIGHT - 220 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                arcade.color.CRIMSON,
+                18 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                font_name="Courier New",
+                bold=True,
+            )
 
         self.window.use()
         self.filter.draw()
