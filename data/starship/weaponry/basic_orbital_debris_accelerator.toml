@@ -1,9 +1,10 @@
 display_name = "Basic Accelerator"
 description = """
-    A very basic and janky build of
-    a particle accrelerator connected directly
-    to a ship energy reactor.
-    In reality its another artificial rift.
+    Rescent advancements in understanding of
+    energy accumulation cycles of
+    Death Artillery Crown and similar structures
+    allowed a creation of this prototype
+    mass accelerator, reporpused as a weapon.
 """
 bullet_damage = 8
 energy_per_bullet = 3

@@ -1,7 +1,14 @@
 display_name = "damaged artillery"
 description = """
-    Another highly destructive and highly damaged
-    creations of engineering of rescent times.
+    More traditional high-velocity weapon,
+    an anti-aircraft artillery originated
+    from Earth early 20th century
+    and harboring .127mm ammo.
+
+    Curretly it is equipped with custom-made
+    shells and a mounting mechanism which
+    allowed to get rid of weapon's pneumatic
+    counter-recoil systems.
 """
 bullet_damage = 30
 energy_per_bullet = 3
