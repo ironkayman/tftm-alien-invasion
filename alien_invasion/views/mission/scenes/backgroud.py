@@ -23,7 +23,7 @@ class BackgroundImage(arc.Sprite):
 
     pixelated: bool = True
 
-    def __init__(self, texture, scale: float|int) -> None:
+    def __init__(self, texture, scale: float | int) -> None:
         """Initialise preset center_* values by `scale`.
 
         Default position is bottom-left of the screen (0,0)
@@ -64,12 +64,11 @@ class Background(arc.Scene):
                     change_xy=(0.0, -16.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=5,
                     center_xy=arc.rand_on_line(
-                        (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
+                        (0.0, 0.0), (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.1 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                    alpha=40
-                )
+                    alpha=40,
+                ),
             )
 
         def create_layer_stardust_primary() -> arc.Emitter:
@@ -86,12 +85,11 @@ class Background(arc.Scene):
                     change_xy=(0.0, -1.5 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=180,
                     center_xy=arc.rand_on_line(
-                        (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
+                        (0.0, 0.0), (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.04,
                     alpha=60,
-                )
+                ),
             )
 
         def create_layer_stardust_secondary() -> arc.Emitter:
@@ -108,17 +106,17 @@ class Background(arc.Scene):
                     change_xy=(0.0, -1.0 * CONSTANTS.DISPLAY.SCALE_RELATION),
                     lifetime=240,
                     center_xy=arc.rand_on_line(
-                        (0.0, 0.0),
-                        (CONSTANTS.DISPLAY.WIDTH, 0.0)
+                        (0.0, 0.0), (CONSTANTS.DISPLAY.WIDTH, 0.0)
                     ),
                     scale=0.04,
-                    alpha=30
-                )
+                    alpha=30,
+                ),
             )
 
         def create_background_rolling_image_layer() -> None:
             bg_pair = arc.load_texture_pair(
-                CONSTANTS.DIR_RESOURCES / 'images/background/20150327144347-2dca2987-me.png'
+                CONSTANTS.DIR_RESOURCES
+                / "images/background/20150327144347-2dca2987-me.png"
             )
             sprites: list[arc.Sprite] = [
                 BackgroundImage(texture=bg_pair[0], scale=1.0),
@@ -139,12 +137,13 @@ class Background(arc.Scene):
 
         create_background_rolling_image_layer()
 
-        self.title_sprite = BackgroundImage(
-            texture=arc.load_texture(level_title_image_path),
-            scale=0.78
-        ),
+        self.title_sprite = (
+            BackgroundImage(
+                texture=arc.load_texture(level_title_image_path), scale=0.78
+            ),
+        )
         self.title_sprite[0].center_x = CONSTANTS.DISPLAY.WIDTH // 2
-        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 8/10
+        self.title_sprite[0].center_y = CONSTANTS.DISPLAY.HEIGHT * 8 / 10
         self.title_sprite[0].alpha = 210
 
         self.emitter_stardust_secondary = create_layer_stardust_secondary()
@@ -153,6 +152,7 @@ class Background(arc.Scene):
 
     def on_update(self, _: float = 1 / 60) -> None:
         """Compute background layer changes."""
+
         def compute_viewport_layer_3() -> None:
             """
             Reposition textures of layer 3/image background.
@@ -168,11 +168,15 @@ class Background(arc.Scene):
         # compute image shifting against veiwport
         compute_viewport_layer_3()
         # call emitters
-        [layer.update() for layer in (
-            self.emitter_stardust_secondary,
-            self.emitter_stardust_primary,
-            self.emitter_microcomet,
-            self.backgrounds,)]
+        [
+            layer.update()
+            for layer in (
+                self.emitter_stardust_secondary,
+                self.emitter_stardust_primary,
+                self.emitter_microcomet,
+                self.backgrounds,
+            )
+        ]
 
     def draw(self):
         """
@@ -182,9 +186,12 @@ class Background(arc.Scene):
         # Draw the background texture
         self.backgrounds.draw(pixelated=BackgroundImage.pixelated)
         # render emitted particles
-        [layer.draw() for layer in (
-            self.title_sprite[0],
-            self.emitter_stardust_secondary,
-            self.emitter_stardust_primary,
-            self.emitter_microcomet,)]
-
+        [
+            layer.draw()
+            for layer in (
+                self.title_sprite[0],
+                self.emitter_stardust_secondary,
+                self.emitter_stardust_primary,
+                self.emitter_microcomet,
+            )
+        ]

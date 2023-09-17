@@ -19,7 +19,7 @@ from alien_invasion.utils.loaders.level.model import LevelConfiguration
 from alien_invasion.entities import Starship
 
 
-class Invasion(arc.View):
+class Mission(arc.View):
     def __init__(
         self,
         completion_callback_view: arc.View,

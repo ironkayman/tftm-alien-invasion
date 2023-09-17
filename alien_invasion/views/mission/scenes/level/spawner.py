@@ -2,9 +2,6 @@
 """
 
 from typing import cast
-from itertools import filterfalse
-from functools import partial
-
 
 import arcade as arc
 from arcade import Particle
@@ -13,8 +10,7 @@ from alien_invasion.entities import Alien
 
 
 class AlienSpawner(arc.Emitter):
-    """Implementation of Emitter specifically for Alien class particle.
-    """
+    """Implementation of Emitter specifically for Alien class particle."""
 
     def __init__(
         self,
@@ -25,8 +21,7 @@ class AlienSpawner(arc.Emitter):
         self.starship = starship
 
     def on_update(self, delta_time: float) -> None:
-        """Impliments on_update method on par with standard .update
-        """
+        """Impliments on_update method on par with standard .update"""
         # update emitter
         self.center_x += self.change_x
         self.center_y += self.change_y
@@ -38,7 +33,9 @@ class AlienSpawner(arc.Emitter):
             self._emit()
         # notice:
         self._particles.on_update(delta_time)
-        aliens_to_reap: list[Alien] = [p for p in self._particles if cast(Particle, p).can_reap()]
+        aliens_to_reap: list[Alien] = [
+            p for p in self._particles if cast(Particle, p).can_reap()
+        ]
         for alien in aliens_to_reap:
             if not (alien.top <= 0):
                 self.starship.xp += alien.config.info.xp

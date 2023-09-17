@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 
-import arcade as arc
-
-from pydantic import validator, PrivateAttr
+from pydantic import validator
 
 # from alien_invasion.utils.loaders.alien import load_alien_by_name
 from alien_invasion.utils.loaders.alien import AlienConfig
@@ -16,18 +14,12 @@ class AlienWaveWrapper:
     # spawner: AlienSpawnerStats
 
 
-class OnslaughtWave(arc.Scene):
-    """A single onslaught wave of a `Level`."""
-
-    spawns: list[AlienWaveWrapper]
-
-    _timer: float = PrivateAttr(default=0.0)
+class OnslaughtWave:
+    """A single onslaught wave of a `Level`"""
 
     def __init__(self, config: OnslaughtWave) -> None:
-        super().__init__()
-
-    def setup(self):
-        return
+        self.spawns: list[AlienWaveWrapper]
+        self.timer: float
 
     @validator("spawns", pre=True)
     def get_alien_configs(cls, configs_dict: dict) -> list[AlienWaveWrapper]:

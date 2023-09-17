@@ -12,7 +12,7 @@ from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from alien_invasion.utils.loaders.level import loader as load_level_configs
 from alien_invasion.utils.loaders.level.model import LevelConfiguration
-from alien_invasion.views import Invasion
+from alien_invasion.views import Mission
 
 
 class CallbackButton(arc.gui.UIFlatButton, ABC):
@@ -189,7 +189,7 @@ class Interface(arc.Section, arc.Scene):
         self, level_config: LevelConfiguration
     ) -> None:
         """Callback funct for starting Invasion view."""
-        invasion_view = Invasion(self.view, mission_config=level_config)
+        invasion_view = Mission(self.view, mission_config=level_config)
         self.window.show_view(invasion_view)
 
     def __deploy_exit(self) -> None:
