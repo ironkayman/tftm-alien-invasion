@@ -115,7 +115,7 @@ class ViewLoader(arc.View):
         )
         from time import sleep
 
-        sleep(1.2)
+        sleep(1.6)
         closing_event.set()
 
     def on_show_view(self):
@@ -157,7 +157,7 @@ class ViewLoader(arc.View):
                     volume=0.0,
                     speed=1.0,
                 )
-        if self._progress_events[3].is_set():
+        if self._progress_events[3].is_set() and self.media_player_last.volume < 0.9:
             if self.media_player_last.volume > 0.0326:
                 self.media_player_last.volume += 0.002
             else:

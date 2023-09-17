@@ -114,6 +114,7 @@ class Mission(arc.View):
         self.starship_controls.on_update(delta_time)
 
         self.starship.on_update(delta_time)
+
         self.starship_bullets.update()
         if self.starship.can_reap():
             self.game_over.on_update(delta_time)

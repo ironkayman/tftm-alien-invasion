@@ -7,5 +7,5 @@ description = """
     it still capable of withstanding high preasure
     and lifting some another enourmous machinery.
 """
-velocity = 140
+velocity = 260
 energy_requirement = 10

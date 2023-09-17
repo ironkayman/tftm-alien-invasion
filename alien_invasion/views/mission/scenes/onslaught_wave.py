@@ -20,14 +20,14 @@ class OnslaughtWave(arc.Scene):
     def __init__(
         self,
         config: ModelOnslaughtWave,
-        state_registry: dict[str, bytes],
+        state_registry: dict[str, arc.Texture],
     ) -> None:
         """
 
         Parameters
         ----------
         config : ModelOnslaughtWave
-        state_registry : dict[str, bytes]
+        state_registry : dict[str, arc.Texture]
             "<alien name>.<state name>": bytes
         """
         self.__config = config
@@ -73,5 +73,5 @@ class OnslaughtWave(arc.Scene):
                 del state_props["texture_path"]
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
-        self.timer += delta_time
+        # self.timer += delta_time
         return super().on_update()

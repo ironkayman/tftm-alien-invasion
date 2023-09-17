@@ -198,7 +198,7 @@ class Starship(Entity, OnUpdateMixin):
 
         # Position the bullet
         bullet.center_x = self.center_x
-        bullet.bottom = self.top - 200
+        bullet.bottom = self.top - 20
 
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
