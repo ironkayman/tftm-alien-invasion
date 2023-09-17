@@ -6,7 +6,6 @@ description = """
 
 # [[waves]]
 
-
 #     [[waves.pass_requirements]]
 #         # score/experince from killed aliens required to pass this wave
 #         score = 2300
@@ -50,6 +49,11 @@ description = """
     [waves.pass_requirements]
         # score/experince from aliens required to pass this wave
         score = 2300
+
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '2:10:100'
+        loop = true
 
     [[waves.spawns]]
         name = "hollow_copy"

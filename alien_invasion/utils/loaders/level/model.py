@@ -41,6 +41,7 @@ class AlienSpawnConfiguration(BaseModel):
     _registry_config_reference: None
     scale: float = 1.0
     random_rotation: bool = False
+    xp_multiplier: float = 1.0
 
     @root_validator(pre=True)
     def preproc(cls, v: dict):
@@ -53,15 +54,28 @@ class AlienSpawnConfiguration(BaseModel):
         arbitrary_types_allowed = True
 
 
+class OnslaughtWaveSoundtrack(BaseModel):
+    start: str
+    stop: str
+    loop: bool
+    _path: Path
+
+    class Config:
+        underscore_attrs_are_private = True
+
+
 class OnslaughtWave(BaseModel):
     """Describes configuration of an enemy Wave"""
 
     pass_requirements: PassRequirements
+    soundtrack: OnslaughtWaveSoundtrack
     spawns: list[AlienSpawnConfiguration]
 
     @root_validator(pre=True)
     def preproc(cls, v: dict):
         v["pass_requirements"] = PassRequirements(**v["pass_requirements"])
+        v["soundtrack"] = OnslaughtWaveSoundtrack(**v["soundtrack"])
+        # v["soundtrack"]._path =
         spawns_replaced = []
         for spawn_dict in v["spawns"]:
             spawns_replaced.append(AlienSpawnConfiguration(**spawn_dict))
@@ -88,8 +102,6 @@ class LevelConfiguration:
             self.description: str = level_dict["description"]
 
             self.title_image: Path = self.__source_path / "title.png"
-
-            self.soundtracks: list[Path] | None = level_dir.glob("wave_*.")
 
             self.onslaught_waves: list[OnslaughtWave] = []
             if len((waves := level_dict["waves"])) == 0:
