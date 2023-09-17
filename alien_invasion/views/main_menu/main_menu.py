@@ -4,6 +4,7 @@ import arcade as arc
 import arcade.gui
 from pyglet.media import Player
 
+from alien_invasion import CONSTANTS
 from alien_invasion.constants import DIR_MUSIC
 from alien_invasion.settings import CONFIG_DICT
 
@@ -93,7 +94,7 @@ class MainMenu(arc.View):
         self.filter.clear()
 
         self.obelisk.draw()
-
+        
         # self.filter.draw()
 
         self.outlines.draw()

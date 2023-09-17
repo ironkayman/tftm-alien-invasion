@@ -153,7 +153,6 @@ class Starship(Entity, OnUpdateMixin):
 
         self.texture = arc.load_texture(
             file_name=state.texture_path,
-            can_cache=True,
         )
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
@@ -199,7 +198,7 @@ class Starship(Entity, OnUpdateMixin):
 
         # Position the bullet
         bullet.center_x = self.center_x
-        bullet.bottom = self.top - 20
+        bullet.bottom = self.top - 200
 
         # Add the bullet to the appropriate lists
         self.fired_shots.append(bullet)
