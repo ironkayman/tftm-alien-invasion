@@ -1,5 +1,7 @@
 import arcade as arc
 
+from alien_invasion import CONSTANTS
+
 
 class StarshipControls(arc.Section, arc.Scene):
     """Player ship area of movement.
@@ -17,10 +19,6 @@ class StarshipControls(arc.Section, arc.Scene):
 
     def __init__(
         self,
-        left: int,
-        bottom: int,
-        width: int,
-        height: int,
         key_left: int,
         key_right: int,
         key_up: int,
@@ -28,17 +26,18 @@ class StarshipControls(arc.Section, arc.Scene):
         key_fire_primary: int,
         key_fire_secondary: int,
         key_on_pause: int,
-        on_pause,
+        starship,
+        parent_view,
         **kwargs
     ) -> None:
         """Area of a view in which ship is placed"""
         # Manual MRO resolution
         arc.Section.__init__(
             self,
-            left,
-            bottom,
-            width,
-            height,
+            0,
+            0,
+            CONSTANTS.DISPLAY.WIDTH,
+            CONSTANTS.DISPLAY.HEIGHT,
             accept_keyboard_events={
                 key_left,
                 key_right,
@@ -52,8 +51,9 @@ class StarshipControls(arc.Section, arc.Scene):
         )
         arc.Scene.__init__(self)
 
-        self._parent_view = on_pause
-        self.on_pause = on_pause
+        self._parent_view = parent_view
+        self.on_pause = self._parent_view.on_pause
+        self.starship = starship
 
         # keys assigned to move the paddle
         self.key_left: int = key_left
@@ -73,26 +73,6 @@ class StarshipControls(arc.Section, arc.Scene):
 
         if self.on_pause:
             return
-
-        if self.starship.can_reap():
-            return
-        # player update func considers its movement states
-        # which were potentially changed
-        self.starship.on_update(delta_time)
-        self.starship_bullets.update()
-
-    def draw(self) -> None:
-        """Redraws its sprites"""
-        self.starship_bullets.draw()
-
-        if self.starship.can_reap():
-            return
-
-        self.starship.draw()
-        self.starship.draw_hit_box(
-            color=arc.color.BLUE_BELL,
-            line_thickness=1.5,
-        )
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """Process player-sprite related key press events."""

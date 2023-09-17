@@ -14,7 +14,7 @@ class LevelHasNoOnslaughtWaves(ValidationError):
     pass
 
 
-class PassRequirements(BaseModel):
+class ModelPassRequirements(BaseModel):
     """Requirement for wave completion"""
 
     score: int | None
@@ -54,7 +54,7 @@ class AlienSpawnConfiguration(BaseModel):
         arbitrary_types_allowed = True
 
 
-class OnslaughtWaveSoundtrack(BaseModel):
+class ModelOnslaughtWaveSoundtrack(BaseModel):
     start: str
     stop: str
     loop: bool
@@ -64,17 +64,17 @@ class OnslaughtWaveSoundtrack(BaseModel):
         underscore_attrs_are_private = True
 
 
-class OnslaughtWave(BaseModel):
+class ModelOnslaughtWave(BaseModel):
     """Describes configuration of an enemy Wave"""
 
-    pass_requirements: PassRequirements
-    soundtrack: OnslaughtWaveSoundtrack
+    pass_requirements: ModelPassRequirements
+    soundtrack: ModelOnslaughtWaveSoundtrack
     spawns: list[AlienSpawnConfiguration]
 
     @root_validator(pre=True)
     def preproc(cls, v: dict):
-        v["pass_requirements"] = PassRequirements(**v["pass_requirements"])
-        v["soundtrack"] = OnslaughtWaveSoundtrack(**v["soundtrack"])
+        v["pass_requirements"] = ModelPassRequirements(**v["pass_requirements"])
+        v["soundtrack"] = ModelOnslaughtWaveSoundtrack(**v["soundtrack"])
         # v["soundtrack"]._path =
         spawns_replaced = []
         for spawn_dict in v["spawns"]:
@@ -139,10 +139,10 @@ class LevelConfiguration:
 
             self.title_image: Path = self.__source_path / "title.png"
 
-            self.onslaught_waves: list[OnslaughtWave] = []
+            self.onslaught_waves: list[ModelOnslaughtWave] = []
             if len((waves := level_dict["waves"])) == 0:
                 raise LevelHasNoOnslaughtWaves()
             for wave in waves:
-                self.onslaught_waves.append(OnslaughtWave(**wave))
+                self.onslaught_waves.append(ModelOnslaughtWave(**wave))
         except Exception as e:
             self.error = e

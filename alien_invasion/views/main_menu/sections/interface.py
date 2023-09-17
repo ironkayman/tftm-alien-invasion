@@ -117,6 +117,7 @@ class Interface(arc.Section, arc.Scene):
         self.manager = arc.gui.UIManager(self.view)
 
         self._create_start_menu()
+        self.next_view = None
 
     def _create_start_menu(self) -> None:
         self.manager.clear()
@@ -190,7 +191,7 @@ class Interface(arc.Section, arc.Scene):
     ) -> None:
         """Callback funct for starting Invasion view."""
         invasion_view = Mission(self.view, mission_config=level_config)
-        self.window.show_view(invasion_view)
+        self.next_view = invasion_view
 
     def __deploy_exit(self) -> None:
         """Callback func for Exiting Arcade."""

@@ -20,37 +20,11 @@ from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 from .spawner import AlienSpawner
-from .onslaught_wave import OnslaughtWave
+from ..onslaught_wave import OnslaughtWave
 
 
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s."""
-
-    _current_wave_index: int = 0
-    is_finished: bool = False
-
-    def __init__(self, config: LevelConfiguration) -> None:
-        """Creates level object w/ fully loaded resources
-
-        Level object loads resources from a given `config`
-        sequentially, i.e. based on a current active onslaught wave.
-
-        Parameters
-        ----------
-        config : LevelConfiguration
-        """
-        super().__init__()
-        self._config = config
-
-    def __init_next_onslaught_wave(self):
-        self.__current_wave_index += 1
-        if len(self._config.onslaught_waves) - 1 == self.__current_wave_index:
-            self.is_finished = True
-            return
-        self.__current_wave = OnslaughtWave(
-            self._config.onslaught_waves[self.__current_wave_index]
-        )
-        self.__current_wave.setup()
 
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(

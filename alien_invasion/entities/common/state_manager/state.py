@@ -108,6 +108,7 @@ class State(BaseModel):
     # wrappers
     data: dict
     texture_path: Path
+    registry_texture_id: str | None = None
 
     @root_validator(pre=True)
     def check_conditional_parameters(cls, values) -> dict:
