@@ -41,7 +41,7 @@ class AliewnSpawnRates(BaseModel):
     max_count: int | None
     rate: int  # spawns per sec
 
-s
+
 class AlienSpawnConfiguration(BaseModel):
     """Arbitrary Aliens' Spawner properties
 
