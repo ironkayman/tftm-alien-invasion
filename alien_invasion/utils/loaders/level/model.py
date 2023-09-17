@@ -10,6 +10,10 @@ class EmptyWavecompletionRequirements(ValidationError):
     pass
 
 
+class LevelHasNoOnslaughtWaves(ValidationError):
+    pass
+
+
 class PassRequirements(BaseModel):
     """Requirement for wave completion"""
 
@@ -18,9 +22,10 @@ class PassRequirements(BaseModel):
     custom: Callable | None
 
     @root_validator
-    def requirements_checker(cls, values):
+    def requirements_checker(cls, values: dict):
         """At least 1 value should be filled"""
-        # raise EmptyWavecompletionRequirements
+        if not any(values.values()):
+            raise EmptyWavecompletionRequirements()
         return values
 
 
@@ -38,7 +43,7 @@ class AlienSpawnConfiguration(BaseModel):
     random_rotation: bool = False
 
     @root_validator(pre=True)
-    def preproc(cls, v):
+    def preproc(cls, v: dict):
         v["spawn_rates"] = AliewnSpawnRates(**v["spawn_rates"])
         return v
 
@@ -55,7 +60,7 @@ class OnslaughtWave(BaseModel):
     spawns: list[AlienSpawnConfiguration]
 
     @root_validator(pre=True)
-    def preproc(cls, v):
+    def preproc(cls, v: dict):
         v["pass_requirements"] = PassRequirements(**v["pass_requirements"])
         spawns_replaced = []
         for spawn_dict in v["spawns"]:
@@ -67,10 +72,6 @@ class OnslaughtWave(BaseModel):
         underscore_attrs_are_private = True
         validate_assignment = True
         arbitrary_types_allowed = True
-
-
-class TitleImage(Path):
-    pass
 
 
 class LevelConfiguration:
@@ -86,14 +87,13 @@ class LevelConfiguration:
             self.display_name: str = level_dict["display_name"]
             self.description: str = level_dict["description"]
 
-            # self.title_image: TitleImage = TitleImage(
-            #     self.__source_path / 'title.png')
+            self.title_image: Path = self.__source_path / "title.png"
 
-            # self.soundtracks: list["Soundtrack"] | None
+            self.soundtracks: list[Path] | None = level_dir.glob("wave_*.")
 
             self.onslaught_waves: list[OnslaughtWave] = []
             if len((waves := level_dict["waves"])) == 0:
-                raise Exception
+                raise LevelHasNoOnslaughtWaves()
             for wave in waves:
                 self.onslaught_waves.append(OnslaughtWave(**wave))
         except Exception as e:

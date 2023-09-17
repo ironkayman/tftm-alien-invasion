@@ -18,5 +18,7 @@ def loader() -> list[LevelConfiguration]:
     for level_dir in CONSTANTS.DIR_LEVELS.iterdir():
         if level_dir.name.endswith(".ignore"):
             continue
-        levels.append(LevelConfiguration(level_dir))
+        level = LevelConfiguration(level_dir)
+        # if level.error: continue
+        levels.append(level)
     return levels

@@ -4,18 +4,6 @@ description = """
     and clear out nearby areas before entering the posessed ruins.
 """
 
-[credits]
-
-[credits.title]
-[[credits.ost]]
-    filename = "waves_1.2.3.ogg"
-    track_name = "Extra Pain"
-    author = "Maid Dresses"
-    track_number = 9
-    album = "Extra Pain"
-    year = 2022
-    link = "https://maiddresses.bandcamp.com/track/extra-pain"
-
 # [[waves]]
 
 
