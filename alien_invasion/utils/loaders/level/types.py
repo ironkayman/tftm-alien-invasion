@@ -1,1 +1,0 @@
-# TODO: declare LevelConfig type for tuple[dict, Path]
