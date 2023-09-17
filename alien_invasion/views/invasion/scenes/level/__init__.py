@@ -1,2 +1,2 @@
 from .level import Level
-from .wave import Wave
+from .onslaught_wave import OnslaughtWave

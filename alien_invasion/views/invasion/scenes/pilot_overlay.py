@@ -2,15 +2,13 @@ import arcade as arc
 
 from alien_invasion import CONSTANTS
 
-from ..sections import PlayerArea
-
 
 class PilotOverlay(arc.Scene):
     """Starship's pilot overlay UI components."""
 
-    def __init__(self, player_area: PlayerArea) -> None:
+    def __init__(self, starship) -> None:
         super().__init__()
-        self.starship = player_area.starship
+        self.starship = starship
 
     def draw(self) -> None:
         # Render FPS formated with 2 decimal places

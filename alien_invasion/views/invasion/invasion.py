@@ -1,10 +1,9 @@
 import arcade as arc
-from pathlib import Path
 
 from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from .sections import (
-    PlayerArea,
+    StarshipControls,
 )
 from alien_invasion.utils.crt_filters import CRTFilterDefault
 
@@ -15,32 +14,50 @@ from .scenes import (
     GameOver,
 )
 
+from alien_invasion.utils.loaders.level.model import LevelConfiguration
+
+from alien_invasion.entities import Starship
+
 
 class Invasion(arc.View):
     def __init__(
-        self, completion_callback_view: arc.View, mission_config: tuple[dict, Path]
+        self,
+        completion_callback_view: arc.View,
+        mission_config: LevelConfiguration,
     ) -> None:
         """Creates entity vars
 
         Parameters
         ----------
         completion_callback_view : arc.View
-            View to return to at level completion/exit/death.
-        mission_config : tuple[dict, Path]
-            A pair of objects: mission's config represented as dict,
-            and title image path.
+            View to return to at level completion/exit.
+        mission_config : LevelConfiguration
+            Mission configuration object.
         """
         super().__init__()
 
         self.filter = CRTFilterDefault(self.window)
-
         self.on_pause = False
-
         self.completion_callback_view = completion_callback_view
-
         self.game_over = GameOver()
 
-        self.player_area = PlayerArea(
+        self.config = mission_config
+
+        self.starship_bullets = arc.SpriteList()
+        self.alien_bullets = arc.SpriteList()
+        self.hit_effect_list = arc.SpriteList()
+
+        # the player ship
+        self.starship = Starship(
+            fired_shots=self.starship_bullets,
+            enemy_shots=self.alien_bullets,
+            hit_effect_list=self.hit_effect_list,
+        )
+        # move to level setup
+        self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
+        self.starship.center_y = self.starship.height
+
+        self.starship_controls = StarshipControls(
             left=0,
             bottom=0,
             width=CONSTANTS.DISPLAY.WIDTH,
@@ -53,24 +70,18 @@ class Invasion(arc.View):
             key_fire_primary=KEYMAP["confirm"],
             key_fire_secondary=KEYMAP["fire_secondary"],
             key_on_pause=KEYMAP["pause"],
-            parent_view=self,
+            on_pause=self.on_pause,
         )
-
-        self.pilot_overlay = PilotOverlay(self.player_area)
-
-        breakpoint()
+        self.pilot_overlay = PilotOverlay(self.starship)
         self.level = Level(mission_config)
-
-        self.background = Background(self.level.title_image_path)
+        self.background = Background(self.config.title_image)
 
         self.section_manager.add_section(self.player_area)
-        self.window.set_mouse_visible(False)
+        # self.window.set_mouse_visible(False)
 
     def on_show_view(self) -> None:
         """Initialises entities"""
-        # FIXME: move passthrough of bullets' lists
-        # outside of starship for less propdrilling
-        self.level.setup(self.player_area.starship)
+        self.level.setup(self.starship)
 
     def on_hide_view(self) -> None:
         self.level = None

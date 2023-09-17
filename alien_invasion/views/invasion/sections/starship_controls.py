@@ -1,10 +1,7 @@
 import arcade as arc
 
-from alien_invasion import CONSTANTS
-from alien_invasion.entities import Starship
 
-
-class PlayerArea(arc.Section, arc.Scene):
+class StarshipControls(arc.Section, arc.Scene):
     """Player ship area of movement.
 
     Handles and coordinates sprite lists
@@ -31,7 +28,7 @@ class PlayerArea(arc.Section, arc.Scene):
         key_fire_primary: int,
         key_fire_secondary: int,
         key_on_pause: int,
-        parent_view: arc.View,
+        on_pause,
         **kwargs
     ) -> None:
         """Area of a view in which ship is placed"""
@@ -55,8 +52,8 @@ class PlayerArea(arc.Section, arc.Scene):
         )
         arc.Scene.__init__(self)
 
-        self._parent_view = parent_view
-        self.on_pause = self._parent_view.on_pause
+        self._parent_view = on_pause
+        self.on_pause = on_pause
 
         # keys assigned to move the paddle
         self.key_left: int = key_left
@@ -70,20 +67,6 @@ class PlayerArea(arc.Section, arc.Scene):
         self.key_fire_secondary: int = key_fire_secondary
 
         self.key_on_pause = key_on_pause
-
-        self.starship_bullets = arc.SpriteList()
-        self.alien_bullets = arc.SpriteList()
-        self.hit_effect_list = arc.SpriteList()
-
-        # the player ship
-        self.starship = Starship(
-            fired_shots=self.starship_bullets,
-            area_coords=[self.left, self.right, width, height],
-            enemy_shots=self.alien_bullets,
-            hit_effect_list=self.hit_effect_list,
-        )
-        self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
-        self.starship.center_y = self.starship.height
 
     def on_update(self, delta_time: float) -> None:
         """Updates its sprites(lists)"""
@@ -116,7 +99,6 @@ class PlayerArea(arc.Section, arc.Scene):
         # set the paddle direction and movement speed
         if symbol == self.key_on_pause:
             self.on_pause = not self.on_pause
-            self._parent_view.on_pause = self.on_pause
 
         if symbol == self.key_left:
             self.starship.moving_left = True

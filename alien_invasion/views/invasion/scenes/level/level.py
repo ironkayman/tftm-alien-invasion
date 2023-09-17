@@ -2,7 +2,6 @@
 """
 
 from itertools import chain
-from pathlib import Path
 
 import arcade as arc
 
@@ -21,26 +20,20 @@ from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 from .spawner import AlienSpawner
-from .wave import Wave
+from .onslaught_wave import OnslaughtWave
 
 
 class Level(arc.Scene):
-    """Description of a single level consisting of `Wave`s.
+    """Description of a single level consisting of `Wave`s."""
 
-    Attributes
-    -----------
-    waves : tuple[Wave]
-        Tuple of level waves.
-    """
-
-    waves: list[Wave]
     _current_wave_index: int = 0
-    _wave_timer: float = 0.0
     is_finished: bool = False
-    title_image_path: Path
 
     def __init__(self, config: LevelConfiguration) -> None:
-        """
+        """Creates level object w/ fully loaded resources
+
+        Level object loads resources from a given `config`
+        sequentially, i.e. based on a current active onslaught wave.
 
         Parameters
         ----------
@@ -48,13 +41,16 @@ class Level(arc.Scene):
         """
         super().__init__()
         self._config = config
-        self.display_name = config.display_name
-        self.description = config.description
-        self.waves = [
-            Wave(**wave_config) for wave_config in self._config.onslaught_waves
-        ]
-        self.alien_was_hit_effect_particles = arc.SpriteList()
-        self.title_image_path = config.title_image
+
+    def __init_next_onslaught_wave(self):
+        self.__current_wave_index += 1
+        if len(self._config.onslaught_waves) - 1 == self.__current_wave_index:
+            self.is_finished = True
+            return
+        self.__current_wave = OnslaughtWave(
+            self._config.onslaught_waves[self.__current_wave_index]
+        )
+        self.__current_wave.setup()
 
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(
@@ -93,12 +89,11 @@ class Level(arc.Scene):
         """
 
         self.starship = starship
-        self.__current_wave: Wave = self.waves[self._current_wave_index]
         self.alien_bullets = starship.enemy_shots
 
         # Alens are spawned as particle-like objects
         # from an eternal Emitter wth time interval between spawns
-        self.initialise_wave()
+        self.__init_next_onslaught_wave()
 
     def initialise_wave(self) -> None:
         """Initialises a `Wave` object to spawn aliens from"""
@@ -158,7 +153,7 @@ class Level(arc.Scene):
                 return
             self._current_wave_index += 1
             print("Reached Wave:", self._current_wave_index + 1)
-            self.__current_wave: Wave = self.waves[self._current_wave_index]
+            self.__current_wave: OnslaughtWave = self.waves[self._current_wave_index]
             self.initialise_wave()
 
     def on_update(self, delta_time: float = 1 / 60) -> None:

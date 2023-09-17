@@ -96,7 +96,6 @@ class Starship(Entity, OnUpdateMixin):
     def __init__(
         self,
         fired_shots: arc.SpriteList,
-        area_coords: list,
         enemy_shots: arc.SpriteList,
         hit_effect_list: arc.SpriteList,
     ):
@@ -106,9 +105,6 @@ class Starship(Entity, OnUpdateMixin):
         ----------
         fired_shots: arc.SpriteList
             List of currently registered bullets
-        area_coords:list
-            Description of an area at which
-            ship is allowed to move.
         """
 
         # workaround for cycling imports
@@ -132,7 +128,7 @@ class Starship(Entity, OnUpdateMixin):
         )
         self._timers = Timers()
 
-        self.movement_borders = TMovementArea(*area_coords)
+        self.movement_borders = TMovementArea()
         self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 

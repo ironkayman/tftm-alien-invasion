@@ -1,1 +1,1 @@
-from .player_area import PlayerArea
+from .starship_controls import StarshipControls
