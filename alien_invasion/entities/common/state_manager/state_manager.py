@@ -15,12 +15,12 @@ class StateManager:
         Examples
         --------
         >>> states = StateManager([
-            {'initial': {
+            {
                 state_name: str,
                 state_data: dict,
                 index: int
-                registry_texture_id: str
-            }},
+                registry_texture_id: str | None
+            },
         ])
         >>> next(states)
         ...

@@ -105,14 +105,13 @@ class AlienConfig:
             state_name, state = state
             texture_path = self.define_state_texture_path(state_name)
             states.append(
-                {
-                    f"{state_name}": dict(
-                        name=state_name,
-                        index=index,
-                        data=state,
-                        texture_path=texture_path,
-                    )
-                }
+                dict(
+                    name=state_name,
+                    index=index,
+                    data=state,
+                    texture_path=texture_path,
+                    registry_texture_id=None,
+                )
             )
         self.states = StateManager(states)
 

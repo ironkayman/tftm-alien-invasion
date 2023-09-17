@@ -79,8 +79,8 @@ class Mission(arc.View):
 
         # is mission finished
         self.is_finished = False
-        self.__current_inslaught_wave = None
-        self.__current_onslaught_wave_index = -1
+        self._current_inslaught_wave = None
+        self._current_onslaught_wave_index = 0
 
     def on_show_view(self) -> None:
         """Initialises entities"""
@@ -90,15 +90,37 @@ class Mission(arc.View):
         return
 
     def __init_next_onslaught_wave(self):
-        self.__current_onslaught_wave_index += 1
-        if len(self._config.onslaught_waves) - 1 == self.__current_onslaught_wave_index:
+        if len(self._config.onslaught_waves) == self._current_onslaught_wave_index:
             # self.is_finished = True
             return
-        self.__current_inslaught_wave = OnslaughtWave(
-            self._config.onslaught_waves[self.__current_onslaught_wave_index],
+        self._current_inslaught_wave = OnslaughtWave(
+            self._config.onslaught_waves[self._current_onslaught_wave_index],
             self._state_registry,
         )
-        self.__current_inslaught_wave.setup()
+        self._current_onslaught_wave_index += 1
+        self._current_inslaught_wave.setup()
+
+
+    def on_update(self, delta_time: float) -> None:
+        """ """
+        print(list(self._state_registry.keys()))
+        if self.on_pause:
+            return
+        if self.is_finished:
+            self.window.show_view(self.completion_callback_view)
+
+        self.background.on_update(delta_time)
+        # self.level.on_update(delta_time)
+        self.starship_controls.on_update(delta_time)
+
+        self.starship.on_update(delta_time)
+        self.starship_bullets.update()
+        if self.starship.can_reap():
+            self.game_over.on_update(delta_time)
+            return
+
+        self.pilot_overlay.on_update(delta_time)
+
 
     def on_draw(self) -> None:
         self.filter.use()
@@ -125,22 +147,3 @@ class Mission(arc.View):
         self.window.use()
         self.window.clear()
         self.filter.draw()
-
-    def on_update(self, delta_time: float) -> None:
-        """ """
-        if self.on_pause:
-            return
-        if self.is_finished:
-            self.window.show_view(self.completion_callback_view)
-
-        self.background.on_update(delta_time)
-        # self.level.on_update(delta_time)
-        self.starship_controls.on_update(delta_time)
-
-        self.starship.on_update(delta_time)
-        self.starship_bullets.update()
-        if self.starship.can_reap():
-            self.game_over.on_update(delta_time)
-            return
-
-        self.pilot_overlay.on_update(delta_time)

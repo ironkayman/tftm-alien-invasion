@@ -65,6 +65,7 @@ class OnslaughtWave(arc.Scene):
                 )
                 # del alien_config.states['state_name']['texture_path']
                 alien_config.states["state_name"]["registry_texture_id"] = texture_id
+        breakpoint()
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         self.timer += delta_time
