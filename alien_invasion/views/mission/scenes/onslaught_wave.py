@@ -13,6 +13,7 @@ from alien_invasion.utils.loaders.level.model import (
     AlienSpawnConfiguration,
 )
 
+from alien_invasion.entities import AlienSpawner
 
 class OnslaughtWave(arc.Scene):
     """A single onslaught wave of a `Level`"""
@@ -49,8 +50,11 @@ class OnslaughtWave(arc.Scene):
         """
         Put registry, remove path key
         """
-        for alien_desc in self.__config.spawns:
-            alien_name = alien_desc.name
+        self.__create_spawnables()
+
+    def __create_spawnables(self):
+        for alien_spawn_config in self.__config.spawns:
+            alien_name = alien_spawn_config.name
             self.__alien_configurations.append(
                 (alien_config := load_alien_by_name(alien_name))
             )
@@ -68,10 +72,22 @@ class OnslaughtWave(arc.Scene):
                     can_cache=True,
                     hit_box_algorithm="Detailed",
                 )
-                # del alien_config.states['state_name']['texture_path']
+                # link state's texture by an ID akin many-to-one
                 state_props["registry_texture_id"] = texture_id
                 del state_props["texture_path"]
 
+            AlienSpawner(
+                config=alien_spawn_config
+                # starship=self.starship,
+                # center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
+                # emit_controller=arc.EmitInterval(alien_config.spawner.spawn_interval),
+                # particle_factory=particle_factory,
+            )
+
     def on_update(self, delta_time: float = 1 / 60) -> None:
-        # self.timer += delta_time
+        self.timer += delta_time
+        print(self.timer)
         return super().on_update()
+
+    def draw(self) -> None:
+        return super().draw()

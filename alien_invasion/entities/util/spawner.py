@@ -6,19 +6,20 @@ from typing import cast
 import arcade as arc
 from arcade import Particle
 
-from alien_invasion.entities import Alien
-
+# from alien_invasion.entities import Alien
+from alien_invasion.utils.loaders.level.model import AlienSpawnConfiguration
 
 class AlienSpawner(arc.Emitter):
     """Implementation of Emitter specifically for Alien class particle."""
 
     def __init__(
         self,
-        starship,
+        config: AlienSpawnConfiguration,
         **emitter_kwargs,
     ) -> None:
         super().__init__(**emitter_kwargs)
-        self.starship = starship
+        self._config = config
+        self._aliens_to_reap = []
 
     def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update"""
@@ -31,12 +32,12 @@ class AlienSpawner(arc.Emitter):
         emit_count = self.rate_factory.how_many(1 / 60, len(self._particles))
         for _ in range(emit_count):
             self._emit()
-        # notice:
+
         self._particles.on_update(delta_time)
-        aliens_to_reap: list[Alien] = [
-            p for p in self._particles if cast(Particle, p).can_reap()
-        ]
-        for alien in aliens_to_reap:
+        self._aliens_to_reap.extend([
+            p for p in self._particles if p.can_reap()
+        ])
+        for alien in self._aliens_to_reap:
             if not (alien.top <= 0):
                 self.starship.xp += alien.config.info.xp
             alien.kill()

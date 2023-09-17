@@ -19,7 +19,7 @@ from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
 )
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
-from .spawner import AlienSpawner
+from .....entities.util.spawner import AlienSpawner
 from ..onslaught_wave import OnslaughtWave
 
 

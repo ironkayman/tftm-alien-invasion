@@ -114,6 +114,7 @@ class Mission(arc.View):
         self.starship_controls.on_update(delta_time)
 
         self.starship.on_update(delta_time)
+        self._current_inslaught_wave.on_update(delta_time)
 
         self.starship_bullets.update()
         if self.starship.can_reap():
@@ -131,6 +132,7 @@ class Mission(arc.View):
         # self.level.draw()
         self.starship_controls.draw()
         self.starship_bullets.draw()
+        self._current_inslaught_wave.draw()
 
         if self.starship.can_reap():
             return

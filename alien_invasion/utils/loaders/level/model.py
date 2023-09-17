@@ -30,11 +30,36 @@ class ModelPassRequirements(BaseModel):
 
 
 class AliewnSpawnRates(BaseModel):
+    """
+    Attributes
+    ----------
+    max_count : int | None
+        Upper boundry, if needed
+    rate : int
+        Spawns per second
+    """
     max_count: int | None
     rate: int  # spawns per sec
 
-
+s
 class AlienSpawnConfiguration(BaseModel):
+    """Arbitrary Aliens' Spawner properties
+
+    Attributes
+    ----------
+    name : str
+    movement_velocity_multiplier : list[float]
+    spawn_rates : AliewnSpawnRates
+    scale : float = 1.0
+    random_rotation : bool = False
+    xp_multiplierm : float = 1.0
+    
+    AlienSpawnRates
+        max_count : int | None
+            Upper boundry, if needed
+        rate : int
+            Spawns per second
+    """
     name: str
     movement_velocity_multiplier: list[float]  # l r u d
     spawn_rates: AliewnSpawnRates
