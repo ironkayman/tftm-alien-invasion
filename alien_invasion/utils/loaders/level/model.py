@@ -89,7 +89,43 @@ class OnslaughtWave(BaseModel):
 
 
 class LevelConfiguration:
-    """Dict-like descriptin of a level from designated .toml"""
+    """Dict-like descriptin of a level from designated .toml
+
+    Attributes
+    ----------
+    error : Exception | Ellipsis
+    display_name : str
+    description : str
+    title_image : Path
+    onslaught_waves : list[OnslaughtWave]
+
+    OnslaughtWave
+        pass_requirements : PassRequirements
+        soundtrack : OnslaughtWaveSoundtrack
+        spawns : list[AlienSpawnConfiguration]
+
+        PassRequirements
+            score : int | None
+            duration : int | None
+            custom : Callable | None
+
+        OnslaughtWaveSoundtrack
+            start : str
+            stop : str
+            loop : bool
+
+        AlienSpawnConfiguration
+            name : str
+            movement_velocity_multiplier : list[float]
+            spawn_rates : AliewnSpawnRates
+            scale : float = 1.0
+            random_rotation : bool = False
+            xp_multiplier : float = 1.0
+
+            AliewnSpawnRates
+                max_count : int | None
+                rate : int
+    """
 
     def __init__(self, level_dir: Path) -> None:
         self.__source_path = level_dir

@@ -59,7 +59,7 @@ class Invasion(arc.View):
         self.pilot_overlay = PilotOverlay(self.player_area)
 
         breakpoint()
-        self.level = Level(*mission_config)
+        self.level = Level(mission_config)
 
         self.background = Background(self.level.title_image_path)
 

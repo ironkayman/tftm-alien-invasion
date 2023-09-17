@@ -7,6 +7,7 @@ from pathlib import Path
 import arcade as arc
 
 from alien_invasion import CONSTANTS
+from alien_invasion.utils.loaders.level.model import LevelConfiguration
 from alien_invasion.entities import Alien, Starship
 from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
     on_update_evade_bullets,
@@ -38,20 +39,22 @@ class Level(arc.Scene):
     is_finished: bool = False
     title_image_path: Path
 
-    def __init__(self, config: dict, title_image: Path) -> None:
+    def __init__(self, config: LevelConfiguration) -> None:
         """
 
         Parameters
         ----------
-        config : dict
+        config : LevelConfiguration
         """
         super().__init__()
-        self.display_name = config["display_name"]
-        self.description = config["description"]
         self._config = config
-        self.waves = [Wave(**wave_config) for wave_config in self._config["waves"]]
+        self.display_name = config.display_name
+        self.description = config.description
+        self.waves = [
+            Wave(**wave_config) for wave_config in self._config.onslaught_waves
+        ]
         self.alien_was_hit_effect_particles = arc.SpriteList()
-        self.title_image_path = title_image
+        self.title_image_path = config.title_image
 
     def alien_constructor(self, alien_config) -> AlienSpawner:
         particle_factory = lambda emitter: Alien(
