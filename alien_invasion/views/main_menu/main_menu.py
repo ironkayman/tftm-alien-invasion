@@ -78,6 +78,7 @@ class MainMenu(arc.View):
         self.obelisk.on_update(delta_time)
         self.outlines.on_update(delta_time)
         self.ruins.on_update(delta_time)
+
         if self.human_interface.next_view:
             self.window.show_view(self.human_interface.next_view)
 

@@ -79,6 +79,7 @@ class StarshipControls(arc.Section, arc.Scene):
         # set the paddle direction and movement speed
         if symbol == self.key_on_pause:
             self.on_pause = not self.on_pause
+            self._parent_view.on_pause = not self._parent_view.on_pause
 
         if symbol == self.key_left:
             self.starship.moving_left = True

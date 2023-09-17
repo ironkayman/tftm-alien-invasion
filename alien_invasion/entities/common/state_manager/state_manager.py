@@ -30,16 +30,12 @@ class StateManager:
         self._current_state_index = 0
 
     def __iter__(self):
-        return self._states
+        return iter(self._states)
 
     def __next__(self) -> tuple[State, IndexError | None]:
         err = None
         try:
-            state_name, self._current_state = [
-                *self._states[self._current_state_index].items()
-            ][0]
-            self._current_state["index"] = self._current_state_index
-            self._current_state["name"] = state_name
+            self._current_state = self._states[self._current_state_index]
         except IndexError as e:
             err = FinalStateReached
         else:

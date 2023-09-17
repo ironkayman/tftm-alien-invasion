@@ -46,15 +46,20 @@ class OnslaughtWave(arc.Scene):
         # return configs
 
     def setup(self):
+        """
+        Put registry, remove path key
+        """
         for alien_desc in self.__config.spawns:
             alien_name = alien_desc.name
             self.__alien_configurations.append(
                 (alien_config := load_alien_by_name(alien_name))
             )
-            for state_name, state_props in alien_config.states.items():
+            for state_props in alien_config.states:
+                state_name = state_props['name']
                 texture_id = f"{alien_name}.{state_name}"
 
-                if self.state_registry.get(texture_id, False):
+                # texture_id already exists
+                if self.state_registry.get(texture_id):
                     continue
 
                 self.state_registry[texture_id] = arc.load_texture(
@@ -64,8 +69,8 @@ class OnslaughtWave(arc.Scene):
                     hit_box_algorithm="Detailed",
                 )
                 # del alien_config.states['state_name']['texture_path']
-                alien_config.states["state_name"]["registry_texture_id"] = texture_id
-        breakpoint()
+                state_props["registry_texture_id"] = texture_id
+                del state_props["texture_path"]
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         self.timer += delta_time

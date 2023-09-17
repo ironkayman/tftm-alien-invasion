@@ -103,7 +103,7 @@ class Mission(arc.View):
 
     def on_update(self, delta_time: float) -> None:
         """ """
-        print(list(self._state_registry.keys()))
+        # print(list(self._state_registry.keys()))
         if self.on_pause:
             return
         if self.is_finished:

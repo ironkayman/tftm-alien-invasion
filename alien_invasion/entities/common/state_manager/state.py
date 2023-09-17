@@ -133,6 +133,7 @@ class State(BaseModel):
         name: str,
         index: int,
         texture_path: Path,
+        registry_texture_id: str,
         data: dict,
     ) -> None:
         """Maps groups of entity's properties to a coherent data structure
@@ -171,5 +172,6 @@ class State(BaseModel):
             index=index,
             data=data,
             texture_path=texture_path,
+            registry_texture_id=registry_texture_id,
             **data,
         )
