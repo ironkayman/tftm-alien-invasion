@@ -53,8 +53,7 @@ class Mission(arc.View):
         # the player ship
         self.starship = Starship(
             fired_shots=self.starship_bullets,
-            enemy_shots=self.alien_bullets,
-            hit_effect_list=self.hit_effect_particles,
+            hit_effects=self.hit_effect_particles,
         )
         # move to level setup
         self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
@@ -96,6 +95,8 @@ class Mission(arc.View):
         self._current_inslaught_wave = OnslaughtWave(
             self._config.onslaught_waves[self._current_onslaught_wave_index],
             self._state_registry,
+            self.alien_bullets,
+            self.hit_effect_particles,
         )
         self._current_onslaught_wave_index += 1
         self._current_inslaught_wave.setup()

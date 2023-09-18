@@ -96,8 +96,7 @@ class Starship(Entity, OnUpdateMixin):
     def __init__(
         self,
         fired_shots: arc.SpriteList,
-        enemy_shots: arc.SpriteList,
-        hit_effect_list: arc.SpriteList,
+        hit_effects: arc.SpriteList,
     ):
         """Creates Starship instance.
 
@@ -112,12 +111,21 @@ class Starship(Entity, OnUpdateMixin):
 
         self.loadout = STARSHIP
 
+        config = AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG)
+        texture_registry = {}
+        for state_props in config.states:
+            texture_id = f"starship.{state_props['name']}"
+            state_props["registry_texture_id"] = texture_id
+            texture_registry[texture_id] = arc.load_texture(
+                state_props['texture_path']
+            )
+            del state_props["texture_path"]
         super().__init__(
-            config=AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG),
-            parent_sprite_list=arc.SpriteList(),
+            config=config,
+            system_name='starship',
             fired_shots=fired_shots,
-            enemy_shots=enemy_shots,
-            hit_effects=hit_effect_list,
+            hit_effects=hit_effects,
+            texture_registry=texture_registry,
         )
 
         self.timeouts = Timeouts(
@@ -151,9 +159,7 @@ class Starship(Entity, OnUpdateMixin):
             state.hp = 1
         state.speed = self.loadout.thrusters.velocity
 
-        self.texture = arc.load_texture(
-            file_name=state.texture_path,
-        )
+        self.texture = self._texture_registry[f'{self.system_name}.{state.name}']
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
 

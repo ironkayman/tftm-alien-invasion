@@ -76,33 +76,21 @@ class Alien(Entity):
     def __init__(
         self,
         config: AlienConfig,
-        overrides: dict,
-        approach_velocity_multiplier: float,
-        hit_effect_list: arc.SpriteList,
-        alien_bullets: arc.SpriteList,
-        parent_sprite_list: arc.SpriteList,
-        # Particle-oriented properties
-        **particle_kwargs
+        system_name: str,
+        fired_shots: arc.SpriteList,
+        hit_effects: arc.SpriteList,
+        texture_registry: dict,
+        **sprite_kwargs,
     ):
         """Crearte instance of alien from given `config`"""
-        # self._can_reap: bool = False
-
-        # super().__init__()
-        # self._aliens = parent_sprite_list
-
-        self._approach_velocity_multiplier = approach_velocity_multiplier
-
-        self._overrides = Overrides.parse_obj(overrides)
-
-        particle_kwargs["scale"] *= CONSTANTS.DISPLAY.SCALE_RELATION
 
         super().__init__(
             config=config,
-            parent_sprite_list=parent_sprite_list,
-            fired_shots=alien_bullets,
-            enemy_shots=[],
-            hit_effects=hit_effect_list,
-            **particle_kwargs,
+            system_name=system_name,
+            fired_shots=fired_shots,
+            hit_effects=hit_effects,
+            texture_registry=texture_registry,
+            **sprite_kwargs,
         )
 
         # create hit-particles emitter
@@ -198,15 +186,10 @@ class Alien(Entity):
     def apply_state(self) -> None:
         """Applies `self.state`'s changes to the entity"""
         state: State = self.state  # type: ignore
-        self.texture = arc.load_texture(
-            file_name=state.texture_path,
-            flipped_vertically=True,
-            can_cache=True,
-            hit_box_algorithm="Detailed",
-        )
+        self.texture = self._texture_registry[f'{self.system_name}.{state.name}']
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
-        self.change_y = self.speed * -0.01 * self._approach_velocity_multiplier
+        self.change_y = self.speed * -0.01
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position

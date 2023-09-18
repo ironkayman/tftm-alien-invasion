@@ -22,6 +22,8 @@ class OnslaughtWave(arc.Scene):
         self,
         config: ModelOnslaughtWave,
         state_registry: dict[str, arc.Texture],
+        alien_bullets: arc.SpriteList,
+        hit_effects: arc.SpriteList,
     ) -> None:
         """
 
@@ -33,9 +35,12 @@ class OnslaughtWave(arc.Scene):
         """
         self.__config = config
         self.state_registry = state_registry
+        self.alien_bullets = alien_bullets
+        self.hit_effects = hit_effects
 
         self.timer = 0.0
         self.__alien_configurations: list[AlienConfig] = []
+        self.spawners: list[AlienSpawner] = []
 
         # configs = []
         # for pair in configs_dict.items():
@@ -76,18 +81,21 @@ class OnslaughtWave(arc.Scene):
                 state_props["registry_texture_id"] = texture_id
                 del state_props["texture_path"]
 
-            AlienSpawner(
-                config=alien_spawn_config
-                # starship=self.starship,
-                # center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
-                # emit_controller=arc.EmitInterval(alien_config.spawner.spawn_interval),
-                # particle_factory=particle_factory,
-            )
+            self.spawners.append(AlienSpawner(
+                spawn_config=alien_spawn_config,
+                alien_config=alien_config,
+                alien_bullets=self.alien_bullets,
+                hit_effects=self.hit_effects,
+                texture_registry=self.state_registry,
+            ))
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         self.timer += delta_time
-        print(self.timer)
-        return super().on_update()
+        for s in self.spawners:
+            s.on_update(delta_time)
+        # return super().on_update()
 
     def draw(self) -> None:
-        return super().draw()
+        for s in self.spawners:
+            s.draw()
+        # return super().draw()

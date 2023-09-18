@@ -7,6 +7,7 @@ import arcade as arc
 
 # from alien_invasion.entities import Alien
 from alien_invasion.utils.loaders.level.model import AlienSpawnConfiguration
+from alien_invasion.utils.loaders.alien.config import AlienInfo, AlienConfig
 from alien_invasion.entities import Alien
 
 from alien_invasion import CONSTANTS
@@ -17,14 +18,22 @@ class AlienSpawner(arc.Emitter):
 
     def __init__(
         self,
-        config: AlienSpawnConfiguration,
+        spawn_config: AlienSpawnConfiguration,
+        alien_config: AlienConfig,
+        alien_bullets: arc.SpriteList,
+        hit_effects: arc.SpriteList,
+        texture_registry: dict,
     ) -> None:
-        self._config = config
+        self._spawn_config = spawn_config
+        self._alien_config = alien_config
+        self._alien_bullets = alien_bullets
+        self._hit_effects = hit_effects
+        self._texture_registry = texture_registry
 
-        rate = self._config.spawn_rates.rate
+        rate = self._spawn_config.spawn_rates.rate
         emit_controller = arc.EmitInterval(rate / 60)
         # overrides
-        if (max_count := self._config.spawn_rates.max_count):
+        if (max_count := self._spawn_config.spawn_rates.max_count):
             emit_controller = arc.EmitMaintainCount(max_count)
 
         super().__init__(
@@ -35,27 +44,28 @@ class AlienSpawner(arc.Emitter):
             emit_controller=emit_controller,
             particle_factory=self.__alien_factory,
         )
-        # self.particle_factory = self.__alien_factory
 
     def __alien_factory(self, emitter: arc.Emitter) -> Alien:
         return Alien(
-            # config=alien_config.config,
+            config=self._alien_config,
+            system_name=self._spawn_config.name,
+            texture_registry=self._texture_registry,
             # approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
             # relative to emitter's center_xy
             center_xy=arc.rand_on_line(
                 (-CONSTANTS.DISPLAY.WIDTH // 2, 0),
                 (CONSTANTS.DISPLAY.WIDTH // 2, 0),
             ),
-            hit_effect_list=self.alien_was_hit_effect_particles,
+            hit_effects=self._hit_effects,
             # starship=self.starship,
-            alien_bullets=self.alien_bullets,
+            fired_shots=self._alien_bullets,
             change_xy=arc.rand_vec_spread_deg(
                 -90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION
             ),
-            parent_sprite_list=emitter._particles,
-            scale=self._config.scale,
+            # parent_sprite_list=emitter._particles,
+            scale=self._spawn_config.scale,
             angle=(arc.rand_angle_360_deg()
-                if self._config.spawn_random_rotation
+                if self._spawn_config.random_rotation
                 else 0
             ),
         )

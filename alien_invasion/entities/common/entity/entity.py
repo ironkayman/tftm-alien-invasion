@@ -53,10 +53,10 @@ class Entity(arc.Sprite, ABC):
     def __init__(
         self,
         config,
-        parent_sprite_list: arc.SpriteList,
+        system_name: str,
         fired_shots: arc.SpriteList,
-        enemy_shots: arc.SpriteList,
         hit_effects: arc.SpriteList,
+        texture_registry: dict,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
         center_xy: arc.Point = (0.0, 0.0),
@@ -74,7 +74,6 @@ class Entity(arc.Sprite, ABC):
         # self.speed: int
 
         super().__init__(hit_box_algorithm="Detailed")
-        self._parent_sprite_list = parent_sprite_list
 
         # Particle properties
         self.center_x = center_xy[0]
@@ -85,17 +84,19 @@ class Entity(arc.Sprite, ABC):
         self.scale = scale
         self.change_angle = change_angle
         self.alpha = alpha
-        self.mutation_callback = mutation_callback
 
         self.config = config
+        self._texture_registry = texture_registry
+        self.system_name = system_name
 
-        self.states = deepcopy(self.config.states)
+        # self.states = deepcopy(self.config.states)
+        self.states = self.config.states
+
         self.state, _ = next(self.states)
         self.apply_state()
 
         self.hit_effect_list = hit_effects
         self.fired_shots = fired_shots
-        self.enemy_shots = enemy_shots
 
     def _restart_hit_effect_emitter(self) -> None:
         """Method for restarting emitter animation"""
