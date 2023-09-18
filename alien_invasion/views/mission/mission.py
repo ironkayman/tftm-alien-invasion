@@ -50,7 +50,6 @@ class Mission(arc.View):
         self.alien_bullets = arc.SpriteList()
         self.hit_effect_particles = arc.SpriteList()
 
-        # the player ship
         self.starship = Starship(
             fired_shots=self.starship_bullets,
             hit_effects=self.hit_effect_particles,

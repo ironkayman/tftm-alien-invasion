@@ -62,7 +62,7 @@ class Entity(arc.Sprite, ABC):
         center_xy: arc.Point = (0.0, 0.0),
         angle: float = 0.0,
         change_angle: float = 0.0,
-        scale: float = 1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        scale: float = 1.0,
         alpha: int = 255,
         mutation_callback=None,
     ):
@@ -73,24 +73,23 @@ class Entity(arc.Sprite, ABC):
         self._can_reap: bool = False
         # self.speed: int
 
-        super().__init__(hit_box_algorithm="Detailed")
+        super().__init__(
+            center_x=center_xy[0],
+            center_y=center_xy[1],
+            angle=angle,
+            scale=scale * CONSTANTS.DISPLAY.SCALE_RELATION,
+            hit_box_algorithm="Detailed",
+        )
+        self.change_x=change_xy[0]
 
-        # Particle properties
-        self.center_x = center_xy[0]
-        self.center_y = center_xy[1]
-        self.change_x = change_xy[0]
-        # self.change_y = self.speed * -0.01
-        self.angle = angle
-        self.scale = scale
         self.change_angle = change_angle
         self.alpha = alpha
-
+        
         self.config = config
         self._texture_registry = texture_registry
         self.system_name = system_name
 
         self.states = deepcopy(self.config.states)
-        # self.states = self.config.states
 
         self.state, _ = next(self.states)
         self.apply_state()
