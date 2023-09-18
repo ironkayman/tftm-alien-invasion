@@ -89,8 +89,8 @@ class Entity(arc.Sprite, ABC):
         self._texture_registry = texture_registry
         self.system_name = system_name
 
-        # self.states = deepcopy(self.config.states)
-        self.states = self.config.states
+        self.states = deepcopy(self.config.states)
+        # self.states = self.config.states
 
         self.state, _ = next(self.states)
         self.apply_state()
