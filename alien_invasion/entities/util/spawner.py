@@ -38,8 +38,8 @@ class AlienSpawner(arc.Emitter):
 
         super().__init__(
             center_xy=(
-                CONSTANTS.DISPLAY.WIDTH,
-                CONSTANTS.DISPLAY.HEIGHT + 20
+                0,
+                CONSTANTS.DISPLAY.HEIGHT + 40
             ),
             emit_controller=emit_controller,
             particle_factory=self.__alien_factory,
@@ -53,8 +53,8 @@ class AlienSpawner(arc.Emitter):
             # approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
             # relative to emitter's center_xy
             center_xy=arc.rand_on_line(
-                (-CONSTANTS.DISPLAY.WIDTH // 2, 0),
-                (CONSTANTS.DISPLAY.WIDTH // 2, 0),
+                (0, 0),
+                (CONSTANTS.DISPLAY.WIDTH, 0),
             ),
             hit_effects=self._hit_effects,
             # starship=self.starship,

@@ -26,63 +26,6 @@ from ..onslaught_wave import OnslaughtWave
 class Level(arc.Scene):
     """Description of a single level consisting of `Wave`s."""
 
-    def alien_constructor(self, alien_config) -> AlienSpawner:
-        particle_factory = lambda emitter: Alien(
-            config=alien_config.config,
-            overrides=dict(
-                should_persue=alien_config.spawner.should_persue,
-            ),
-            approach_velocity_multiplier=alien_config.spawner.approach_velocity_multiplier,
-            # relative to emitter's center_xy
-            center_xy=arc.rand_on_line(
-                (-CONSTANTS.DISPLAY.WIDTH // 2, 0), (CONSTANTS.DISPLAY.WIDTH // 2, 0)
-            ),
-            hit_effect_list=self.alien_was_hit_effect_particles,
-            # starship=self.starship,
-            alien_bullets=self.alien_bullets,
-            change_xy=arc.rand_vec_spread_deg(
-                -90, 12, 1 * CONSTANTS.DISPLAY.SCALE_RELATION
-            ),
-            parent_sprite_list=emitter._particles,
-            scale=alien_config.spawner.scale,
-            angle=arc.rand_angle_360_deg()
-            if alien_config.spawner.spawn_random_rotation
-            else 0,
-        )  # type: ignore E731
-        return AlienSpawner(
-            starship=self.starship,
-            center_xy=(CONSTANTS.DISPLAY.WIDTH // 2, CONSTANTS.DISPLAY.HEIGHT - 20),
-            emit_controller=arc.EmitInterval(alien_config.spawner.spawn_interval),
-            particle_factory=particle_factory,
-        )
-
-    def setup(self, starship: Starship) -> None:
-        """Starts the level.
-
-        Iterates through waves, spawning it's aliens and manages time.
-        """
-
-        self.starship = starship
-        self.alien_bullets = starship.enemy_shots
-
-        # Alens are spawned as particle-like objects
-        # from an eternal Emitter wth time interval between spawns
-        self.__init_next_onslaught_wave()
-
-    def initialise_wave(self) -> None:
-        """Initialises a `Wave` object to spawn aliens from"""
-        # sort by size, this will affect draw order, so
-        # less sized aliens may be placed under larger once
-        wave = self.__current_wave
-        wave.spawns.sort(key=lambda c: c.config.info.size.value, reverse=True)
-        self.spawners = []
-        spawn_pairs = zip([self.alien_constructor] * len(wave.spawns), wave.spawns)
-        # workound to prevent pointer of config-spawners
-        # to update through external variable passed to func
-        # under for/while cycle across multiple iterations
-        # of AlienSpawner object creation (one per alien)
-        for spawn_pair in spawn_pairs:
-            self.spawners.append(spawn_pair[0](spawn_pair[1]))
 
     @property
     def aliens(self) -> arc.SpriteList:
