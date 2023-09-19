@@ -145,15 +145,12 @@ class Alien(Entity):
     def update_particles_on_hit(self) -> None:
         """Updates health `hp`"""
         if self.__hit_emitter:
-            # self.__hit_emitter.center_x = self.center_x
-            # self.__hit_emitter.center_y = self.center_y
-            x = round(self.center_x)
-            y = round(self.center_y)
-            wd = self.width // 3
-            hd = self.height // 3
-            # FIXME: random - causes significatn performance issues
-            self.__hit_emitter.center_x = random.randint(x - wd, x + wd)
-            self.__hit_emitter.center_y = random.randint(y - hd, y + hd)
+            wd = self.width / 3
+            hd = self.height / 3
+            x = self.center_x - wd
+            y = self.center_y - hd
+            self.__hit_emitter.center_x = x + wd * 2 * random.random()
+            self.__hit_emitter.center_y = y + hd * 2 * random.random()
         self.__hit_emitter.update()
 
     def on_update(self, delta_time: float) -> None:
