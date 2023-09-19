@@ -61,19 +61,33 @@ description = """
         movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
         [waves.spawns.spawn_rates]
             # max_count = 30
-            rate = 1.2
+            rate = 5.0
 
-#     [waves.spawns.castle_wall_sontra]
-#         approach_velocity_multiplier = 1.6
-#         spawn_interval = 38.0
-#         spawn_random_rotation = true
-#         scale = 2.4
+    [[waves.spawns]]
+        name = "imperfect_copy"
+        # pixels per second - l r u d
+        scale = 1.1
+        movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
+        [waves.spawns.spawn_rates]
+            # max_count = 30
+            rate = 10.0
+
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 2.4
+        random_rotation = true
+        # pixels per second - l r u d
+        movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
+        [waves.spawns.spawn_rates]
+            # max_count = 30
+            rate = 6.0
 
     [[waves.spawns]]
         name = "ancient_fort_remnant"
+        scale = 2.0
         movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
         [waves.spawns.spawn_rates]
-            rate = 1.2
+            rate = 8.2
         # approach_velocity_multiplier = 1.75
         # spawn_interval = 2.5
         # spawn_random_rotation = false

@@ -18,6 +18,18 @@ from alien_invasion.utils.loaders.level.model import LevelConfiguration
 
 from alien_invasion.entities import Starship
 
+from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
+    on_update_evade_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.fire_bullets import (
+    on_update_fire_bullets,
+)
+from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
+    on_update_plot_movement,
+)
+from alien_invasion.entities.common.state_manager.state import AlienMoveset
+
+
 
 class Mission(arc.View):
     def __init__(
@@ -114,6 +126,19 @@ class Mission(arc.View):
 
         # Business logic regarding starship-alien interactions
         # ---------------
+
+        # NOTE: Legacy start
+        for alien_group in self.alien_groups:
+            for alien in alien_group:
+                # plot movement
+                on_update_plot_movement(alien, self.starship, delta_time)
+                # evade bullets
+                if AlienMoveset.dodging in alien.state.movesets:
+                    on_update_evade_bullets(alien, self.starship, delta_time)
+                # firing logic
+                if AlienMoveset.firing in alien.state.movesets:
+                    on_update_fire_bullets(alien, self.starship, delta_time)
+        # NOTE: Legacy end
 
         self.__process_collisions_bullets_clearout()
         self.__process_out_of_bounds_alien_bullets()

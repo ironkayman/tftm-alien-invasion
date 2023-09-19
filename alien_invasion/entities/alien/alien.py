@@ -98,7 +98,7 @@ class Alien(Entity):
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=700 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
+            primary=1300 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         self._timers = Timers()
 
