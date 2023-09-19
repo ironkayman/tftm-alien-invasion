@@ -43,7 +43,7 @@ def on_update_plot_movement(alien, starship: Starship, delta_time: float) -> Non
                 alien.change_x = 0
             elif alien.center_x > ship_x:
                 alien._timers.reset_track()
-                alien.change_x = -alien.speed * delta_time / relative_amount
+                alien.change_x = -alien.speed * delta_time * relative_amount
             elif alien.center_x < ship_x:
                 alien._timers.reset_track()
                 alien.change_x = alien.speed * delta_time * relative_amount
