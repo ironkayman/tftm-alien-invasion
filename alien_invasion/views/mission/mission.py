@@ -185,9 +185,18 @@ class Mission(arc.View):
         self.starship_bullets.draw()
 
         self.starship.draw()
+        # draw hitbox better
+        arc.draw_circle_filled(
+            self.starship.center_x,
+            self.starship.center_y,
+            self.starship.width // 5.3,
+            arc.color.AIR_SUPERIORITY_BLUE,
+            self._current_inslaught_wave.timer * 10,
+            6,
+        )
         self.starship.draw_hit_box(
-            color=arc.color.BLUE_BELL,
-            line_thickness=1.5,
+            color=arc.color.ASH_GREY,
+            line_thickness=3.5,
         )
 
         self.alien_bullets.draw()
