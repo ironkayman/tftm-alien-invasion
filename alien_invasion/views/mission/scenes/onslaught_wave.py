@@ -23,7 +23,7 @@ class OnslaughtWave(arc.Scene):
         config: ModelOnslaughtWave,
         state_registry: dict[str, arc.Texture],
         alien_bullets: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
     ) -> None:
         """
 
@@ -36,7 +36,7 @@ class OnslaughtWave(arc.Scene):
         self.__config = config
         self.state_registry = state_registry
         self.alien_bullets = alien_bullets
-        self.hit_effects = hit_effects
+        # self.hit_effects = hit_effects
 
         self.timer = 0.0
         self.__alien_configurations: list[AlienConfig] = []
@@ -85,7 +85,7 @@ class OnslaughtWave(arc.Scene):
                 spawn_config=alien_spawn_config,
                 alien_config=alien_config,
                 alien_bullets=self.alien_bullets,
-                hit_effects=self.hit_effects,
+                # hit_effects=self.hit_effects,
                 texture_registry=self.state_registry,
             ))
 

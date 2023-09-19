@@ -55,7 +55,7 @@ class Entity(arc.Sprite, ABC):
         config,
         system_name: str,
         fired_shots: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
         texture_registry: dict,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
@@ -94,7 +94,7 @@ class Entity(arc.Sprite, ABC):
         self.state, _ = next(self.states)
         self.apply_state()
 
-        self.hit_effect_list = hit_effects
+        # self.hit_effects = hit_effects
         self.fired_shots = fired_shots
 
     def _restart_hit_effect_emitter(self) -> None:

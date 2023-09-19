@@ -21,20 +21,20 @@ class AlienSpawner(arc.Emitter):
         spawn_config: AlienSpawnConfiguration,
         alien_config: AlienConfig,
         alien_bullets: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
         texture_registry: dict,
     ) -> None:
         self._spawn_config = spawn_config
         self._alien_config = alien_config
         self._alien_bullets = alien_bullets
-        self._hit_effects = hit_effects
+        # self._hit_effects = hit_effects
         self._texture_registry = texture_registry
 
         self.last_reap_results_total_xp = 0
         self.last_reap_results_count = 0
 
         rate = self._spawn_config.spawn_rates.rate
-        emit_controller = arc.EmitInterval(rate / 60)
+        emit_controller = arc.EmitInterval(rate)
         # overrides
         if (max_count := self._spawn_config.spawn_rates.max_count):
             emit_controller = arc.EmitMaintainCount(max_count)
@@ -64,7 +64,7 @@ class AlienSpawner(arc.Emitter):
                 (0, 0),
                 (CONSTANTS.DISPLAY.WIDTH, 0),
             ),
-            hit_effects=self._hit_effects,
+            # hit_effects=self._hit_effects,
             # starship=self.starship,
             fired_shots=self._alien_bullets,
             change_xy=arc.rand_vec_spread_deg(
@@ -102,4 +102,6 @@ class AlienSpawner(arc.Emitter):
             alien.kill()
 
     def draw(self, pixelated=False):
-        self._particles.draw(pixelated=pixelated, filter=arc.gl.NEAREST)
+        self._particles.draw(pixelated=pixelated)
+        for p in self._particles:
+            p.draw_hit_effects()

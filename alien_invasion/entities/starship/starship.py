@@ -96,7 +96,7 @@ class Starship(Entity, OnUpdateMixin):
     def __init__(
         self,
         fired_shots: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
     ):
         """Creates Starship instance.
 
@@ -124,7 +124,7 @@ class Starship(Entity, OnUpdateMixin):
             config=config,
             system_name='starship',
             fired_shots=fired_shots,
-            hit_effects=hit_effects,
+            # hit_effects=hit_effects,
             texture_registry=texture_registry,
         )
 

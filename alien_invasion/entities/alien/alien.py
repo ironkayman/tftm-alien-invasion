@@ -78,7 +78,7 @@ class Alien(Entity):
         config: AlienConfig,
         system_name: str,
         fired_shots: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
         texture_registry: dict,
         **sprite_kwargs,
     ):
@@ -88,7 +88,7 @@ class Alien(Entity):
             config=config,
             system_name=system_name,
             fired_shots=fired_shots,
-            hit_effects=hit_effects,
+            # hit_effects=hit_effects,
             texture_registry=texture_registry,
             **sprite_kwargs,
         )
@@ -119,7 +119,7 @@ class Alien(Entity):
         )
         # replace internal spritelist,
         # with enabled spacial haching
-        self.__hit_emitter._particles = self.hit_effect_list
+        # self.__hit_emitter._particles = self.hit_effects
 
     def _restart_hit_effect_emitter(self) -> arc.Emitter:
         """Recreate particle burst
@@ -151,6 +151,7 @@ class Alien(Entity):
             y = round(self.center_y)
             wd = self.width // 3
             hd = self.height // 3
+            # FIXME: random - causes significatn performance issues
             self.__hit_emitter.center_x = random.randint(x - wd, x + wd)
             self.__hit_emitter.center_y = random.randint(y - hd, y + hd)
         self.__hit_emitter.update()
@@ -162,6 +163,9 @@ class Alien(Entity):
         """
         self.update_particles_on_hit()
         super().update()
+
+    def draw_hit_effects(self):
+        self.__hit_emitter.draw()
 
     def can_reap(self) -> bool:
         """Determine if Particle can be deleted.

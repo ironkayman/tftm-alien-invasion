@@ -48,11 +48,11 @@ class Mission(arc.View):
         # spritelists
         self.starship_bullets = arc.SpriteList()
         self.alien_bullets = arc.SpriteList()
-        self.hit_effect_particles = arc.SpriteList()
+        # self.hit_effect_particles = arc.SpriteList()
 
         self.starship = Starship(
             fired_shots=self.starship_bullets,
-            hit_effects=self.hit_effect_particles,
+            # hit_effects=self.hit_effect_particles,
         )
         # move to level setup
         self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
@@ -95,7 +95,7 @@ class Mission(arc.View):
             self._config.onslaught_waves[self._current_onslaught_wave_index],
             self._state_registry,
             self.alien_bullets,
-            self.hit_effect_particles,
+            # self.hit_effect_particles,
         )
         self._current_onslaught_wave_index += 1
         self._current_inslaught_wave.setup()
@@ -114,9 +114,6 @@ class Mission(arc.View):
 
         # Business logic regarding starship-alien interactions
         # ---------------
-        self.starship_bullets.update()
-        self.alien_bullets.update()
-        self.hit_effect_particles.update()
 
         self.__process_collisions_bullets_clearout()
         self.__process_out_of_bounds_alien_bullets()
@@ -127,10 +124,11 @@ class Mission(arc.View):
         self.__process_collisions_aliens_damage_bullets()
         self.__process_collisions_aliens_starship_sprites()
 
-        # self.alien_was_hit_effect_particles.update()
-
         # ----
 
+        self.starship_bullets.update()
+        self.alien_bullets.update()
+        # self.hit_effect_particles.update()
 
         self._current_inslaught_wave.on_update(delta_time)
         for alien_group in self.alien_groups:
@@ -154,17 +152,21 @@ class Mission(arc.View):
         self.background.draw()
         # self.level.draw()
         self.starship_controls.draw()
-        self.starship_bullets.draw()
         self._current_inslaught_wave.draw()
 
         if self.starship.can_reap():
             return
+        
+        self.starship_bullets.draw()
 
         self.starship.draw()
         self.starship.draw_hit_box(
             color=arc.color.BLUE_BELL,
             line_thickness=1.5,
         )
+
+        self.alien_bullets.draw()
+        # self.hit_effect_particles.draw()
 
         if self.starship.can_reap():
             self.game_over.draw()
