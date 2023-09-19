@@ -30,6 +30,9 @@ class AlienSpawner(arc.Emitter):
         self._hit_effects = hit_effects
         self._texture_registry = texture_registry
 
+        self.last_reap_results_total_xp = 0
+        self.last_reap_results_count = 0
+
         rate = self._spawn_config.spawn_rates.rate
         emit_controller = arc.EmitInterval(rate / 60)
         # overrides
@@ -44,6 +47,11 @@ class AlienSpawner(arc.Emitter):
             emit_controller=emit_controller,
             particle_factory=self.__alien_factory,
         )
+        # alias
+        self.aliens = self._particles
+
+    def __iter__(self) -> list[Alien]:
+        return iter(self.aliens)
 
     def __alien_factory(self, emitter: arc.Emitter) -> Alien:
         return Alien(
@@ -73,6 +81,8 @@ class AlienSpawner(arc.Emitter):
     def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update"""
         # update emitter
+        self.last_reap_results_total_xp = 0
+        self.last_reap_results_count = 0
         self.center_x += self.change_x
         self.center_y += self.change_y
         self.angle += self.change_angle
@@ -86,7 +96,9 @@ class AlienSpawner(arc.Emitter):
 
         for alien in filter(lambda p: p.can_reap(), self._particles):
             if not (alien.top <= 0):
-                self.starship.xp += alien.config.info.xp
+                self.last_reap_results_count += 1
+                self.last_reap_results_total_xp += alien.config.info.xp 
+                # self.starship.xp += alien.config.info.xp
             alien.kill()
 
     def draw(self, pixelated=False):

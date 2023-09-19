@@ -1,10 +1,6 @@
 from .state import State
 
 
-class FinalStateReached(IndexError):
-    pass
-
-
 class StateManager:
     def __init__(
         self,
@@ -32,12 +28,15 @@ class StateManager:
     def __iter__(self):
         return iter(self._states)
 
+    class FinalStateReached(IndexError):
+        pass
+
     def __next__(self) -> tuple[State, IndexError | None]:
         err = None
         try:
             self._current_state = self._states[self._current_state_index]
         except IndexError as e:
-            err = FinalStateReached
+            err = StateManager.FinalStateReached
         else:
             self._current_state_index += 1
         return (State(**self._current_state), err)
