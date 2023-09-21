@@ -60,11 +60,9 @@ class Mission(arc.View):
         # spritelists
         self.starship_bullets = arc.SpriteList()
         self.alien_bullets = arc.SpriteList()
-        # self.hit_effect_particles = arc.SpriteList()
 
         self.starship = Starship(
             fired_shots=self.starship_bullets,
-            # hit_effects=self.hit_effect_particles,
         )
         # move to level setup
         self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
@@ -93,20 +91,28 @@ class Mission(arc.View):
         self._current_onslaught_wave_index = 0
 
     def on_show_view(self) -> None:
-        """Initialises entities"""
+        """Creates and initialises first aliens' onsluaght wave"""
         self.__init_next_onslaught_wave()
 
     def on_hide_view(self) -> None:
         return
 
     def __init_next_onslaught_wave(self):
+        """Cretates next OnslaughtWave based on it's spawns
+        
+        New wave is pleced to `_current_inslaught_wave` and
+        increases `_current_onslaught_wave_index` by 1.
+        """
+        # process ins wave
         if len(self._config.onslaught_waves) == self._current_onslaught_wave_index:
             # self.is_finished = True
             return
         self._current_inslaught_wave = OnslaughtWave(
-            self._config.onslaught_waves[self._current_onslaught_wave_index],
-            self._state_registry,
-            self.alien_bullets,
+            config=self._config.onslaught_waves[
+                self._current_onslaught_wave_index
+            ],
+            state_registry=self._state_registry,
+            alien_bullets=self.alien_bullets,
             # self.hit_effect_particles,
         )
         self._current_onslaught_wave_index += 1
@@ -115,30 +121,44 @@ class Mission(arc.View):
 
     def on_update(self, delta_time: float) -> None:
         """ """
-        # print(list(self._state_registry.keys()))
         if self.on_pause:
             return
         if self.is_finished:
             self.window.show_view(self.completion_callback_view)
 
         self.background.on_update(delta_time)
+
+        self._current_inslaught_wave.on_update(delta_time)
+        for alien_group in self.alien_groups:
+            self.starship.xp += alien_group.last_reap_results_total_xp
+
+        self.starship_bullets.update()
+        self.alien_bullets.update()
+
+
+        if self.starship.can_reap():
+            self.game_over.on_update(delta_time)
+            return
+
         self.starship_controls.on_update(delta_time)
+
+
 
         # Business logic regarding starship-alien interactions
         # ---------------
 
-        # NOTE: Legacy start
-        for alien_group in self.alien_groups:
-            for alien in alien_group:
-                # plot movement
-                on_update_plot_movement(alien, self.starship, delta_time)
-                # evade bullets
-                if AlienMoveset.dodging in alien.state.movesets:
-                    on_update_evade_bullets(alien, self.starship, delta_time)
-                # firing logic
-                if AlienMoveset.firing in alien.state.movesets:
-                    on_update_fire_bullets(alien, self.starship, delta_time)
-        # NOTE: Legacy end
+        # # NOTE: Legacy start
+        # for alien_group in self.alien_groups:
+        #     for alien in alien_group:
+        #         # plot movement
+        #         on_update_plot_movement(alien, self.starship, delta_time)
+        #         # evade bullets
+        #         if AlienMoveset.dodging in alien.state.movesets:
+        #             on_update_evade_bullets(alien, self.starship, delta_time)
+        #         # firing logic
+        #         if AlienMoveset.firing in alien.state.movesets:
+        #             on_update_fire_bullets(alien, self.starship, delta_time)
+        # # NOTE: Legacy end
 
         self.__process_collisions_bullets_clearout()
         self.__process_out_of_bounds_alien_bullets()
@@ -151,19 +171,9 @@ class Mission(arc.View):
 
         # ----
 
-        self.starship_bullets.update()
-        self.alien_bullets.update()
         # self.hit_effect_particles.update()
 
-        self._current_inslaught_wave.on_update(delta_time)
-        for alien_group in self.alien_groups:
-            self.starship.xp += alien_group.last_reap_results_total_xp
-
         self.starship.on_update(delta_time)
-
-        if self.starship.can_reap():
-            self.game_over.on_update(delta_time)
-            return
 
         self.pilot_overlay.on_update(delta_time)
 
@@ -175,36 +185,32 @@ class Mission(arc.View):
         self.filter.clear()
 
         self.background.draw()
-        # self.level.draw()
-        self.starship_controls.draw()
+
         self._current_inslaught_wave.draw()
-
-        if self.starship.can_reap():
-            return
-        
-        self.starship_bullets.draw()
-
-        self.starship.draw()
-        # draw hitbox better
-        arc.draw_circle_filled(
-            self.starship.center_x,
-            self.starship.center_y,
-            self.starship.width // 5.3,
-            arc.color.AIR_SUPERIORITY_BLUE,
-            self._current_inslaught_wave.timer * 10,
-            6,
-        )
-        self.starship.draw_hit_box(
-            color=arc.color.ASH_GREY,
-            line_thickness=3.5,
-        )
-
         self.alien_bullets.draw()
-        # self.hit_effect_particles.draw()
+
+        self.starship_controls.draw()
+        self.starship_bullets.draw()
 
         if self.starship.can_reap():
             self.game_over.draw()
-        self.pilot_overlay.draw()
+        else:
+            self.starship.draw()
+            # draw hitbox better
+            arc.draw_circle_filled(
+                self.starship.center_x,
+                self.starship.center_y,
+                self.starship.width // 5.3,
+                arc.color.AIR_SUPERIORITY_BLUE,
+                self._current_inslaught_wave.timer * 10,
+                6,
+            )
+            self.starship.draw_hit_box(
+                color=arc.color.ASH_GREY,
+                line_thickness=3.5,
+            )
+
+            self.pilot_overlay.draw()
 
         self.window.use()
         self.window.clear()
