@@ -1,3 +1,4 @@
+from typing import List, Optional
 import arcade as arc
 
 from alien_invasion import CONSTANTS

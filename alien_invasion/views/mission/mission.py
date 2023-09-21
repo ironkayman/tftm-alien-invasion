@@ -162,16 +162,13 @@ class Mission(arc.View):
 
         self.__process_collisions_bullets_clearout()
         self.__process_out_of_bounds_alien_bullets()
-        # self.__process_starship_danger_proximity()
+        self.__process_starship_danger_proximity()
 
         self.__process_bounds_starship_bullets()
         self.__process_collisions_starship_damage_bullets()
         self.__process_collisions_aliens_damage_bullets()
         self.__process_collisions_aliens_starship_sprites()
 
-        # ----
-
-        # self.hit_effect_particles.update()
 
         self.starship.on_update(delta_time)
 
@@ -196,6 +193,13 @@ class Mission(arc.View):
             self.game_over.draw()
         else:
             self.starship.draw()
+            # draw proximity box based on texture's original hitbox
+            if self.starship.is_proximity:
+                arc.draw_polygon_outline(
+                    self.starship.current_position_original_hit_box,
+                    arc.color.ALIZARIN_CRIMSON,
+                    3 * CONSTANTS.DISPLAY.SCALE_RELATION,
+                )
             # draw hitbox better
             arc.draw_circle_filled(
                 self.starship.center_x,
@@ -237,28 +241,23 @@ class Mission(arc.View):
             if bullet.top < 0:
                 bullet.remove_from_sprite_lists()
 
-    # @property
-    # def starship_danger(self) -> arc.SpriteList:
-    #     """All objects capable of damaging starship
+    def __process_starship_danger_proximity(self) -> None:
+        """Check for enemies' proximity to starship, set it's flag"""
+        self.starship.is_proximity = False
+        # check bullet proximity, lower than aliens' hitboxes
+        if (
+            closest := arc.get_closest_sprite(self.starship, self.alien_bullets)
+        ) and closest[1] < 50 * CONSTANTS.DISPLAY.SCALE_RELATION:
+            self.starship.is_proximity = True
+            return
 
-    #     Returns
-    #     -------
-    #     arc.SpriteList
-    #         All aliens (`self.aliens` property) and their
-    #         currently present bullets.
-    #     """
-    #     starship_danger_list = self.aliens
-    #     starship_danger_list.extend(self.alien_bullets)
-    #     return starship_danger_list
-
-    # def __process_starship_danger_proximity(self) -> None:
-    #     """Check for enemies' proximity to starship, set it's flag"""
-    #     self.starship.is_proximity = False
-    #     tracked_objects = self.starship_danger
-    #     if (
-    #         closest := arc.get_closest_sprite(self.starship, tracked_objects)
-    #     ) and closest[1] < 45 * CONSTANTS.DISPLAY.SCALE_RELATION:
-    #         self.starship.is_proximity = True
+        # check alien hitbox proximity, higher than bullet's proximity
+        for alien_group in self.alien_groups:
+            if alien_group.aliens and (
+                closest := arc.get_closest_sprite(self.starship, alien_group.aliens)
+            ) and closest[1] < 65 * CONSTANTS.DISPLAY.SCALE_RELATION:
+                self.starship.is_proximity = True
+                return
 
     def __process_bounds_starship_bullets(self) -> None:
         """Remove starship's bullets which reched top of the viewport"""
