@@ -299,12 +299,13 @@ class Mission(arc.View):
         """Processes aliens' behavior actions like movement and firing
         """
         for alien_group in self.alien_groups:
+            # plot movement
+            on_update_plot_movement(alien_group, self.starship, delta_time)    
             for alien in alien_group:
-                # plot movement
-                on_update_plot_movement(alien, self.starship, delta_time)
                 # evade bullets
                 if AlienMoveset.dodging in alien.state.movesets:
                     on_update_evade_bullets(alien, self.starship, delta_time)
                 # firing logic
                 if AlienMoveset.firing in alien.state.movesets:
                     on_update_fire_bullets(alien, self.starship, delta_time)
+ 
