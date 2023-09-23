@@ -1,0 +1,3 @@
+from .evade_bullets import on_update_evade_bullets
+from .fire_bullets import on_update_fire_bullets
+from .moveset_stategy import on_update_plot_movement

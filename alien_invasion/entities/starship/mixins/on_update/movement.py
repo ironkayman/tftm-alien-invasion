@@ -50,26 +50,17 @@ def on_update_movement(self, delta_time: float):
         if self.moving_down and not self.transmission.throttle:
             self.change_y = -self.speed * 0.6 * delta_time
 
-        # slow down while approching to left border
+        # stop at walls
         if (
             self.moving_left
             and self.transmission.throttle
             and self.transmission.border_reached_left
-        ):
-            self.change_x = -self.speed // 3 * delta_time
-            # stop inside a wall
-            if self.left < self.movement_borders.left - self.width * 0.3:
-                self.stop()
-        # slow down while approching to right border
-        elif (
+        ) or (
             self.moving_right
             and self.transmission.throttle
             and self.transmission.border_reached_right
         ):
-            self.change_x = self.speed // 3 * delta_time
-            # stop inside a wall
-            if self.right > self.movement_borders.right + self.width * 0.3:
-                self.stop()
+            self.change_x = 0
 
         # stop at no movement or both L and R or U and D
         if not self.transmission.throttle:

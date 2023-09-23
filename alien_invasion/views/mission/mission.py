@@ -18,17 +18,12 @@ from alien_invasion.utils.loaders.level.model import LevelConfiguration
 
 from alien_invasion.entities import Starship
 
-from alien_invasion.entities.alien.mixins.on_update.evade_bullets import (
+from alien_invasion.entities.alien.bulk_logic import (
     on_update_evade_bullets,
-)
-from alien_invasion.entities.alien.mixins.on_update.fire_bullets import (
     on_update_fire_bullets,
-)
-from alien_invasion.entities.alien.mixins.on_update.moveset_stategy import (
     on_update_plot_movement,
 )
 from alien_invasion.entities.common.state_manager.state import AlienMoveset
-
 
 
 class Mission(arc.View):
