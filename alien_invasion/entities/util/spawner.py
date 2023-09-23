@@ -1,13 +1,10 @@
 """Logic for Alien spawners
 """
-
-from typing import Callable
-
 import arcade as arc
 
 # from alien_invasion.entities import Alien
 from alien_invasion.utils.loaders.level.model import AlienSpawnConfiguration
-from alien_invasion.utils.loaders.alien.config import AlienInfo, AlienConfig
+from alien_invasion.utils.loaders.alien.config import AlienConfig
 from alien_invasion.entities import Alien
 
 from alien_invasion import CONSTANTS
@@ -22,7 +19,7 @@ class AlienSpawner(arc.Emitter):
         alien_config: AlienConfig,
         alien_bullets: arc.SpriteList,
         # hit_effects: arc.SpriteList,
-        texture_registry: dict,
+        texture_registry: dict[str, arc.Texture],
     ) -> None:
         self._spawn_config = spawn_config
         self._alien_config = alien_config
@@ -30,14 +27,20 @@ class AlienSpawner(arc.Emitter):
         # self._hit_effects = hit_effects
         self._texture_registry = texture_registry
 
+        self.__timer = 0.0
+
         self.last_reap_results_total_xp = 0
         self.last_reap_results_count = 0
 
-        rate = self._spawn_config.spawn_rates.rate
-        emit_controller = arc.EmitInterval(rate)
+        self._base_rate = self._spawn_config.spawn_rates.rate
+        emit_controller = arc.EmitInterval(1 / self._base_rate)
         # overrides
         if (max_count := self._spawn_config.spawn_rates.max_count):
             emit_controller = arc.EmitMaintainCount(max_count)
+
+        # seconds
+        self._rate_increase_interval = self._spawn_config.spawn_rates.rate_increase_interval
+        self._density_multiplier = self._spawn_config.spawn_rates.density_multiplier
 
         super().__init__(
             center_xy=(
@@ -80,6 +83,12 @@ class AlienSpawner(arc.Emitter):
 
     def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update"""
+        self.__timer += delta_time
+        # if self._rate_increase_interval and self.__timer > self._rate_increase_interval:
+        #     print(self.__timer)
+        #     self.__timer = 0.0
+        #     self.rate_factory = arc.EmitInterval(1 / self._base_rate * self._density_multiplier)
+
         # update emitter
         self.last_reap_results_total_xp = 0
         self.last_reap_results_count = 0
