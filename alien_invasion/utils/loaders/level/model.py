@@ -42,7 +42,8 @@ class AliewnSpawnRates(BaseModel):
     density_multiplier : float
         Base rate increase
     """
-    max_count: int | None
+
+    max_count: int = 999
     rate: float
     rate_increase_interval: int | None = None
     density_multiplier: float = 1.00
@@ -59,13 +60,14 @@ class AlienSpawnConfiguration(BaseModel):
     scale : float = 1.0
     random_rotation : bool = False
     xp_multiplier : float = 1.0
-    
+
     AlienSpawnRates
         max_count : int | None
             Upper boundry, if needed
         rate : int
             Spawns per second
     """
+
     name: str
     movement_velocity_multiplier: list[float]  # l r u d
     spawn_rates: AliewnSpawnRates

@@ -4,51 +4,10 @@ description = """
     and clear out nearby areas before entering the posessed ruins.
 """
 
-# [[waves]]
-
-#     [[waves.pass_requirements]]
-#         # score/experince from killed aliens required to pass this wave
-#         score = 2300
-#     # # interval in seconds before density_multplier increase
-#     # interval = 25
-#     # # how many enemies and their speed will increase at next interval
-#     # density_multiplier = 1.08
-
-#     # [waves.spawns]
-
-#     # # aliens present on a level
-#     # [waves.spawns.hollow_copy]
-#     #     # pixels per second
-#     #     approach_velocity_multiplier = 1.0
-#     #     # every [n] seconds spawns
-#     #     spawn_interval = 4.5
-#     #     # does spawn in random 360 angle?
-#     #     spawn_random_rotation = false
-#     #     scale = 1.0
-
-#     # [waves.spawns.castle_wall_sontra]
-#     #     approach_velocity_multiplier = 1.0
-#     #     spawn_interval = 10.0
-#     #     spawn_random_rotation = true
-#     #     scale = 2.4
-
-#     # [waves.spawns.imperfect_copy]
-#     #     approach_velocity_multiplier = 1.1
-#     #     spawn_interval = 24.0
-#     #     spawn_random_rotation = false
-#     #     scale = 1.1
-
-#     # [waves.spawns.ancient_fort_remnant]
-#     #     approach_velocity_multiplier = 1.0
-#     #     spawn_interval = 8.0
-#     #     spawn_random_rotation = false
-#     #     scale = 2.0
-
 [[waves]]
 
     [waves.pass_requirements]
-        # score/experince from aliens required to pass this wave
-        score = 2300
+        score = 2200
 
     [waves.soundtrack]
         start = '0:00.000'
@@ -60,10 +19,10 @@ description = """
         # pixels per second - l r u d
         movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
         [waves.spawns.spawn_rates]
-            # max_count = 30
+            max_count = 7
             rate = 0.2
-            rate_increase_interval = 6
-            density_multiplier = 20.00
+            rate_increase_interval = 9
+            density_multiplier = 1.01
 
     [[waves.spawns]]
         name = "imperfect_copy"
@@ -96,17 +55,24 @@ description = """
         # scale = 2.0
         # should_persue = true
 
-# [[waves]]
+[[waves]]
 
-#     # time oriented wave
-#     pass_time = 140
-#     interval = 10
-#     density_multiplier = 1.1
+    [waves.pass_requirements]
+        # score/experince from aliens required to pass this wave
+        duration = 20
 
-#     [waves.spawns]
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '2:10:100'
+        loop = true
 
-#     [waves.spawns.castle_wall_sontra]
-#         approach_velocity_multiplier = 4.6
-#         spawn_interval = 1.3
-#         spawn_random_rotation = true
-#         scale = 2.0
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 2.4
+        random_rotation = true
+        # pixels per second - l r u d
+        movement_velocity_multiplier = [1.0, 1.0, 1.0, 1.6]
+        [waves.spawns.spawn_rates]
+            # max_count = 30
+            rate = 0.5
+

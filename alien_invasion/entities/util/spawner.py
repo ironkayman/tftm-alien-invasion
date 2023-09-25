@@ -34,19 +34,16 @@ class AlienSpawner(arc.Emitter):
 
         self._base_rate = self._spawn_config.spawn_rates.rate
         emit_controller = arc.EmitInterval(1 / self._base_rate)
-        # overrides
-        if (max_count := self._spawn_config.spawn_rates.max_count):
-            emit_controller = arc.EmitMaintainCount(max_count)
+        self._max_count = self._spawn_config.spawn_rates.max_count  # 999 defaut
 
         # seconds
-        self._rate_increase_interval = self._spawn_config.spawn_rates.rate_increase_interval
+        self._rate_increase_interval = (
+            self._spawn_config.spawn_rates.rate_increase_interval
+        )
         self._density_multiplier = self._spawn_config.spawn_rates.density_multiplier
 
         super().__init__(
-            center_xy=(
-                0,
-                CONSTANTS.DISPLAY.HEIGHT + 40
-            ),
+            center_xy=(0, CONSTANTS.DISPLAY.HEIGHT + 40),
             emit_controller=emit_controller,
             particle_factory=self.__alien_factory,
         )
@@ -75,19 +72,24 @@ class AlienSpawner(arc.Emitter):
             ),
             # parent_sprite_list=emitter._particles,
             scale=self._spawn_config.scale,
-            angle=(arc.rand_angle_360_deg()
-                if self._spawn_config.random_rotation
-                else 0
+            angle=(
+                arc.rand_angle_360_deg() if self._spawn_config.random_rotation else 0
             ),
         )
+
+    def _calculate_interval(
+        self,
+        current: float,
+        base_rate: float,
+        multiplier: float,
+    ) -> float:
+        if (result := current - (base_rate * multiplier)) <= 0:
+            return current
+        return result
 
     def on_update(self, delta_time: float) -> None:
         """Impliments on_update method on par with standard .update"""
         self.__timer += delta_time
-        # if self._rate_increase_interval and self.__timer > self._rate_increase_interval:
-        #     print(self.__timer)
-        #     self.__timer = 0.0
-        #     self.rate_factory = arc.EmitInterval(1 / self._base_rate * self._density_multiplier)
 
         # update emitter
         self.last_reap_results_total_xp = 0
@@ -96,17 +98,30 @@ class AlienSpawner(arc.Emitter):
         self.center_y += self.change_y
         self.angle += self.change_angle
 
-        # update particles
-        emit_count = self.rate_factory.how_many(1 / 60, len(self._particles))
-        for _ in range(emit_count):
-            self._emit()
+        if len(self._particles) < self._max_count:
+            emit_count = self.rate_factory.how_many(delta_time, len(self._particles))
+            for _ in range(emit_count):
+                self._emit()
+
+            if (
+                self._rate_increase_interval
+                and self.__timer > self._rate_increase_interval
+            ):
+                self.__timer = 0.0
+                self.rate_factory = arc.EmitInterval(
+                    self._calculate_interval(
+                        self.rate_factory._emit_interval,
+                        self._base_rate,
+                        self._density_multiplier,
+                    )
+                )
 
         self._particles.on_update(delta_time)
 
         for alien in filter(lambda p: p.can_reap(), self._particles):
             if not (alien.top <= 0):
                 self.last_reap_results_count += 1
-                self.last_reap_results_total_xp += alien.config.info.xp 
+                self.last_reap_results_total_xp += alien.config.info.xp
                 # self.starship.xp += alien.config.info.xp
             alien.kill()
 

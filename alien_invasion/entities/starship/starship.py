@@ -71,6 +71,9 @@ class Starship(Entity, OnUpdateMixin):
     which in our case is View/Section.
     """
 
+    BULLET_TEXTURE = arc.load_texture(":resources:images/space_shooter/laserRed01.png")
+    BULLET_SCALE = 1.0
+
     moving_left = False
     moving_right = False
     moving_up = False
@@ -116,13 +119,11 @@ class Starship(Entity, OnUpdateMixin):
         for state_props in config.states:
             texture_id = f"starship.{state_props['name']}"
             state_props["registry_texture_id"] = texture_id
-            texture_registry[texture_id] = arc.load_texture(
-                state_props['texture_path']
-            )
+            texture_registry[texture_id] = arc.load_texture(state_props["texture_path"])
             del state_props["texture_path"]
         super().__init__(
             config=config,
-            system_name='starship',
+            system_name="starship",
             fired_shots=fired_shots,
             # hit_effects=hit_effects,
             texture_registry=texture_registry,
@@ -159,7 +160,7 @@ class Starship(Entity, OnUpdateMixin):
             state.hp = 1
         state.speed = self.loadout.thrusters.velocity
 
-        self.texture = self._texture_registry[f'{self.system_name}.{state.name}']
+        self.texture = self._texture_registry[f"{self.system_name}.{state.name}"]
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
 
@@ -192,9 +193,10 @@ class Starship(Entity, OnUpdateMixin):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = Bullet(
-            ":resources:images/space_shooter/laserRed01.png",
+            filename=None,
             damage=self.loadout.weaponry.primary.bullet_damage,
-            # scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            scale=Starship.BULLET_SCALE,
+            texture=Starship.BULLET_TEXTURE,
         )
         bullet.change_y = (
             self.loadout.weaponry.primary.speed

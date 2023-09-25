@@ -73,6 +73,9 @@ class Alien(Entity):
     factory creation inside an `arc.Emitter`.
     """
 
+    BULLET_TEXTURE = arc.load_texture(":resources:/images/pinball/bumper.png")
+    BULLET_SCALE = 0.12
+
     def __init__(
         self,
         config: AlienConfig,
@@ -187,7 +190,7 @@ class Alien(Entity):
     def apply_state(self) -> None:
         """Applies `self.state`'s changes to the entity"""
         state: State = self.state  # type: ignore
-        self.texture = self._texture_registry[f'{self.system_name}.{state.name}']
+        self.texture = self._texture_registry[f"{self.system_name}.{state.name}"]
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
         self.change_y = self.speed * -0.01
@@ -201,9 +204,11 @@ class Alien(Entity):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = Bullet(
-            ":resources:images/space_shooter/laserRed01.png",
+            filename=None,
             damage=self.state.bullet_damage,
+            scale=Alien.BULLET_SCALE,
             angle=180,
+            texture=Alien.BULLET_TEXTURE,
         )
         # if self.state.recharge_timeout
         bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time

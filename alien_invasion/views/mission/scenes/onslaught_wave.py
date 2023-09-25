@@ -16,9 +16,10 @@ from alien_invasion.utils.loaders.level.model import (
 
 from alien_invasion.entities import AlienSpawner
 
+
 class OnslaughtWave(arc.Scene):
     """A single onslaught wave of a `Level`
-    
+
     Attributes
     ----------
     state_registry : dict[str, arc.Texture]
@@ -47,20 +48,13 @@ class OnslaughtWave(arc.Scene):
         self.state_registry = state_registry
         self.alien_bullets = alien_bullets
         # self.hit_effects = hit_effects
-        self.completion_requirements: ModelPassRequirements = self.__config.pass_requirements
+        self.completion_requirements: ModelPassRequirements = (
+            self.__config.pass_requirements
+        )
 
         self.timer = 0.0
         self.__alien_configurations: list[AlienConfig] = []
         self.spawners: list[AlienSpawner] = []
-
-        # configs = []
-        # for pair in configs_dict.items():
-        #     alien_config = load_alien_by_name(pair[0])
-        #     alien_spawner_stats = AlienSpawnerStats.parse_obj(pair[1])
-        #     configs.append(
-        #         AlienWaveWrapper(config=alien_config, spawner=alien_spawner_stats)
-        #     )
-        # return configs
 
     def setup(self):
         """
@@ -75,7 +69,7 @@ class OnslaughtWave(arc.Scene):
                 (alien_config := load_alien_by_name(alien_name))
             )
             for state_props in alien_config.states:
-                state_name = state_props['name']
+                state_name = state_props["name"]
                 texture_id = f"{alien_name}.{state_name}"
 
                 # texture_id already exists
@@ -92,13 +86,15 @@ class OnslaughtWave(arc.Scene):
                 state_props["registry_texture_id"] = texture_id
                 del state_props["texture_path"]
 
-            self.spawners.append(AlienSpawner(
-                spawn_config=alien_spawn_config,
-                alien_config=alien_config,
-                alien_bullets=self.alien_bullets,
-                # hit_effects=self.hit_effects,
-                texture_registry=self.state_registry,
-            ))
+            self.spawners.append(
+                AlienSpawner(
+                    spawn_config=alien_spawn_config,
+                    alien_config=alien_config,
+                    alien_bullets=self.alien_bullets,
+                    # hit_effects=self.hit_effects,
+                    texture_registry=self.state_registry,
+                )
+            )
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
         self.timer += delta_time

@@ -95,24 +95,22 @@ class Mission(arc.View):
 
     def __init_next_onslaught_wave(self):
         """Cretates next OnslaughtWave based on it's spawns
-        
+
         New wave is pleced to `_current_onslaught_wave` and
         increases `_current_onslaught_wave_index` by 1.
         """
+        self._state_registry = {}
         if len(self._config.onslaught_waves) == self._current_onslaught_wave_index + 1:
             self.is_finished = True
             return
+        self._current_onslaught_wave_index += 1
         self._current_onslaught_wave = OnslaughtWave(
-            config=self._config.onslaught_waves[
-                self._current_onslaught_wave_index
-            ],
+            config=self._config.onslaught_waves[self._current_onslaught_wave_index],
             state_registry=self._state_registry,
             alien_bullets=self.alien_bullets,
             # self.hit_effect_particles,
         )
-        self._current_onslaught_wave_index += 1
         self._current_onslaught_wave.setup()
-
 
     def on_update(self, delta_time: float) -> None:
         """ """
@@ -130,7 +128,6 @@ class Mission(arc.View):
         self.starship_bullets.update()
         self.alien_bullets.update()
 
-
         if self.starship.can_reap():
             self.game_over.on_update(delta_time)
         else:
@@ -138,9 +135,6 @@ class Mission(arc.View):
             self.starship.on_update(delta_time)
 
             self.pilot_overlay.on_update(delta_time)
-
-
-
 
         # Business logic regarding starship-alien interactions
         # ---------------
@@ -157,7 +151,6 @@ class Mission(arc.View):
 
         if int(self._current_onslaught_wave.timer) % 6 == 5:
             self.__check_wave_completion_requirements()
-
 
     def on_draw(self) -> None:
         self.filter.use()
@@ -211,8 +204,10 @@ class Mission(arc.View):
     def __check_wave_completion_requirements(self) -> None:
         """Checks if required XP gained to proceed to a next Wave"""
         if (
-            self._current_onslaught_wave.completion_requirements.score <= self.starship.xp
-            and self._current_onslaught_wave.timer > self._current_onslaught_wave.completion_requirements.duration
+            self._current_onslaught_wave.completion_requirements.score
+            <= self.starship.xp
+            and self._current_onslaught_wave.timer
+            > self._current_onslaught_wave.completion_requirements.duration
         ):
             self.__init_next_onslaught_wave()
 
@@ -220,9 +215,7 @@ class Mission(arc.View):
         """Check if starship's bullets collide with aliensm"""
         # ship's bullets can clear out aliens' bullets
         for bullet in self.starship_bullets:
-            collisions = arc.check_for_collision_with_list(
-                bullet, self.alien_bullets
-            )
+            collisions = arc.check_for_collision_with_list(bullet, self.alien_bullets)
             for c in collisions:
                 c.remove_from_sprite_lists()
 
@@ -245,9 +238,13 @@ class Mission(arc.View):
 
         # check alien hitbox proximity, higher than bullet's proximity
         for alien_group in self.alien_groups:
-            if alien_group.aliens and (
-                closest := arc.get_closest_sprite(self.starship, alien_group.aliens)
-            ) and closest[1] < 65 * CONSTANTS.DISPLAY.SCALE_RELATION:
+            if (
+                alien_group.aliens
+                and (
+                    closest := arc.get_closest_sprite(self.starship, alien_group.aliens)
+                )
+                and closest[1] < 65 * CONSTANTS.DISPLAY.SCALE_RELATION
+            ):
                 self.starship.is_proximity = True
                 return
 
@@ -300,11 +297,10 @@ class Mission(arc.View):
                     alien.hp -= round(alien.hp * 0.01)
 
     def __process_alien_actions(self, delta_time: float) -> None:
-        """Processes aliens' behavior actions like movement and firing
-        """
+        """Processes aliens' behavior actions like movement and firing"""
         for alien_group in self.alien_groups:
             # plot movement
-            on_update_plot_movement(alien_group, self.starship, delta_time)    
+            on_update_plot_movement(alien_group, self.starship, delta_time)
             for alien in alien_group:
                 # evade bullets
                 if AlienMoveset.dodging in alien.state.movesets:
@@ -312,4 +308,3 @@ class Mission(arc.View):
                 # firing logic
                 if AlienMoveset.firing in alien.state.movesets:
                     on_update_fire_bullets(alien, self.starship, delta_time)
- 
