@@ -179,14 +179,14 @@ class Mission(arc.View):
             arc.draw_circle_filled(
                 self.starship.center_x,
                 self.starship.center_y,
-                self.starship.width // 5.3,
-                arc.color.AIR_SUPERIORITY_BLUE,
+                self.starship.width // 5.7,
+                arc.color.YELLOW_ORANGE,
                 self._current_onslaught_wave.timer * 10,
                 6,
             )
             self.starship.draw_hit_box(
-                color=arc.color.ASH_GREY,
-                line_thickness=3.5,
+                color=arc.color.ORANGE_RED,
+                line_thickness=4.0,
             )
 
             self.pilot_overlay.draw()
