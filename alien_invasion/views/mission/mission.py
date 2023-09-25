@@ -133,9 +133,12 @@ class Mission(arc.View):
 
         if self.starship.can_reap():
             self.game_over.on_update(delta_time)
-            return
+        else:
+            self.starship_controls.on_update(delta_time)
+            self.starship.on_update(delta_time)
 
-        self.starship_controls.on_update(delta_time)
+            self.pilot_overlay.on_update(delta_time)
+
 
 
 
@@ -153,9 +156,6 @@ class Mission(arc.View):
         self.__process_collisions_aliens_starship_sprites()
 
 
-        self.starship.on_update(delta_time)
-
-        self.pilot_overlay.on_update(delta_time)
 
         # self._check_wave_completion_requirements()
 
@@ -167,12 +167,12 @@ class Mission(arc.View):
         self.background.draw()
 
         self._current_inslaught_wave.draw()
-        self.alien_bullets.draw()
 
         self.starship_controls.draw()
         self.starship_bullets.draw()
 
         if self.starship.can_reap():
+            self.alien_bullets.draw()
             self.game_over.draw()
         else:
             self.starship.draw()
@@ -198,6 +198,8 @@ class Mission(arc.View):
             )
 
             self.pilot_overlay.draw()
+
+            self.alien_bullets.draw()
 
         self.window.use()
         self.window.clear()
