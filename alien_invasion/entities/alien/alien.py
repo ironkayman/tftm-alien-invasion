@@ -2,6 +2,8 @@
 """
 
 import random
+from math import sin, cos
+
 
 import arcade as arc
 from pydantic import BaseModel
@@ -64,6 +66,8 @@ class Overrides(BaseModel):
     should_persue: bool
 
 
+bullet_texture = arc.load_texture(":resources:images/pinball/bumper.png")
+
 class Alien(Entity):
     """Alien sprite class.
 
@@ -72,6 +76,8 @@ class Alien(Entity):
     `Particle`-like properties during its
     factory creation inside an `arc.Emitter`.
     """
+
+    __bullet_scale = 0.2
 
     def __init__(
         self,
@@ -200,17 +206,32 @@ class Alien(Entity):
 
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
-        bullet = Bullet(
-            ":resources:images/space_shooter/laserRed01.png",
-            damage=self.state.bullet_damage,
-            angle=180,
-        )
-        # if self.state.recharge_timeout
-        bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time
+        # bullet = Bullet(
+        #     ":resources:images/space_shooter/laserRed01.png",
+        #     damage=self.state.bullet_damage,
+        #     angle=180,
+        # )
+        # # if self.state.recharge_timeout
+        # bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time
 
-        # Position the bullet
-        bullet.center_x = self.center_x
-        bullet.bottom = self.bottom - 20
+        # # Position the bullet
+        # bullet.center_x = self.center_x
+        # bullet.bottom = self.bottom - 20
 
-        # Add the bullet to the appropriate lists
-        self.fired_shots.append(bullet)
+
+        for angle in range(1, 360, 30):
+            bullet = Bullet(
+                filename=None,
+                texture=bullet_texture,
+                damage=self.state.bullet_damage,
+            )
+            # Position the bullet
+            bullet.center_x = self.center_x
+            bullet.center_y = self.center_y
+            
+            bullet.change_x = cos(angle)
+            bullet.change_y = sin(angle)
+            bullet.scale = self.__bullet_scale
+
+            # Add the bullet to the appropriate lists
+            self.fired_shots.append(bullet)
