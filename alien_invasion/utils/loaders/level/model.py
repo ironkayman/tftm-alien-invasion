@@ -17,8 +17,8 @@ class LevelHasNoOnslaughtWaves(ValidationError):
 class ModelPassRequirements(BaseModel):
     """Requirement for wave completion"""
 
-    score: int | None
-    duration: int | None
+    score: int = 0
+    duration: float = 0.0
     custom: Callable | None
 
     @root_validator

@@ -11,12 +11,22 @@ from alien_invasion.utils.loaders.alien import AlienConfig
 from alien_invasion.utils.loaders.level.model import (
     ModelOnslaughtWave,
     AlienSpawnConfiguration,
+    ModelPassRequirements,
 )
 
 from alien_invasion.entities import AlienSpawner
 
 class OnslaughtWave(arc.Scene):
-    """A single onslaught wave of a `Level`"""
+    """A single onslaught wave of a `Level`
+    
+    Attributes
+    ----------
+    state_registry : dict[str, arc.Texture]
+    alien_bullets : arc.SpriteList
+    spawners : list[AlienSpawner]
+    timer : float
+    completion_requirements : ModelPassRequirements
+    """
 
     def __init__(
         self,
@@ -37,6 +47,7 @@ class OnslaughtWave(arc.Scene):
         self.state_registry = state_registry
         self.alien_bullets = alien_bullets
         # self.hit_effects = hit_effects
+        self.completion_requirements: ModelPassRequirements = self.__config.pass_requirements
 
         self.timer = 0.0
         self.__alien_configurations: list[AlienConfig] = []

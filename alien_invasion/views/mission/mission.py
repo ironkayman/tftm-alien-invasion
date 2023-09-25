@@ -80,29 +80,29 @@ class Mission(arc.View):
 
         self.section_manager.add_section(self.starship_controls)
 
-        # is mission finished
         self.is_finished = False
-        self._current_inslaught_wave = None
-        self._current_onslaught_wave_index = 0
+        self._current_onslaught_wave = None
+        self._current_onslaught_wave_index = -1
 
     def on_show_view(self) -> None:
         """Creates and initialises first aliens' onsluaght wave"""
         self.__init_next_onslaught_wave()
 
     def on_hide_view(self) -> None:
-        return
+        self.is_finished = False
+        self._current_onslaught_wave_index = -1
+        self._state_registry = {}
 
     def __init_next_onslaught_wave(self):
         """Cretates next OnslaughtWave based on it's spawns
         
-        New wave is pleced to `_current_inslaught_wave` and
+        New wave is pleced to `_current_onslaught_wave` and
         increases `_current_onslaught_wave_index` by 1.
         """
-        # process ins wave
-        if len(self._config.onslaught_waves) == self._current_onslaught_wave_index:
-            # self.is_finished = True
+        if len(self._config.onslaught_waves) == self._current_onslaught_wave_index + 1:
+            self.is_finished = True
             return
-        self._current_inslaught_wave = OnslaughtWave(
+        self._current_onslaught_wave = OnslaughtWave(
             config=self._config.onslaught_waves[
                 self._current_onslaught_wave_index
             ],
@@ -111,7 +111,7 @@ class Mission(arc.View):
             # self.hit_effect_particles,
         )
         self._current_onslaught_wave_index += 1
-        self._current_inslaught_wave.setup()
+        self._current_onslaught_wave.setup()
 
 
     def on_update(self, delta_time: float) -> None:
@@ -123,7 +123,7 @@ class Mission(arc.View):
 
         self.background.on_update(delta_time)
 
-        self._current_inslaught_wave.on_update(delta_time)
+        self._current_onslaught_wave.on_update(delta_time)
         for alien_group in self.alien_groups:
             self.starship.xp += alien_group.last_reap_results_total_xp
 
@@ -155,9 +155,8 @@ class Mission(arc.View):
         self.__process_collisions_aliens_damage_bullets()
         self.__process_collisions_aliens_starship_sprites()
 
-
-
-        # self._check_wave_completion_requirements()
+        if int(self._current_onslaught_wave.timer) % 6 == 5:
+            self.__check_wave_completion_requirements()
 
 
     def on_draw(self) -> None:
@@ -166,7 +165,7 @@ class Mission(arc.View):
 
         self.background.draw()
 
-        self._current_inslaught_wave.draw()
+        self._current_onslaught_wave.draw()
 
         self.starship_controls.draw()
         self.starship_bullets.draw()
@@ -189,7 +188,7 @@ class Mission(arc.View):
                 self.starship.center_y,
                 self.starship.width // 5.3,
                 arc.color.AIR_SUPERIORITY_BLUE,
-                self._current_inslaught_wave.timer * 10,
+                self._current_onslaught_wave.timer * 10,
                 6,
             )
             self.starship.draw_hit_box(
@@ -207,7 +206,15 @@ class Mission(arc.View):
 
     @property
     def alien_groups(self) -> list[list]:
-        return self._current_inslaught_wave.spawners
+        return self._current_onslaught_wave.spawners
+
+    def __check_wave_completion_requirements(self) -> None:
+        """Checks if required XP gained to proceed to a next Wave"""
+        if (
+            self._current_onslaught_wave.completion_requirements.score <= self.starship.xp
+            and self._current_onslaught_wave.timer > self._current_onslaught_wave.completion_requirements.duration
+        ):
+            self.__init_next_onslaught_wave()
 
     def __process_collisions_bullets_clearout(self) -> None:
         """Check if starship's bullets collide with aliensm"""
