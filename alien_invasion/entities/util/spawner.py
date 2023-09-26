@@ -41,6 +41,7 @@ class AlienSpawner(arc.Emitter):
             self._spawn_config.spawn_rates.rate_increase_interval
         )
         self._density_multiplier = self._spawn_config.spawn_rates.density_multiplier
+        self._movement_velocity_multiplier = self._spawn_config.movement_velocity_multiplier
 
         super().__init__(
             center_xy=(0, CONSTANTS.DISPLAY.HEIGHT + 40),
@@ -75,6 +76,7 @@ class AlienSpawner(arc.Emitter):
             angle=(
                 arc.rand_angle_360_deg() if self._spawn_config.random_rotation else 0
             ),
+            movement_velocity_multiplier=self._movement_velocity_multiplier,
         )
 
     def _calculate_interval(

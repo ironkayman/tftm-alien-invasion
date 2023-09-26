@@ -85,6 +85,7 @@ class Alien(Entity):
         fired_shots: arc.SpriteList,
         # hit_effects: arc.SpriteList,
         texture_registry: dict,
+        movement_velocity_multiplier: tuple[float],
         **sprite_kwargs,
     ):
         """Crearte instance of alien from given `config`"""
@@ -106,6 +107,10 @@ class Alien(Entity):
             primary=1300 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         self._timers = Timers()
+        self._movement_velocity_multiplier = movement_velocity_multiplier
+        self.change_x *= self._movement_velocity_multiplier[0]
+        self.change_y *= self._movement_velocity_multiplier[1]
+
 
     def __configure_emitter(self):
         """Creates emitter for particles after being hit."""

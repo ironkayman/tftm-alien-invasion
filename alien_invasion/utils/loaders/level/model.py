@@ -69,7 +69,7 @@ class AlienSpawnConfiguration(BaseModel):
     """
 
     name: str
-    movement_velocity_multiplier: list[float]  # l r u d
+    movement_velocity_multiplier: list[float] = [1.0, 1.0]  # l-r u-d
     spawn_rates: AliewnSpawnRates
     _registry_config_reference: None
     scale: float = 1.0
