@@ -108,7 +108,6 @@ class AlienSpawner(arc.Emitter):
             if (
                 self._rate_increase_interval
                 and self.__timer > self._rate_increase_interval
-                and len(self._particles) > 0
             ):
                 self.__timer = 0.0
                 self.rate_factory = arc.EmitInterval(
