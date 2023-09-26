@@ -1,0 +1,51 @@
+display_name = "Looming Flight Arcade"
+description = """
+"""
+
+[[waves]]
+
+
+    [waves.pass_requirements]
+        duration = 100
+
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '0:00.000'
+        loop = true
+
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 1.2
+        random_rotation = true
+        movement_velocity_multiplier = [1.1, 50.0]
+        [waves.spawns.spawn_rates]
+            rate = 5.0
+            rate_increase_interval = 7
+            density_multiplier = 1.8
+
+
+    [[waves.spawns]]
+        name = 'hollow_copy'
+        scale = 1.1
+        [waves.spawns.spawn_rates]
+            rate = 0.125
+            rate_increase_interval = 7
+            density_multiplier = 1.1
+
+[[waves]]
+
+    [waves.pass_requirements]
+        duration = 40
+
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '0:00.000'
+        loop = true
+
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 1.2
+        random_rotation = true
+        movement_velocity_multiplier = [1.1, 70.0]
+        [waves.spawns.spawn_rates]
+            rate = 17.666
