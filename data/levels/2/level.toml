@@ -1,4 +1,4 @@
-display_name = "Into The Light"
+display_name = "Far Radiance Belt : 01"
 description = """
     Approach the Far Radiance Belt of Ekhinillian Crown
     and clear out nearby areas before entering the posessed ruins.
@@ -16,7 +16,6 @@ description = """
 
     [[waves.spawns]]
         name = "hollow_copy"
-        # pixels per second - l r u d
         movement_velocity_multiplier = [1.0, 1.6]
         [waves.spawns.spawn_rates]
             max_count = 7
@@ -26,10 +25,8 @@ description = """
 
     [[waves.spawns]]
         name = "imperfect_copy"
-        # pixels per second - l r u d
         scale = 1.1
         [waves.spawns.spawn_rates]
-            # max_count = 30
             rate = 0.1
 
     [[waves.spawns]]
@@ -37,7 +34,6 @@ description = """
         scale = 2.4
         random_rotation = true
         [waves.spawns.spawn_rates]
-            # max_count = 30
             rate = 0.1666
 
     [[waves.spawns]]
@@ -49,7 +45,6 @@ description = """
 [[waves]]
 
     [waves.pass_requirements]
-        # score/experince from aliens required to pass this wave
         duration = 120
 
     [waves.soundtrack]
@@ -61,10 +56,8 @@ description = """
         name = "castle_wall_sontra"
         scale = 2.4
         random_rotation = true
-        # pixels per second - l r u d
         movement_velocity_multiplier = [1.4, 3.4]
         [waves.spawns.spawn_rates]
-            # max_count = 30
             rate = 1.2
 
     [[waves.spawns]]
