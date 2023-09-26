@@ -64,6 +64,9 @@ class Overrides(BaseModel):
     should_persue: bool
 
 
+ALIEN_BULLET_TEXTURE = arc.load_texture(":resources:/images/pinball/bumper.png")
+
+
 class Alien(Entity):
     """Alien sprite class.
 
@@ -73,7 +76,6 @@ class Alien(Entity):
     factory creation inside an `arc.Emitter`.
     """
 
-    BULLET_TEXTURE = arc.load_texture(":resources:/images/pinball/bumper.png")
     BULLET_SCALE = 0.12
 
     def __init__(
@@ -208,7 +210,7 @@ class Alien(Entity):
             damage=self.state.bullet_damage,
             scale=Alien.BULLET_SCALE,
             angle=180,
-            texture=Alien.BULLET_TEXTURE,
+            texture=ALIEN_BULLET_TEXTURE,
         )
         # if self.state.recharge_timeout
         bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time

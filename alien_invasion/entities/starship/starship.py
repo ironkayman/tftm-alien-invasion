@@ -58,6 +58,9 @@ class Timers:
         self.outage = 0
 
 
+STARSHIP_BULLET_TEXTURE = arc.load_texture(":resources:images/space_shooter/laserRed01.png")
+
+
 class Starship(Entity, OnUpdateMixin):
     """ViewModel Starship entity.
 
@@ -71,7 +74,6 @@ class Starship(Entity, OnUpdateMixin):
     which in our case is View/Section.
     """
 
-    BULLET_TEXTURE = arc.load_texture(":resources:images/space_shooter/laserRed01.png")
     BULLET_SCALE = 1.0
 
     moving_left = False
@@ -196,7 +198,7 @@ class Starship(Entity, OnUpdateMixin):
             filename=None,
             damage=self.loadout.weaponry.primary.bullet_damage,
             scale=Starship.BULLET_SCALE,
-            texture=Starship.BULLET_TEXTURE,
+            texture=STARSHIP_BULLET_TEXTURE,
         )
         bullet.change_y = (
             self.loadout.weaponry.primary.speed
