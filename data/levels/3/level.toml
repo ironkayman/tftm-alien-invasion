@@ -21,7 +21,7 @@ description = """
         [waves.spawns.spawn_rates]
             rate = 5.0
             rate_increase_interval = 7
-            density_multiplier = 1.8
+            density_multiplier = 1.1
 
 
     [[waves.spawns]]

@@ -86,7 +86,7 @@ class AlienSpawner(arc.Emitter):
         multiplier: float,
     ) -> float:
         if (result := current - (base_rate * multiplier)) <= 0:
-            return current
+            return current * 9/10
         return result
 
     def on_update(self, delta_time: float) -> None:
@@ -109,6 +109,7 @@ class AlienSpawner(arc.Emitter):
                 self._rate_increase_interval
                 and self.__timer > self._rate_increase_interval
             ):
+                print('o', self._alien_config.info.name, self.rate_factory._emit_interval)
                 self.__timer = 0.0
                 self.rate_factory = arc.EmitInterval(
                     self._calculate_interval(
@@ -117,6 +118,7 @@ class AlienSpawner(arc.Emitter):
                         self._density_multiplier,
                     )
                 )
+                print('n', self._alien_config.info.name, self.rate_factory._emit_interval)
 
         self._particles.on_update(delta_time)
 
