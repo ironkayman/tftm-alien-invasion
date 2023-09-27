@@ -14,7 +14,7 @@
 
     bullet_damage = 18
     bullet_speed = 800
-    recharge_timeout = 300
+    recharge_timeout = 0.9
 
 [state.shattered]
     # stategy: due to speed, hard to not to get hit, slow down with bullets

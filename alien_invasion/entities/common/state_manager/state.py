@@ -2,7 +2,6 @@
 """
 
 from enum import IntEnum, auto
-from pathlib import Path
 
 from pydantic import BaseModel, root_validator
 
@@ -86,7 +85,7 @@ class State(BaseModel):
         Parameter is required if `firing` moveset is present.
     bullet_speed : int | None
         Optional parameter for overriding calculated bullet speed (vector).
-    recharge_timeout : int | None
+    recharge_timeout : float
         Optional parameter for overriding default rechange of 1000 ms.
     """
 
@@ -103,7 +102,7 @@ class State(BaseModel):
     # overrides of prev state, optional
     bullet_damage: int | None
     bullet_speed: int | None
-    recharge_timeout: int | None
+    recharge_timeout: float = 2.0
 
     # wrappers
     data: dict
@@ -148,23 +147,6 @@ class State(BaseModel):
             Corresponding texture to a given state by its name att `state_name`.
         data : dict
             All data from `::state:state_name`.
-
-        Examples
-        --------
-        >>> name
-        'initial'
-        >>> data
-        {
-            'movesets': ['tracking'],
-            'speed': 90,
-            'hp': 20,
-            'death_damage_cap': False,
-            'bullet_damage': 8,
-            'bullet_speed': 800,
-            'recharge_timeout': 300
-        }
-        >>> texture_path
-        PosixPath('/home/kayman/git/mtt/tftm-alien-invasion/data/aliens/dummy_ufo/state.initial.png')
         """
 
         super().__init__(

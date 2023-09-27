@@ -17,7 +17,9 @@
 [state.initial]
     # looks inside resources/sprites, searched after state name
     # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
-    movesets = []
+    movesets = ['firing']
+    bullet_damage = 8
+    recharge_timeout = 6.6
     speed = 20
     hp = 140
     death_damage_cap = false
