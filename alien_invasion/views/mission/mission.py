@@ -27,12 +27,19 @@ from alien_invasion.entities.common.state_manager.state import AlienMoveset
 
 
 class Mission(arc.View):
+    """Mission view, contains main gameplay loop
+
+    Connects an onslught wave with rest of environment
+    including background and starship logic/controls
+    through shared spritelists.
+    """
+
     def __init__(
         self,
         completion_callback_view: arc.View,
         mission_config: LevelConfiguration,
     ) -> None:
-        """Creates entity vars
+        """Prepares parameters for onslaught wave
 
         Parameters
         ----------
@@ -44,16 +51,21 @@ class Mission(arc.View):
         super().__init__()
 
         self.filter = CRTFilterDefault(self.window)
+        # if mission is paused
         self.on_pause = False
         self.completion_callback_view = completion_callback_view
+        # gameove scene, behaving similar to pause
         self.game_over = GameOver()
 
         self._config = mission_config
 
-        self._state_registry = {}
+        # mapping of state IDs to their preloaded textures
+        self._state_registry: dict[str, arc.Texture] = {}
 
-        # spritelists
+        # all starship's bullets
         self.starship_bullets = arc.SpriteList()
+        # all bullets from all spawned aliens,
+        # ignoring individual spwners
         self.alien_bullets = arc.SpriteList()
 
         self.starship = Starship(
@@ -63,6 +75,7 @@ class Mission(arc.View):
         self.starship.center_x = CONSTANTS.DISPLAY.WIDTH // 2
         self.starship.center_y = self.starship.height
 
+        # arcade section to manage user's input separately
         self.starship_controls = StarshipControls(
             name="starship_controls",
             key_left=KEYMAP["player_starship_movement_left"],
@@ -80,8 +93,14 @@ class Mission(arc.View):
 
         self.section_manager.add_section(self.starship_controls)
 
+        # flag for mission completion baed on
+        # final OnslaughtWave requirements
         self.is_finished = False
+        # onslaught wave object
         self._current_onslaught_wave = None
+        # above's index/position across all mission's waves
+        # is -1 since on_show_view invokes +=1 on this index
+        # and setups te scene
         self._current_onslaught_wave_index = -1
 
     def on_show_view(self) -> None:
@@ -94,7 +113,7 @@ class Mission(arc.View):
         self._state_registry = {}
 
     def __init_next_onslaught_wave(self):
-        """Cretates next OnslaughtWave based on it's spawns
+        """Cretates next OnslaughtWave scene based on it's spawns
 
         New wave is pleced to `_current_onslaught_wave` and
         increases `_current_onslaught_wave_index` by 1.
@@ -113,7 +132,6 @@ class Mission(arc.View):
         self._current_onslaught_wave.setup()
 
     def on_update(self, delta_time: float) -> None:
-        """ """
         if self.on_pause:
             return
         if self.is_finished:

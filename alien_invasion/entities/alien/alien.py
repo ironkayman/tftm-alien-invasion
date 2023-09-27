@@ -88,7 +88,22 @@ class Alien(Entity):
         movement_velocity_multiplier: tuple[float],
         **sprite_kwargs,
     ):
-        """Crearte instance of alien from given `config`"""
+        """Crearte instance of alien from given `config`
+
+        config : AlienConfig
+            Main configuration properties
+        system_name : str
+            ID of an alien
+        fired_shots : arc.SpriteList
+            Shared list of all fired by all aliens bullets
+        texture_registry : dict
+            Shared read-only registry of each alien
+            in a wave with their state textures loaded
+        movement_velocity_multiplier : tuple[float]
+            tuple of 2 floats:
+            [0]: multiplies movement up/down
+            [1]: multiplies movement left/right
+        """
 
         super().__init__(
             config=config,
@@ -110,7 +125,6 @@ class Alien(Entity):
         self._movement_velocity_multiplier = movement_velocity_multiplier
         self.change_x *= self._movement_velocity_multiplier[0]
         self.change_y *= self._movement_velocity_multiplier[1]
-
 
     def __configure_emitter(self):
         """Creates emitter for particles after being hit."""
@@ -197,7 +211,12 @@ class Alien(Entity):
     def apply_state(self) -> None:
         """Applies `self.state`'s changes to the entity"""
         state: State = self.state  # type: ignore
+
+        # Texture is extracted from the the passed
+        # texture registry based on alien's name
+        # and desired state
         self.texture = self._texture_registry[f"{self.system_name}.{state.name}"]
+
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
         self.change_y = self.speed * -0.01

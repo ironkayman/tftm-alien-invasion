@@ -12,8 +12,7 @@ from alien_invasion import CONSTANTS
 class BackgroundImage(arc.Sprite):
     """Background image wrapper
 
-    Used fot wrappig [copyrighted content]
-    Observatory taken images due to their size.
+    Used for wrapping background scene sprites.
 
     Attributes
     ----------

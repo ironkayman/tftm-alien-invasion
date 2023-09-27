@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-from typing import List, Optional
-
-from pydantic import validator
+"""Onslaugh Wave scene represents object of a single wave in a mission
+"""
 
 import arcade as arc
 
@@ -10,7 +8,6 @@ from alien_invasion.utils.loaders.alien import AlienConfig
 
 from alien_invasion.utils.loaders.level.model import (
     ModelOnslaughtWave,
-    AlienSpawnConfiguration,
     ModelPassRequirements,
 )
 
@@ -18,15 +15,29 @@ from alien_invasion.entities import AlienSpawner
 
 
 class OnslaughtWave(arc.Scene):
-    """A single onslaught wave of a `Level`
+    """A single onslaught wave initiated from wave config
+
+    Rest of parameters are once that are shared across
+    the entire mission.
+
+    Yet, despite alien_bullets are shared across all aliens,
+    aliens themselves are placed to individual spwners' spritelists
+    which we iterate through in Mission's view on_update.
 
     Attributes
     ----------
     state_registry : dict[str, arc.Texture]
+        Mapping of loaded textures by a string id,
+        composed of alien's name and state's name.
     alien_bullets : arc.SpriteList
+        Shared spritelist of all bullets.
     spawners : list[AlienSpawner]
-    timer : float
+        List aliens' spawners, each contains spritelist
+        of aliens (`._particles`, `.alien_group`).
     completion_requirements : ModelPassRequirements
+        completion_requirements are loaded from wave's
+        config that are required for moving/initiating
+        a the next OnsluaghtWave.
     """
 
     def __init__(
@@ -42,7 +53,10 @@ class OnslaughtWave(arc.Scene):
         ----------
         config : ModelOnslaughtWave
         state_registry : dict[str, arc.Texture]
-            "<alien name>.<state name>": bytes
+            Mapping of loaded textures to their alien-state pairs:
+            "<alien name>.<state name>": arc.texture
+        alien_bullets : arc.SpriteList
+            Shared spritelist of all aliens' bullets
         """
         self.__config = config
         self.state_registry = state_registry
@@ -57,12 +71,19 @@ class OnslaughtWave(arc.Scene):
         self.spawners: list[AlienSpawner] = []
 
     def setup(self):
-        """
-        Put registry, remove path key
-        """
+        """Initiates scene, creates alien spawners"""
         self.__create_spawnables()
 
     def __create_spawnables(self):
+        """Creates this wave's spawners
+
+        Iterates through spawner configurations of wave config.
+        From every spawner configuration load an alien by name,
+        then load alien's textures delegated to
+        it's states and store them in texture registry,
+        which is passed to every spawner and spawned alien
+        once it is filled.
+        """
         for alien_spawn_config in self.__config.spawns:
             alien_name = alien_spawn_config.name
             self.__alien_configurations.append(
@@ -97,12 +118,11 @@ class OnslaughtWave(arc.Scene):
             )
 
     def on_update(self, delta_time: float = 1 / 60) -> None:
+        """Updates each aliens' spawner"""
         self.timer += delta_time
         for s in self.spawners:
             s.on_update(delta_time)
-        # return super().on_update()
 
     def draw(self) -> None:
         for s in self.spawners:
             s.draw()
-        # return super().draw()
