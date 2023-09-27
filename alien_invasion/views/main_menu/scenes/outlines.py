@@ -63,6 +63,17 @@ class Outlines(arc.Scene):
         """
         Render background section.
         """
+        arc.draw_text(
+            f"FPS:{arc.get_fps():.2f}",
+            start_x=CONSTANTS.DISPLAY.WIDTH - 130 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            start_y=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            color=(197, 160, 40),
+            font_size=17 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            font_name="Courier New",
+            anchor_x="left",
+            anchor_y="top",
+        )
+
         # golden frame
         arc.draw_rectangle_outline(
             CONSTANTS.DISPLAY.WIDTH // 2,

@@ -7,8 +7,6 @@
 [state]
 
 [state.initial]
-    # looks inside resources/sprites, searched after state name
-    # can be png or gif, second case reatable if multiple images with <state_prefix>_<number>.png are used
     movesets = ['tracking', 'dodging', 'firing', 'persuing', 'bordered']
     speed = 120
     hp = 40
@@ -19,6 +17,8 @@
     recharge_timeout = 300
 
 [state.shattered]
+    # stategy: due to speed, hard to not to get hit, slow down with bullets
+    # due to .dodging or try to dodge by moving form border to border
     movesets = ['tracking', 'dodging', 'firing', 'persuing', 'bordered']
     speed = 220
     hp = 52

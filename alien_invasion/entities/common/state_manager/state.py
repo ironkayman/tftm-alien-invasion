@@ -107,7 +107,8 @@ class State(BaseModel):
 
     # wrappers
     data: dict
-    texture_path: Path
+    # texture_path: Path
+    registry_texture_id: str | None
 
     @root_validator(pre=True)
     def check_conditional_parameters(cls, values) -> dict:
@@ -131,7 +132,8 @@ class State(BaseModel):
         self,
         name: str,
         index: int,
-        texture_path: Path,
+        # texture_path: Path,
+        registry_texture_id: str,
         data: dict,
     ) -> None:
         """Maps groups of entity's properties to a coherent data structure
@@ -169,6 +171,7 @@ class State(BaseModel):
             name=name,
             index=index,
             data=data,
-            texture_path=texture_path,
+            # texture_path=texture_path,
+            registry_texture_id=registry_texture_id,
             **data,
         )

@@ -1,6 +1,5 @@
 from abc import ABC
 from functools import partial
-from pathlib import Path
 
 import arcade as arc
 
@@ -12,7 +11,8 @@ from pyglet.event import EVENT_HANDLED, EVENT_UNHANDLED
 from alien_invasion import CONSTANTS
 from alien_invasion.settings import KEYMAP
 from alien_invasion.utils.loaders.level import loader as load_level_configs
-from alien_invasion.views import Invasion
+from alien_invasion.utils.loaders.level.model import LevelConfiguration
+from alien_invasion.views import Mission
 
 
 class CallbackButton(arc.gui.UIFlatButton, ABC):
@@ -117,6 +117,7 @@ class Interface(arc.Section, arc.Scene):
         self.manager = arc.gui.UIManager(self.view)
 
         self._create_start_menu()
+        self.next_view = None
 
     def _create_start_menu(self) -> None:
         self.manager.clear()
@@ -163,7 +164,7 @@ class Interface(arc.Section, arc.Scene):
             level_button = CallbackButton(
                 width=80 * CONSTANTS.DISPLAY.SCALE_RELATION,
                 height=30 * CONSTANTS.DISPLAY.SCALE_RELATION,
-                text=level[0]["display_name"],
+                text=level.display_name,
                 # partial fixes 2 problems:
                 # 1. pointer for level variable changes
                 # for previos oteration to the last one
@@ -186,11 +187,11 @@ class Interface(arc.Section, arc.Scene):
         )
 
     def __deploy_view_invasion_with_level(
-        self, level_config: tuple[dict, Path]
+        self, level_config: LevelConfiguration
     ) -> None:
         """Callback funct for starting Invasion view."""
-        invasion_view = Invasion(self.view, mission_config=level_config)
-        self.window.show_view(invasion_view)
+        invasion_view = Mission(self.view, mission_config=level_config)
+        self.next_view = invasion_view
 
     def __deploy_exit(self) -> None:
         """Callback func for Exiting Arcade."""

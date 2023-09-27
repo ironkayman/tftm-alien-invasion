@@ -1,0 +1,67 @@
+display_name = "Far Radiance Belt : 01"
+description = """
+    Approach the Far Radiance Belt of Ekhinillian Crown
+    and clear out nearby areas before entering the posessed ruins.
+"""
+
+[[waves]]
+
+    [waves.pass_requirements]
+        score = 2200
+
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '2:10:100'
+        loop = true
+
+    [[waves.spawns]]
+        name = "hollow_copy"
+        movement_velocity_multiplier = [1.0, 1.6]
+        [waves.spawns.spawn_rates]
+            max_count = 7
+            rate = 0.2
+            rate_increase_interval = 9
+            density_multiplier = 1.01
+
+    [[waves.spawns]]
+        name = "imperfect_copy"
+        scale = 1.1
+        [waves.spawns.spawn_rates]
+            rate = 0.1
+
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 2.4
+        random_rotation = true
+        [waves.spawns.spawn_rates]
+            rate = 0.1666
+
+    [[waves.spawns]]
+        name = "ancient_fort_remnant"
+        scale = 2.0
+        [waves.spawns.spawn_rates]
+            rate = 0.12195
+
+[[waves]]
+
+    [waves.pass_requirements]
+        duration = 120
+
+    [waves.soundtrack]
+        start = '0:00.000'
+        stop = '2:10:100'
+        loop = true
+
+    [[waves.spawns]]
+        name = "castle_wall_sontra"
+        scale = 2.4
+        random_rotation = true
+        movement_velocity_multiplier = [1.4, 3.4]
+        [waves.spawns.spawn_rates]
+            rate = 1.2
+
+    [[waves.spawns]]
+        name = "ancient_fort_remnant"
+        scale = 1.7
+        [waves.spawns.spawn_rates]
+            rate = 0.2

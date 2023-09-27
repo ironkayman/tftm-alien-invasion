@@ -53,16 +53,16 @@ class Entity(arc.Sprite, ABC):
     def __init__(
         self,
         config,
-        parent_sprite_list: arc.SpriteList,
+        system_name: str,
         fired_shots: arc.SpriteList,
-        enemy_shots: arc.SpriteList,
-        hit_effects: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
+        texture_registry: dict,
         # Particle-oriented properties
         change_xy: arc.Vector = (0.0, 0.0),
         center_xy: arc.Point = (0.0, 0.0),
         angle: float = 0.0,
         change_angle: float = 0.0,
-        scale: float = 1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+        scale: float = 1.0,
         alpha: int = 255,
         mutation_callback=None,
     ):
@@ -73,29 +73,29 @@ class Entity(arc.Sprite, ABC):
         self._can_reap: bool = False
         # self.speed: int
 
-        super().__init__(hit_box_algorithm="Detailed")
-        self._parent_sprite_list = parent_sprite_list
+        super().__init__(
+            center_x=center_xy[0],
+            center_y=center_xy[1],
+            angle=angle,
+            scale=scale * CONSTANTS.DISPLAY.SCALE_RELATION,
+            hit_box_algorithm="Detailed",
+        )
+        self.change_x=change_xy[0]
 
-        # Particle properties
-        self.center_x = center_xy[0]
-        self.center_y = center_xy[1]
-        self.change_x = change_xy[0]
-        # self.change_y = self.speed * -0.01
-        self.angle = angle
-        self.scale = scale
         self.change_angle = change_angle
         self.alpha = alpha
-        self.mutation_callback = mutation_callback
-
+        
         self.config = config
+        self._texture_registry = texture_registry
+        self.system_name = system_name
 
         self.states = deepcopy(self.config.states)
+
         self.state, _ = next(self.states)
         self.apply_state()
 
-        self.hit_effect_list = hit_effects
+        # self.hit_effects = hit_effects
         self.fired_shots = fired_shots
-        self.enemy_shots = enemy_shots
 
     def _restart_hit_effect_emitter(self) -> None:
         """Method for restarting emitter animation"""

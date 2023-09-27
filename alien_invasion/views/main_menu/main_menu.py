@@ -4,6 +4,7 @@ import arcade as arc
 import arcade.gui
 from pyglet.media import Player
 
+from alien_invasion import CONSTANTS
 from alien_invasion.constants import DIR_MUSIC
 from alien_invasion.settings import CONFIG_DICT
 
@@ -60,7 +61,8 @@ class MainMenu(arc.View):
 
         self.human_interface.reset_widget_selection()
         self.human_interface.selected_index = 1
-        self.human_interface.get_widget().hovered = True
+        if self.human_interface.get_widget():
+            self.human_interface.get_widget().hovered = True
 
         self.media_player = self.theme.play(
             loop=True,
@@ -71,11 +73,15 @@ class MainMenu(arc.View):
     def on_hide_view(self) -> None:
         self.human_interface.manager.disable()
         self.theme.stop(self.media_player)
+        self.human_interface.next_view = None
 
     def on_update(self, delta_time: float):
         self.obelisk.on_update(delta_time)
         self.outlines.on_update(delta_time)
         self.ruins.on_update(delta_time)
+
+        if self.human_interface.next_view:
+            self.window.show_view(self.human_interface.next_view)
 
     def on_draw(self) -> None:
         """Render
@@ -88,7 +94,7 @@ class MainMenu(arc.View):
         self.filter.clear()
 
         self.obelisk.draw()
-
+        
         # self.filter.draw()
 
         self.outlines.draw()

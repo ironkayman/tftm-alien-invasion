@@ -8,5 +8,5 @@ description = """
 """
 bullet_damage = 8
 energy_per_bullet = 3
-speed = 800
-recharge_timeout = 300
+speed = 1400
+recharge_timeout = 160

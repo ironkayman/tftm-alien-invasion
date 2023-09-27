@@ -58,6 +58,9 @@ class Timers:
         self.outage = 0
 
 
+STARSHIP_BULLET_TEXTURE = arc.load_texture(":resources:images/space_shooter/laserRed01.png")
+
+
 class Starship(Entity, OnUpdateMixin):
     """ViewModel Starship entity.
 
@@ -70,6 +73,8 @@ class Starship(Entity, OnUpdateMixin):
     possibly removing such business-logic from main Controller
     which in our case is View/Section.
     """
+
+    BULLET_SCALE = 1.0
 
     moving_left = False
     moving_right = False
@@ -96,9 +101,7 @@ class Starship(Entity, OnUpdateMixin):
     def __init__(
         self,
         fired_shots: arc.SpriteList,
-        area_coords: list,
-        enemy_shots: arc.SpriteList,
-        hit_effect_list: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
     ):
         """Creates Starship instance.
 
@@ -106,9 +109,6 @@ class Starship(Entity, OnUpdateMixin):
         ----------
         fired_shots: arc.SpriteList
             List of currently registered bullets
-        area_coords:list
-            Description of an area at which
-            ship is allowed to move.
         """
 
         # workaround for cycling imports
@@ -116,12 +116,19 @@ class Starship(Entity, OnUpdateMixin):
 
         self.loadout = STARSHIP
 
+        config = AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG)
+        texture_registry = {}
+        for state_props in config.states:
+            texture_id = f"starship.{state_props['name']}"
+            state_props["registry_texture_id"] = texture_id
+            texture_registry[texture_id] = arc.load_texture(state_props["texture_path"])
+            del state_props["texture_path"]
         super().__init__(
-            config=AlienConfig(CONSTANTS.DIR_STARSHIP_CONFIG),
-            parent_sprite_list=arc.SpriteList(),
+            config=config,
+            system_name="starship",
             fired_shots=fired_shots,
-            enemy_shots=enemy_shots,
-            hit_effects=hit_effect_list,
+            # hit_effects=hit_effects,
+            texture_registry=texture_registry,
         )
 
         self.timeouts = Timeouts(
@@ -132,7 +139,7 @@ class Starship(Entity, OnUpdateMixin):
         )
         self._timers = Timers()
 
-        self.movement_borders = TMovementArea(*area_coords)
+        self.movement_borders = TMovementArea()
         self.transmission = Transmission(self)
         self.current_energy_capacity = self.loadout.engine.energy_cap
 
@@ -155,10 +162,7 @@ class Starship(Entity, OnUpdateMixin):
             state.hp = 1
         state.speed = self.loadout.thrusters.velocity
 
-        self.texture = arc.load_texture(
-            file_name=state.texture_path,
-            can_cache=True,
-        )
+        self.texture = self._texture_registry[f"{self.system_name}.{state.name}"]
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
 
@@ -191,9 +195,10 @@ class Starship(Entity, OnUpdateMixin):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = Bullet(
-            ":resources:images/space_shooter/laserRed01.png",
+            filename=None,
             damage=self.loadout.weaponry.primary.bullet_damage,
-            # scale=1.0 * CONSTANTS.DISPLAY.SCALE_RELATION,
+            scale=Starship.BULLET_SCALE,
+            texture=STARSHIP_BULLET_TEXTURE,
         )
         bullet.change_y = (
             self.loadout.weaponry.primary.speed

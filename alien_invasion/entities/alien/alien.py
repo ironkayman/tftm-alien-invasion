@@ -64,6 +64,9 @@ class Overrides(BaseModel):
     should_persue: bool
 
 
+ALIEN_BULLET_TEXTURE = arc.load_texture(":resources:/images/pinball/bumper.png")
+
+
 class Alien(Entity):
     """Alien sprite class.
 
@@ -73,36 +76,42 @@ class Alien(Entity):
     factory creation inside an `arc.Emitter`.
     """
 
+    BULLET_SCALE = 0.12
+
     def __init__(
         self,
         config: AlienConfig,
-        overrides: dict,
-        approach_velocity_multiplier: float,
-        hit_effect_list: arc.SpriteList,
-        alien_bullets: arc.SpriteList,
-        parent_sprite_list: arc.SpriteList,
-        # Particle-oriented properties
-        **particle_kwargs
+        system_name: str,
+        fired_shots: arc.SpriteList,
+        # hit_effects: arc.SpriteList,
+        texture_registry: dict,
+        movement_velocity_multiplier: tuple[float],
+        **sprite_kwargs,
     ):
-        """Crearte instance of alien from given `config`"""
-        # self._can_reap: bool = False
+        """Crearte instance of alien from given `config`
 
-        # super().__init__()
-        # self._aliens = parent_sprite_list
-
-        self._approach_velocity_multiplier = approach_velocity_multiplier
-
-        self._overrides = Overrides.parse_obj(overrides)
-
-        particle_kwargs["scale"] *= CONSTANTS.DISPLAY.SCALE_RELATION
+        config : AlienConfig
+            Main configuration properties
+        system_name : str
+            ID of an alien
+        fired_shots : arc.SpriteList
+            Shared list of all fired by all aliens bullets
+        texture_registry : dict
+            Shared read-only registry of each alien
+            in a wave with their state textures loaded
+        movement_velocity_multiplier : tuple[float]
+            tuple of 2 floats:
+            [0]: multiplies movement up/down
+            [1]: multiplies movement left/right
+        """
 
         super().__init__(
             config=config,
-            parent_sprite_list=parent_sprite_list,
-            fired_shots=alien_bullets,
-            enemy_shots=[],
-            hit_effects=hit_effect_list,
-            **particle_kwargs,
+            system_name=system_name,
+            fired_shots=fired_shots,
+            # hit_effects=hit_effects,
+            texture_registry=texture_registry,
+            **sprite_kwargs,
         )
 
         # create hit-particles emitter
@@ -110,9 +119,12 @@ class Alien(Entity):
         self.dodging = False
 
         self.timeouts = Timeouts(
-            primary=700 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
+            primary=1300 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
         )
         self._timers = Timers()
+        self._movement_velocity_multiplier = movement_velocity_multiplier
+        self.change_x *= self._movement_velocity_multiplier[0]
+        self.change_y *= self._movement_velocity_multiplier[1]
 
     def __configure_emitter(self):
         """Creates emitter for particles after being hit."""
@@ -131,7 +143,7 @@ class Alien(Entity):
         )
         # replace internal spritelist,
         # with enabled spacial haching
-        self.__hit_emitter._particles = self.hit_effect_list
+        # self.__hit_emitter._particles = self.hit_effects
 
     def _restart_hit_effect_emitter(self) -> arc.Emitter:
         """Recreate particle burst
@@ -157,14 +169,12 @@ class Alien(Entity):
     def update_particles_on_hit(self) -> None:
         """Updates health `hp`"""
         if self.__hit_emitter:
-            # self.__hit_emitter.center_x = self.center_x
-            # self.__hit_emitter.center_y = self.center_y
-            x = round(self.center_x)
-            y = round(self.center_y)
-            wd = self.width // 3
-            hd = self.height // 3
-            self.__hit_emitter.center_x = random.randint(x - wd, x + wd)
-            self.__hit_emitter.center_y = random.randint(y - hd, y + hd)
+            wd = self.width / 3
+            hd = self.height / 3
+            x = self.center_x - wd
+            y = self.center_y - hd
+            self.__hit_emitter.center_x = x + wd * 2 * random.random()
+            self.__hit_emitter.center_y = y + hd * 2 * random.random()
         self.__hit_emitter.update()
 
     def on_update(self, delta_time: float) -> None:
@@ -174,6 +184,9 @@ class Alien(Entity):
         """
         self.update_particles_on_hit()
         super().update()
+
+    def draw_hit_effects(self):
+        self.__hit_emitter.draw()
 
     def can_reap(self) -> bool:
         """Determine if Particle can be deleted.
@@ -198,15 +211,15 @@ class Alien(Entity):
     def apply_state(self) -> None:
         """Applies `self.state`'s changes to the entity"""
         state: State = self.state  # type: ignore
-        self.texture = arc.load_texture(
-            file_name=state.texture_path,
-            flipped_vertically=True,
-            can_cache=True,
-            hit_box_algorithm="Detailed",
-        )
+
+        # Texture is extracted from the the passed
+        # texture registry based on alien's name
+        # and desired state
+        self.texture = self._texture_registry[f"{self.system_name}.{state.name}"]
+
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
-        self.change_y = self.speed * -0.01 * self._approach_velocity_multiplier
+        self.change_y = self.speed * -0.01
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
@@ -217,9 +230,11 @@ class Alien(Entity):
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission
         bullet = Bullet(
-            ":resources:images/space_shooter/laserRed01.png",
+            filename=None,
             damage=self.state.bullet_damage,
+            scale=Alien.BULLET_SCALE,
             angle=180,
+            texture=ALIEN_BULLET_TEXTURE,
         )
         # if self.state.recharge_timeout
         bullet.change_y = -1 * (self.state.bullet_speed or self.speed * 4) * delta_time

@@ -1,5 +1,6 @@
 from .state import State
 
+
 class StateManager:
     def __init__(
         self,
@@ -10,12 +11,12 @@ class StateManager:
         Examples
         --------
         >>> states = StateManager([
-            {'initial': {
+            {
                 state_name: str,
                 state_data: dict,
-                texture_path: Path,
                 index: int
-            }},
+                registry_texture_id: str | None
+            },
         ])
         >>> next(states)
         ...
@@ -25,22 +26,17 @@ class StateManager:
         self._current_state_index = 0
 
     def __iter__(self):
-        return self._states
+        return iter(self._states)
 
     class FinalStateReached(IndexError):
         pass
 
-    def __next__(self) -> tuple[State, IndexError|None]:
+    def __next__(self) -> tuple[State, IndexError | None]:
         err = None
         try:
-            state_name, self._current_state = [*self._states[self._current_state_index].items()][0]
-            self._current_state['index'] = self._current_state_index
-            self._current_state['name'] = state_name
+            self._current_state = self._states[self._current_state_index]
         except IndexError as e:
             err = StateManager.FinalStateReached
         else:
             self._current_state_index += 1
-        return (
-            State(**self._current_state),
-            err
-        )
+        return (State(**self._current_state), err)

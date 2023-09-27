@@ -16,5 +16,5 @@ description = """
     to see that happening in proximity of
     anybodies' home planet.
 """
-energy_restored = 19
-energy_cap = 60
+energy_restored = 25
+energy_cap = 100

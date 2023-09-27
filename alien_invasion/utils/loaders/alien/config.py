@@ -17,6 +17,7 @@ from alien_invasion.entities.common.loadout import Loadout
 
 from alien_invasion.entities.common.state_manager import State
 from alien_invasion.entities.common.state_manager.state import AlienType, AlienSize
+from alien_invasion.entities.common.state_manager import StateManager
 
 
 class AlienInfo(BaseModel):
@@ -42,12 +43,12 @@ class AlienInfo(BaseModel):
     def __init__(self, info_config: dict) -> None:
         super().__init__(**info_config)
 
-    @validator('size', pre=True)
+    @validator("size", pre=True)
     def get_alien_size_enum(cls, val: str) -> AlienSize:
         """Alien's Size naming - Str -> IntEnum mapping"""
         return tuple(filter(lambda s: s.name == val, list(AlienSize)))[0]
 
-    @validator('type', pre=True)
+    @validator("type", pre=True)
     def get_alien_type_enum(cls, val: list) -> set[AlienType]:
         """Alien's Type naming - Str -> IntEnum mapping"""
         return set(map(lambda c: AlienType[c], val))
@@ -64,12 +65,12 @@ class AlienConfig:
     ----------
     info : AlienInfo
         Inforamtion about specific `Alien`.
-    states : list[State] = []
+    states : StateManager[State] = []
         Listed alien's states.
     """
 
     info: AlienInfo
-    states: Generator[State, None, None] = []
+    states: StateManager
 
     def __init__(self, resource_dir: Path) -> None:
         """Constructs universal object representation of `Alien`.
@@ -87,9 +88,10 @@ class AlienConfig:
 
         self._resource_dir = resource_dir
 
-        if (config_files := list(self._resource_dir.glob('*.toml'))) and \
-            len(config_files) > 1:
-            raise NotImplementedError('One config per folder/alien')
+        if (config_files := list(self._resource_dir.glob("*.toml"))) and len(
+            config_files
+        ) > 1:
+            raise NotImplementedError("One config per folder/alien")
 
         config, error = reader(config_files[0])
 
@@ -97,19 +99,20 @@ class AlienConfig:
             raise NotImplementedError(error)
         self.config = cast(dict, config)
 
-        from alien_invasion.entities.common.state_manager import StateManager
-
-        self.info = AlienInfo(self.config['info'])
+        self.info = AlienInfo(self.config["info"])
         states = []
-        for index, state in enumerate(self.config['state'].items()):
+        for index, state in enumerate(self.config["state"].items()):
             state_name, state = state
             texture_path = self.define_state_texture_path(state_name)
-            states.append({f'{state_name}': dict(
-                name=state_name,
-                index=index,
-                data=state,
-                texture_path=texture_path,
-            )})
+            states.append(
+                dict(
+                    name=state_name,
+                    index=index,
+                    data=state,
+                    texture_path=texture_path,
+                    registry_texture_id=None,
+                )
+            )
         self.states = StateManager(states)
 
     def define_state_texture_path(self, state_name: str) -> Path:
@@ -137,8 +140,8 @@ class AlienConfig:
             of described at alien config's states.
         """
         # texture foir a state file naming pattern
-        file_name = f'state.{state_name}.png'
+        file_name = f"state.{state_name}.png"
         image_path = self._resource_dir / file_name
         if not image_path.exists():
-            raise FileNotFoundError('alien state texture', file_name, 'not found')
+            raise FileNotFoundError("alien state texture", file_name, "not found")
         return image_path
