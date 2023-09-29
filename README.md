@@ -50,11 +50,19 @@ Default controls are configured in [configs/config.json](configs/config.json) at
     <!-- TODO: Add justify-content: center;
     when 6 screenshots
     ffmpeg -i ./ms-gm.mkv -vf "crop=in_w:in_h-80:0:out_h,fps=14,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -ss 00:00:03 -loop 0 ms-gm.gif -->
-    <div style="display: flex; flex-wrap: wrap;">
-        <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/mm-crt.gif"/>
-        <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/ms-st.gif"/>
-        <img style="width: 30%; margin: 4px; display: block;" src="./docs/imgs/ms-gm.gif"/>
-    </div>
+     <table style="border: 0px solid transparent;">
+      <tr>
+        <td>
+            <img style="margin: 4px; display: inline-block;" src="./docs/imgs/mm-crt.gif"/>
+        </td>
+        <td>
+            <img style="margin: 4px; display: inline-block;" src="./docs/imgs/ms-st.gif"/>
+        </td>
+        <td>
+            <img style="margin: 4px; display: block;" src="./docs/imgs/ms-gm.gif"/>
+        </td>
+      </tr>
+    </table>
 </p>
 
 ## Build from source
