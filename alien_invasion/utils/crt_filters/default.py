@@ -27,8 +27,8 @@ def CRTFilterDefault(window: Window) -> CRTFilter:
         hard_scan=-15.0,
         hard_pix=-10.0,
         display_warp=Vec2(0.0, 0.0),
-        mask_dark=1.0,
-        mask_light=1.5,
+        mask_dark=2.5,
+        mask_light=1.1,
     )
 
 
