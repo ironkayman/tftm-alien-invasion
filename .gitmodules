@@ -1,0 +1,3 @@
+[submodule "alien_invasion/utils/bulletml"]
+	path = alien_invasion/utils/bulletml
+	url = https://github.com/mcgillij/python-bulletml
