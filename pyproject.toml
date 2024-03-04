@@ -12,6 +12,7 @@ pydantic = "^1.10.2"
 pyogg = "^0.6.14a1"
 nuitka = "^1.5.6"
 ordered-set = "^4.1.0"
+bulletml = { path = "./alien_invasion/utils/bulletml", develop = false }
 
 [tool.poetry.dev-dependencies]
 

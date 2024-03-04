@@ -7,6 +7,8 @@ from math import sin, cos
 import arcade as arc
 from pydantic import BaseModel
 
+import bulletml
+
 from alien_invasion import CONSTANTS
 from alien_invasion.utils.loaders.alien import AlienConfig
 
