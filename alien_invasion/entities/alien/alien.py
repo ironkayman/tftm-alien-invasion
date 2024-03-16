@@ -2,15 +2,49 @@
 """
 
 import random
+from math import sin, cos
 
 import arcade as arc
 from pydantic import BaseModel
+
+import bulletml
 
 from alien_invasion import CONSTANTS
 from alien_invasion.utils.loaders.alien import AlienConfig
 
 from ..common.entity import Entity
 from ..common.state_manager.state import State
+
+
+def prepare_barrage(
+    bullet_texture: arc.Texture,
+    bullet_scale: float,
+    bullet_damage,
+    center_x: int,
+    center_y: int,
+    pattern="star4",
+) -> list[arc.Sprite]:
+    """Called in Alien._fire"""
+    from alien_invasion.entities import Bullet
+
+    bullets = []
+    if pattern == "star4":
+        base_angle = 360 // 5
+        angles = [base_angle * a for a in range(8)]
+        for angle in angles:
+            bullet = Bullet(
+                filename=None,
+                damage=bullet_damage,
+                scale=bullet_scale,
+                texture=bullet_texture,
+                center_x=center_x,
+                center_y=center_y,
+            )
+            bullet.change_x = sin(angle)
+            bullet.change_y = cos(angle)
+            bullets.append(bullet)
+
+    return bullets
 
 
 class Timeouts:
@@ -118,9 +152,9 @@ class Alien(Entity):
         self.__configure_emitter()
         self.dodging = False
 
-        self.timeouts = Timeouts(
-            primary=1300 * self.scale / CONSTANTS.DISPLAY.SCALE_RELATION,
-        )
+        # self.timeouts = Timeouts(
+        #     primary=self.state.recharge_timeout,
+        # )
         self._timers = Timers()
         self._movement_velocity_multiplier = movement_velocity_multiplier
         self.change_x *= self._movement_velocity_multiplier[0]
@@ -220,12 +254,26 @@ class Alien(Entity):
         self._hp_curr = state.hp
         self.speed = state.speed * CONSTANTS.DISPLAY.SCALE_RELATION
         self.change_y = self.speed * -0.01
+        self.timeouts = Timeouts(
+            primary=state.recharge_timeout,
+        )
 
     def _fire(self, delta_time: float) -> None:
         """Creates a bullet sets its position
         and moves it inside passed `self.fired_shots`.
         """
         from alien_invasion.entities import Bullet
+
+        if self.system_name == "castle_wall_sontra":
+            bullets = prepare_barrage(
+                ALIEN_BULLET_TEXTURE,
+                Alien.BULLET_SCALE,
+                self.state.bullet_damage,
+                self.center_x,
+                self.center_y,
+            )
+            self.fired_shots.extend(bullets)
+            return
 
         # consider shooting functionalities of Starship
         # moving inside separate class as with Transmission

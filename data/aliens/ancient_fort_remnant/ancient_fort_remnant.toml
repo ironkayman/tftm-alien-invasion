@@ -20,7 +20,7 @@
 
     bullet_damage = 20
     bullet_speed = 800
-    recharge_timeout = 300
+    recharge_timeout = 3.0
 
 [state.damaged]
     movesets = ['tracking', 'dodging', 'firing']

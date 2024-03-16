@@ -34,7 +34,7 @@
     death_damage_cap = false
 
     bullet_damage = 8
-    recharge_timeout = 300
+    recharge_timeout = 1.0
 
 [state.shattered]
     movesets = ['escaping', 'dodging']

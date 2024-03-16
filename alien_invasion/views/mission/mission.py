@@ -241,7 +241,12 @@ class Mission(arc.View):
         """If alien bullets reach bottom of the viewport remove them"""
         # remove all out of window player bullets
         for bullet in self.alien_bullets:
-            if bullet.top < 0:
+            if (
+                bullet.top < 0
+                or bullet.right < 0
+                or bullet.left > CONSTANTS.DISPLAY.WIDTH
+                or bullet.bottom > CONSTANTS.DISPLAY.HEIGHT
+            ):
                 bullet.remove_from_sprite_lists()
 
     def __process_starship_danger_proximity(self) -> None:
